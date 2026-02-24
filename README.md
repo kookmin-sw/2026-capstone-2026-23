@@ -1,44 +1,48 @@
+# Luminir Document Parser
+
+사내 문서(HWP/PDF/이미지)를 AI 기반으로 변환하고, RAG 질의응답을 제공하는 웹 애플리케이션
+
+## 시작하기
+
+```bash
+nvm use          # Node 22로 전환
+npm install      # 패키지 설치
+npm run dev      # 개발 서버 실행 (localhost:5173)
+```
+
+## 주요 기능
+
+<!-- TODO: 구현 후 작성 -->
+
+## 기능 플로우
+
+<!-- TODO: 구현 후 작성 -->
+
 ## 기술 스택
 
-| 카테고리         | 기술 스택                        |
-| ---------------- | -------------------------------- |
-| 빌드 도구        | Vite ^7.3.0                      |
-| 프레임워크       | React ^19.2.0                    |
-| 언어             | TypeScript ~5.9.0                |
-| 라우팅           | TanStack Router ^1               |
-| 상태 관리        | Zustand ^5.0.0                   |
-| 데이터 페칭      | TanStack Query ^5.90.0           |
-| HTTP 클라이언트  | axios                            |
-| 서버 단방향 통신 | SSE (Server-Sent Events)         |
-| 스타일링         | TailwindCSS ^4.2.0 + shadcn/ui   |
-| 단위 테스트      | Vitest ^4.0.0                    |
-| E2E 테스트       | Playwright ^1.58.0               |
-| 컴포넌트 문서화  | Storybook ^8.6.0                 |
-| 코드 품질        | ESLint ^9.39.0 + Prettier ^3.8.0 |
-| Git 훅           | Husky ^9.1.7 + lint-staged       |
-| 배포             | Vercel                           |
+| 분류            | 기술                           |
+| --------------- | ------------------------------ |
+| 프레임워크      | React + TypeScript             |
+| 빌드 도구       | Vite                           |
+| 스타일링        | TailwindCSS v4 + shadcn/ui     |
+| 아이콘          | lucide-react                   |
+| 차트            | recharts                       |
+| 라우팅          | TanStack Router                |
+| 서버 데이터     | TanStack Query                 |
+| 클라이언트 상태 | Zustand                        |
+| HTTP 통신       | Axios                          |
+| 실시간 통신     | SSE (Server-Sent Events)       |
+| 단위 테스트     | Vitest + React Testing Library |
+| E2E 테스트      | Playwright                     |
+| 컴포넌트 문서   | Storybook                      |
+| 코드 품질       | ESLint + Prettier + Husky      |
+| CI/CD           | GitHub Actions + Vercel        |
 
-## 브랜치 전략 (Git Flow)
+## 문서
 
-Git Flow 워크플로를 채택하며 main은 프로덕션, develop은 개발 브랜치로 유지합니다.
-
-- **main**: 프로덕션 릴리스 전용. 태그로 버전 관리.
-- **develop**: 다음 릴리스 개발 통합.
-- **feature/\***: 신규 기능 개발 (e.g., feature/user-auth).
-- **bugfix/\***: 버그 수정 (e.g., bugfix/login-error).
-- **hotfix/\***: 프로덕션 긴급 수정.
-- PR은 develop으로 병합, main 푸시는 릴리스 시.
-
-## 커밋 규칙 (Conventional Commits)
-
-형식: `<type>[optional scope]: <description>`
-
-- feat: 신규 기능 (e.g., feat(auth): add login form)
-- fix: 버그 수정 (e.g., fix(login): resolve credential validation error)
-- docs: 문서 변경 (e.g., docs(readme): update installation guide)
-- style: 포맷팅 변경 (e.g., style(button): improve spacing consistency)
-- refactor: 코드 리팩토링 (e.g., refactor(user): extract service layer)
-- test: 테스트 추가 (e.g., test(api): add query integration tests)
-- chore: 빌드/도구 변경 (e.g., chore(deps): update react to v19)
-
-BREAKING CHANGE는 ! 표시 (e.g., feat!: remove legacy API).
+| 파일                      | 내용                                        |
+| ------------------------- | ------------------------------------------- |
+| `docs/project-guide.md`   | 프로젝트 가이드 (개발 흐름, 아키텍처, 규칙) |
+| `docs/testing-guide.md`   | 테스트 코드 작성 가이드                     |
+| `docs/libraries.md`       | 설치된 패키지 목록과 사용 이유              |
+| `docs/ci-setup-report.md` | CI/CD 구성 보고서                           |
