@@ -18,6 +18,8 @@
 | `class-variance-authority`       | shadcn/ui 컴포넌트의 변형(variant) 스타일을 타입 안전하게 정의하기 위해 사용               |
 | `lucide-react`                   | shadcn/ui 기본 아이콘 라이브러리. 일관된 아이콘 시스템 제공                                |
 | `radix-ui`                       | shadcn/ui의 기반 헤드리스 UI 프리미티브. 접근성이 보장된 컴포넌트 동작 로직 제공           |
+| `recharts`                       | 대시보드 차트(LineChart, PieChart 등) 시각화를 위해 사용. React 기반 선언적 차트 라이브러리 |
+| `sonner`                         | shadcn/ui Toast 알림(Toaster) 컴포넌트 의존성. 전역 알림 표시를 위해 사용                  |
 
 ## DevDependencies (개발)
 
