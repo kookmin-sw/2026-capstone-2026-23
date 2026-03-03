@@ -52,30 +52,8 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-sidebar-border border-b p-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 overflow-hidden">
-            <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center">
-              <span className="text-primary-foreground text-lg font-bold">
-                L
-              </span>
-            </div>
-            <span className="text-sidebar-foreground truncate font-bold group-data-[collapsible=icon]:hidden">
-              Luminir
-            </span>
-          </div>
-          <button
-            onClick={toggleSidebar}
-            className="text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent shrink-0 p-1 group-data-[collapsible=icon]:hidden"
-          >
-            <PanelLeftClose className="h-4 w-4" />
-          </button>
-        </div>
-      </SidebarHeader>
-
-      <SidebarContent>
-        {/* Expand button when collapsed */}
-        {isCollapsed && (
-          <div className="flex justify-center pt-2">
+        {isCollapsed ? (
+          <div className="flex justify-center">
             <button
               onClick={toggleSidebar}
               className="text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent p-1"
@@ -83,8 +61,32 @@ export function AppSidebar() {
               <PanelLeftOpen className="h-4 w-4" />
             </button>
           </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-2 overflow-hidden"
+            >
+              <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center">
+                <span className="text-primary-foreground text-lg font-bold">
+                  L
+                </span>
+              </div>
+              <span className="text-sidebar-foreground truncate font-bold">
+                Luminir
+              </span>
+            </Link>
+            <button
+              onClick={toggleSidebar}
+              className="text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent shrink-0 p-1"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </button>
+          </div>
         )}
+      </SidebarHeader>
 
+      <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
