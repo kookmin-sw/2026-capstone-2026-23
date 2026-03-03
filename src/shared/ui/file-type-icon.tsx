@@ -82,7 +82,7 @@ export function FileTypeBadge({ fileName }: FileTypeBadgeProps) {
 
   return (
     <span
-      className={`inline-block w-10 text-center py-0.5 whitespace-nowrap text-xs font-medium border ${getColor()}`}
+      className={`inline-block w-12 text-center py-0.5 whitespace-nowrap text-xs font-medium border ${getColor()}`}
     >
       {ext}
     </span>
