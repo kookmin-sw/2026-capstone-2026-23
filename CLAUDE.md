@@ -31,13 +31,14 @@
 
 ## 코드 품질 검사 필수
 
-코드를 수정한 후에는 반드시 아래 검사를 통과시켜야 한다.
+코드를 커밋하기 전에는 반드시 아래 검사를 통과시켜야 한다.
 
 - `npm run lint` — ESLint 에러 0건 확인
 - `npm run format` — Prettier 포맷팅 적용 (`npm run format:check`로 CI 검증)
 - `npm run build` — TypeScript 컴파일 + Vite 빌드 성공 확인
+- `npm run test:e2e` — Playwright E2E 테스트 통과 확인
 
-커밋 전에 위 3가지를 항상 실행하고, 에러가 있으면 수정 후 커밋한다.
+커밋 전에 위 4가지를 항상 실행하고, 에러가 있으면 수정 후 커밋한다.
 
 ## 라이브러리 설치 시 문서화 필수
 
