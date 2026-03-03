@@ -1,11 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { AppSidebar } from '@/widgets/app-sidebar'
-import {
-  SidebarProvider,
-  SidebarInset,
-  SidebarTrigger,
-} from '@/shared/ui/sidebar'
-import { Separator } from '@/shared/ui/separator'
+import { SidebarProvider, SidebarInset } from '@/shared/ui/sidebar'
 
 export const Route = createFileRoute('/_layout')({
   component: LayoutComponent,
@@ -16,13 +11,6 @@ function LayoutComponent() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="border-border flex h-12 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <span className="text-muted-foreground text-sm font-medium">
-            Luminir Document Parser
-          </span>
-        </header>
         <main className="flex-1 overflow-auto px-4 py-3">
           <Outlet />
         </main>
