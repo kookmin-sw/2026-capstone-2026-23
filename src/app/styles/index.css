@@ -43,75 +43,129 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Carbon spacing scale */
+  --spacing-carbon-1: 0.125rem;
+  --spacing-carbon-2: 0.25rem;
+  --spacing-carbon-3: 0.5rem;
+  --spacing-carbon-4: 0.75rem;
+  --spacing-carbon-5: 1rem;
+  --spacing-carbon-6: 1.5rem;
+  --spacing-carbon-7: 2rem;
+  --spacing-carbon-8: 2.5rem;
+  --spacing-carbon-9: 3rem;
+
+  /* Carbon semantic colors */
+  --color-carbon-blue-60: #0f62fe;
+  --color-carbon-blue-70: #0043ce;
+  --color-carbon-blue-80: #002d9c;
+  --color-carbon-green-50: #24a148;
+  --color-carbon-green-60: #198038;
+  --color-carbon-yellow-30: #f1c21b;
+  --color-carbon-red-60: #da1e28;
+  --color-carbon-red-50: #fa4d56;
+  --color-carbon-purple-60: #8a3ffc;
+  --color-carbon-orange-40: #ff832b;
 }
 
+/* ───── Carbon Light Theme (IBM Carbon Gray 10 base) ───── */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0px; /* Carbon uses sharp corners */
+
+  /* Core */
+  --background: #f4f4f4; /* Gray 10 */
+  --foreground: #161616; /* Gray 100 */
+
+  /* Card / Popover */
+  --card: #ffffff; /* White */
+  --card-foreground: #161616; /* Gray 100 */
+  --popover: #ffffff;
+  --popover-foreground: #161616;
+
+  /* Primary — Carbon Blue 60 */
+  --primary: #0f62fe;
+  --primary-foreground: #ffffff;
+
+  /* Secondary — Carbon Gray 20 */
+  --secondary: #e0e0e0;
+  --secondary-foreground: #161616;
+
+  /* Muted — Carbon Gray 10/20 */
+  --muted: #e0e0e0;
+  --muted-foreground: #525252; /* Gray 70 */
+
+  /* Accent — Carbon Blue 10 */
+  --accent: #edf5ff;
+  --accent-foreground: #161616;
+
+  /* Destructive — Carbon Red 60 */
+  --destructive: #da1e28;
+
+  /* Border / Input / Ring */
+  --border: #e0e0e0; /* Gray 20 */
+  --input: #e0e0e0;
+  --ring: #0f62fe; /* Blue 60 for focus ring */
+
+  /* Chart palette (Carbon Data Vis) */
+  --chart-1: #0f62fe; /* Blue 60 */
+  --chart-2: #24a148; /* Green 50 */
+  --chart-3: #f1c21b; /* Yellow 30 */
+  --chart-4: #8a3ffc; /* Purple 60 */
+  --chart-5: #ff832b; /* Orange 40 */
+
+  /* Sidebar — White base */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #161616;
+  --sidebar-primary: #0f62fe;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f4f4f4; /* Gray 10 */
+  --sidebar-accent-foreground: #161616;
+  --sidebar-border: #e0e0e0; /* Gray 20 */
+  --sidebar-ring: #0f62fe;
 }
 
+/* ───── Carbon Dark Theme (IBM Carbon Gray 100 base) ───── */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #161616; /* Gray 100 */
+  --foreground: #f4f4f4; /* Gray 10 */
+
+  --card: #262626; /* Gray 90 */
+  --card-foreground: #f4f4f4;
+  --popover: #262626;
+  --popover-foreground: #f4f4f4;
+
+  --primary: #78a9ff; /* Blue 40 */
+  --primary-foreground: #161616;
+
+  --secondary: #393939; /* Gray 80 */
+  --secondary-foreground: #f4f4f4;
+
+  --muted: #393939;
+  --muted-foreground: #a8a8a8; /* Gray 40 */
+
+  --accent: #393939;
+  --accent-foreground: #f4f4f4;
+
+  --destructive: #fa4d56; /* Red 50 */
+
+  --border: #393939; /* Gray 80 */
+  --input: #393939;
+  --ring: #78a9ff; /* Blue 40 */
+
+  --chart-1: #78a9ff; /* Blue 40 */
+  --chart-2: #42be65; /* Green 40 */
+  --chart-3: #f1c21b; /* Yellow 30 */
+  --chart-4: #a56eff; /* Purple 40 */
+  --chart-5: #ff832b; /* Orange 40 */
+
+  --sidebar: #262626;
+  --sidebar-foreground: #f4f4f4;
+  --sidebar-primary: #78a9ff;
+  --sidebar-primary-foreground: #161616;
+  --sidebar-accent: #393939;
+  --sidebar-accent-foreground: #f4f4f4;
+  --sidebar-border: #525252; /* Gray 70 */
+  --sidebar-ring: #78a9ff;
 }
 
 @layer base {
@@ -120,5 +174,17 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family:
+      'IBM Plex Sans',
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  code,
+  pre,
+  .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
   }
 }
