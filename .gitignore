@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-.figma_make
+figma_make
 
 # Environment variables
 .env
