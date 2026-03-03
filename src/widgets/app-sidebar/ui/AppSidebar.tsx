@@ -36,20 +36,22 @@ export function AppSidebar() {
   const storagePercent = (storageUsedGB / storageLimitGB) * 100
 
   const getStorageColor = () => {
-    if (storagePercent >= 90) return { bg: 'bg-destructive', text: 'text-destructive' }
-    if (storagePercent >= 70) return { bg: 'bg-[#f1c21b]', text: 'text-[#684e00]' }
+    if (storagePercent >= 90)
+      return { bg: 'bg-destructive', text: 'text-destructive' }
+    if (storagePercent >= 70)
+      return { bg: 'bg-[#f1c21b]', text: 'text-[#684e00]' }
     return { bg: 'bg-primary', text: 'text-primary' }
   }
   const storageColor = getStorageColor()
 
   return (
     <Sidebar>
-      <SidebarHeader className="p-6 border-b border-sidebar-border">
+      <SidebarHeader className="border-sidebar-border border-b p-6">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">L</span>
+          <div className="bg-primary flex h-8 w-8 items-center justify-center">
+            <span className="text-primary-foreground text-lg font-bold">L</span>
           </div>
-          <span className="font-bold text-sidebar-foreground">Luminir</span>
+          <span className="text-sidebar-foreground font-bold">Luminir</span>
         </div>
       </SidebarHeader>
 
@@ -78,31 +80,33 @@ export function AppSidebar() {
 
       <SidebarFooter>
         {/* Storage */}
-        <div className="p-4 border-t border-sidebar-border">
+        <div className="border-sidebar-border border-t p-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <HardDrive className="h-4 w-4 text-sidebar-foreground/60" />
-                <span className="text-sm font-medium text-sidebar-foreground/80">스토리지</span>
+                <HardDrive className="text-sidebar-foreground/60 h-4 w-4" />
+                <span className="text-sidebar-foreground/80 text-sm font-medium">
+                  스토리지
+                </span>
               </div>
               <span className={`text-sm font-semibold ${storageColor.text}`}>
                 {storagePercent.toFixed(0)}%
               </span>
             </div>
-            <div className="w-full h-2 bg-sidebar-accent overflow-hidden">
+            <div className="bg-sidebar-accent h-2 w-full overflow-hidden">
               <div
                 className={`h-full ${storageColor.bg} transition-all duration-300`}
                 style={{ width: `${Math.min(storagePercent, 100)}%` }}
               />
             </div>
-            <div className="text-xs text-sidebar-foreground/60">
+            <div className="text-sidebar-foreground/60 text-xs">
               {storageUsedGB.toFixed(1)} GB / {storageLimitGB} GB
             </div>
           </div>
         </div>
 
         {/* Settings */}
-        <div className="p-4 border-t border-sidebar-border">
+        <div className="border-sidebar-border border-t p-4">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={currentPath === '/settings'}>

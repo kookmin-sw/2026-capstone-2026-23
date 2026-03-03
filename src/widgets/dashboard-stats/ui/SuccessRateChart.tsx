@@ -1,4 +1,11 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+  Tooltip,
+} from 'recharts'
 import { Activity } from 'lucide-react'
 import { Card, CardContent } from '@/shared/ui/card'
 
@@ -12,9 +19,9 @@ export function SuccessRateChart() {
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Activity className="h-4 w-4 text-primary" />
-          <h3 className="text-lg font-semibold text-foreground">성공률 분석</h3>
+        <div className="mb-2 flex items-center gap-2">
+          <Activity className="text-primary h-4 w-4" />
+          <h3 className="text-foreground text-lg font-semibold">성공률 분석</h3>
         </div>
         <ResponsiveContainer width="100%" height={250}>
           <PieChart>
@@ -42,10 +49,10 @@ export function SuccessRateChart() {
             <Legend verticalAlign="bottom" height={36} iconType="circle" />
           </PieChart>
         </ResponsiveContainer>
-        <div className="mt-4 pt-4 border-t border-border">
+        <div className="border-border mt-4 border-t pt-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">평균 처리 시간</span>
-            <span className="font-semibold text-foreground">2분 45초</span>
+            <span className="text-foreground font-semibold">2분 45초</span>
           </div>
         </div>
       </CardContent>

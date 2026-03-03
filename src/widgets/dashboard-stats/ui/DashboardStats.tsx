@@ -7,8 +7,10 @@ interface DashboardStatsProps {
 }
 
 export function DashboardStats({ stats }: DashboardStatsProps) {
-  const completionRate = stats.total > 0 ? ((stats.completed / stats.total) * 100).toFixed(1) : '0'
-  const failureRate = stats.total > 0 ? ((stats.failed / stats.total) * 100).toFixed(1) : '0'
+  const completionRate =
+    stats.total > 0 ? ((stats.completed / stats.total) * 100).toFixed(1) : '0'
+  const failureRate =
+    stats.total > 0 ? ((stats.failed / stats.total) * 100).toFixed(1) : '0'
 
   return (
     <div className="grid grid-cols-4 gap-4">

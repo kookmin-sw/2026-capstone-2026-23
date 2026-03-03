@@ -45,7 +45,7 @@ export function FileTypeIcon({
     default:
       return (
         <div
-          className={`${className} flex items-center justify-center bg-muted text-muted-foreground`}
+          className={`${className} bg-muted text-muted-foreground flex items-center justify-center`}
         >
           <FileText className="h-5 w-5" />
         </div>
@@ -82,7 +82,7 @@ export function FileTypeBadge({ fileName }: FileTypeBadgeProps) {
 
   return (
     <span
-      className={`inline-block w-12 text-center py-0.5 whitespace-nowrap text-xs font-medium border ${getColor()}`}
+      className={`inline-block w-12 border py-0.5 text-center text-xs font-medium whitespace-nowrap ${getColor()}`}
     >
       {ext}
     </span>

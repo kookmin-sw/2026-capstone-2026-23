@@ -139,17 +139,13 @@ export function ConversionPanel() {
 
     return (
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">
+        <label className="text-foreground mb-2 block text-sm font-medium">
           배치 상태
         </label>
-        <div className={`px-4 py-3 border ${bgColor}`}>
+        <div className={`border px-4 py-3 ${bgColor}`}>
           <div className="flex items-start gap-3">
-            <Icon
-              className={`h-5 w-5 flex-shrink-0 mt-0.5 ${iconColor}`}
-            />
-            <p
-              className={`text-sm whitespace-pre-line flex-1 ${textColor}`}
-            >
+            <Icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${iconColor}`} />
+            <p className={`flex-1 text-sm whitespace-pre-line ${textColor}`}>
               {batchStatus}
             </p>
           </div>

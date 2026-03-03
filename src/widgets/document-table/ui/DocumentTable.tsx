@@ -70,11 +70,12 @@ const initialDocuments: DocumentWithSelection[] = [
 ]
 
 export function DocumentTable({ onFileSelect }: DocumentTableProps) {
-  const [documents, setDocuments] = useState<DocumentWithSelection[]>(initialDocuments)
+  const [documents, setDocuments] =
+    useState<DocumentWithSelection[]>(initialDocuments)
   const [selectAll, setSelectAll] = useState(false)
   const [showDeleteDropdown, setShowDeleteDropdown] = useState(false)
   const [activeRowDropdown, setActiveRowDropdown] = useState<string | null>(
-    null
+    null,
   )
   const deleteDropdownRef = useRef<HTMLDivElement>(null)
 
@@ -91,7 +92,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
         setShowDeleteDropdown(false)
       if (activeRowDropdown) {
         const dropdown = document.getElementById(
-          `dropdown-${activeRowDropdown}`
+          `dropdown-${activeRowDropdown}`,
         )
         if (dropdown && !dropdown.contains(event.target as Node))
           setActiveRowDropdown(null)
@@ -104,8 +105,8 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   const toggleDocSelection = (id: string) => {
     setDocuments((docs) =>
       docs.map((doc) =>
-        doc.id === id ? { ...doc, selected: !doc.selected } : doc
-      )
+        doc.id === id ? { ...doc, selected: !doc.selected } : doc,
+      ),
     )
   }
 
@@ -113,7 +114,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
     const newSelectAll = !selectAll
     setSelectAll(newSelectAll)
     setDocuments((docs) =>
-      docs.map((doc) => ({ ...doc, selected: newSelectAll }))
+      docs.map((doc) => ({ ...doc, selected: newSelectAll })),
     )
   }
 
@@ -125,7 +126,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
 
   const downloadSingle = (
     docId: string,
-    type: 'original' | 'tmp' | 'output'
+    type: 'original' | 'tmp' | 'output',
   ) => {
     const doc = documents.find((d) => d.id === docId)
     if (!doc) return
@@ -142,7 +143,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
         if (type === 'original') return { ...doc, hasOriginal: false }
         if (type === 'tmp') return { ...doc, hasTmp: false }
         return { ...doc, hasOutput: false }
-      })
+      }),
     )
   }
 
@@ -154,7 +155,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
         if (type === 'original') return { ...d, hasOriginal: false }
         if (type === 'tmp') return { ...d, hasTmp: false }
         return { ...d, hasOutput: false }
-      })
+      }),
     )
   }
 
@@ -163,12 +164,12 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   return (
     <div className="space-y-3">
       {/* Top Control Bar */}
-      <div className="bg-card border border-border p-3">
+      <div className="bg-card border-border border p-3">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" onClick={loadDocuments}>
             <RefreshCw className="h-4 w-4" />
           </Button>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-sm">
             {selectedCount > 0
               ? `${selectedCount}개 파일 선택됨`
               : '선택된 파일 없음'}
@@ -180,25 +181,25 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
               onClick={() => downloadSelected('original')}
               disabled={selectedCount === 0}
             >
-              <Download className="h-4 w-4 mr-1" />
+              <Download className="mr-1 h-4 w-4" />
               원본
             </Button>
             <Button
               size="sm"
-              className="bg-[#ff832b] hover:bg-[#ba4e00] text-white"
+              className="bg-[#ff832b] text-white hover:bg-[#ba4e00]"
               onClick={() => downloadSelected('tmp')}
               disabled={selectedCount === 0}
             >
-              <Download className="h-4 w-4 mr-1" />
+              <Download className="mr-1 h-4 w-4" />
               tmp
             </Button>
             <Button
               size="sm"
-              className="bg-[#198038] hover:bg-[#0e6027] text-white"
+              className="bg-[#198038] text-white hover:bg-[#0e6027]"
               onClick={() => downloadSelected('output')}
               disabled={selectedCount === 0}
             >
-              <Download className="h-4 w-4 mr-1" />
+              <Download className="mr-1 h-4 w-4" />
               output
             </Button>
             <div className="relative" ref={deleteDropdownRef}>
@@ -208,25 +209,25 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                 onClick={() => setShowDeleteDropdown(!showDeleteDropdown)}
                 disabled={selectedCount === 0}
               >
-                <Trash2 className="h-5 w-5 text-destructive" />
+                <Trash2 className="text-destructive h-5 w-5" />
               </Button>
               {showDeleteDropdown && selectedCount > 0 && (
-                <div className="absolute right-0 mt-1 w-40 bg-card border border-border shadow-lg z-10">
+                <div className="bg-card border-border absolute right-0 z-10 mt-1 w-40 border shadow-lg">
                   <button
                     onClick={() => deleteSelected('original')}
-                    className="w-full px-4 py-2 text-left text-sm hover:bg-accent text-foreground transition-colors"
+                    className="hover:bg-accent text-foreground w-full px-4 py-2 text-left text-sm transition-colors"
                   >
                     원본 삭제
                   </button>
                   <button
                     onClick={() => deleteSelected('tmp')}
-                    className="w-full px-4 py-2 text-left text-sm hover:bg-accent text-foreground transition-colors border-t border-border"
+                    className="hover:bg-accent text-foreground border-border w-full border-t px-4 py-2 text-left text-sm transition-colors"
                   >
                     tmp 삭제
                   </button>
                   <button
                     onClick={() => deleteSelected('output')}
-                    className="w-full px-4 py-2 text-left text-sm hover:bg-accent text-foreground transition-colors border-t border-border"
+                    className="hover:bg-accent text-foreground border-border w-full border-t px-4 py-2 text-left text-sm transition-colors"
                   >
                     output 삭제
                   </button>
@@ -238,45 +239,45 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
       </div>
 
       {/* Document Table */}
-      <div className="bg-card border border-border overflow-hidden">
+      <div className="bg-card border-border overflow-hidden border">
         <div className="overflow-x-auto">
           <table className="w-full whitespace-nowrap">
-            <thead className="bg-muted/50 border-b border-border">
+            <thead className="bg-muted/50 border-border border-b">
               <tr>
-                <th className="px-4 py-3 text-left w-12">
+                <th className="w-12 px-4 py-3 text-left">
                   <input
                     type="checkbox"
                     checked={selectAll}
                     onChange={toggleSelectAll}
-                    className="h-4 w-4 accent-primary"
+                    className="accent-primary h-4 w-4"
                   />
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">
+                <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
                   문서명
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-foreground w-64">
+                <th className="text-foreground w-64 px-4 py-3 text-left text-sm font-semibold">
                   세부사항
                 </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-foreground w-24">
+                <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
                   원본
                 </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-foreground w-24">
+                <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
                   tmp
                 </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-foreground w-24">
+                <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
                   output
                 </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-foreground w-24">
+                <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
                   삭제
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-border divide-y">
               {documents.length === 0 ? (
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-4 py-8 text-center text-muted-foreground"
+                    className="text-muted-foreground px-4 py-8 text-center"
                   >
                     문서가 없습니다.
                   </td>
@@ -289,19 +290,19 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                         type="checkbox"
                         checked={doc.selected}
                         onChange={() => toggleDocSelection(doc.id)}
-                        className="h-4 w-4 accent-primary"
+                        className="accent-primary h-4 w-4"
                       />
                     </td>
                     <td className="px-4 py-3">
                       <button
                         onClick={() => onFileSelect(doc.id)}
-                        className="text-sm font-medium text-primary hover:text-primary/80 hover:underline transition-colors text-left"
+                        className="text-primary hover:text-primary/80 text-left text-sm font-medium transition-colors hover:underline"
                       >
                         {doc.name}
                       </button>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-sm space-y-0.5">
+                      <div className="space-y-0.5 text-sm">
                         <div className="text-muted-foreground">
                           <span className="font-medium">날짜:</span> {doc.date}
                         </div>
@@ -321,16 +322,16 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                       <button
                         onClick={() => downloadSingle(doc.id, 'original')}
                         disabled={!doc.hasOriginal}
-                        className="inline-flex items-center justify-center w-10 h-10 hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        className="hover:bg-accent inline-flex h-10 w-10 items-center justify-center transition-colors disabled:cursor-not-allowed disabled:opacity-30"
                       >
-                        <Download className="h-6 w-6 text-primary" />
+                        <Download className="text-primary h-6 w-6" />
                       </button>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => downloadSingle(doc.id, 'tmp')}
                         disabled={!doc.hasTmp}
-                        className="inline-flex items-center justify-center w-10 h-10 hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        className="hover:bg-accent inline-flex h-10 w-10 items-center justify-center transition-colors disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         <Download className="h-6 w-6 text-[#ff832b]" />
                       </button>
@@ -339,50 +340,43 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                       <button
                         onClick={() => downloadSingle(doc.id, 'output')}
                         disabled={!doc.hasOutput}
-                        className="inline-flex items-center justify-center w-10 h-10 hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        className="hover:bg-accent inline-flex h-10 w-10 items-center justify-center transition-colors disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         <Download className="h-6 w-6 text-[#198038]" />
                       </button>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <div
-                        className="relative"
-                        id={`dropdown-${doc.id}`}
-                      >
+                      <div className="relative" id={`dropdown-${doc.id}`}>
                         <button
                           onClick={() =>
                             setActiveRowDropdown(
-                              activeRowDropdown === doc.id ? null : doc.id
+                              activeRowDropdown === doc.id ? null : doc.id,
                             )
                           }
-                          className="inline-flex items-center justify-center w-10 h-10 hover:bg-[#fff1f1] transition-colors"
+                          className="inline-flex h-10 w-10 items-center justify-center transition-colors hover:bg-[#fff1f1]"
                         >
-                          <Trash2 className="h-6 w-6 text-destructive" />
+                          <Trash2 className="text-destructive h-6 w-6" />
                         </button>
                         {activeRowDropdown === doc.id && (
-                          <div className="absolute right-0 mt-1 w-40 bg-card border border-border shadow-lg z-10">
+                          <div className="bg-card border-border absolute right-0 z-10 mt-1 w-40 border shadow-lg">
                             <button
-                              onClick={() =>
-                                deleteSingle(doc.id, 'original')
-                              }
+                              onClick={() => deleteSingle(doc.id, 'original')}
                               disabled={!doc.hasOriginal}
-                              className="w-full px-4 py-2 text-left text-sm hover:bg-accent text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="hover:bg-accent text-foreground w-full px-4 py-2 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               원본 삭제
                             </button>
                             <button
                               onClick={() => deleteSingle(doc.id, 'tmp')}
                               disabled={!doc.hasTmp}
-                              className="w-full px-4 py-2 text-left text-sm hover:bg-accent text-foreground transition-colors border-t border-border disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="hover:bg-accent text-foreground border-border w-full border-t px-4 py-2 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               tmp 삭제
                             </button>
                             <button
-                              onClick={() =>
-                                deleteSingle(doc.id, 'output')
-                              }
+                              onClick={() => deleteSingle(doc.id, 'output')}
                               disabled={!doc.hasOutput}
-                              className="w-full px-4 py-2 text-left text-sm hover:bg-accent text-foreground transition-colors border-t border-border disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="hover:bg-accent text-foreground border-border w-full border-t px-4 py-2 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               output 삭제
                             </button>

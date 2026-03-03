@@ -1,10 +1,17 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { DashboardStats, TrendChart, SuccessRateChart } from '@/widgets/dashboard-stats'
+import {
+  DashboardStats,
+  TrendChart,
+  SuccessRateChart,
+} from '@/widgets/dashboard-stats'
 import { RecentJobs } from '@/widgets/recent-jobs'
 import { SystemMonitor } from '@/widgets/system-monitor'
 import { ErrorLogWidget } from '@/widgets/error-log-widget'
-import type { DateFilter, DashboardStats as DashboardStatsType } from '@/shared/types'
+import type {
+  DateFilter,
+  DashboardStats as DashboardStatsType,
+} from '@/shared/types'
 
 export function DashboardPage() {
   const navigate = useNavigate()
@@ -21,7 +28,10 @@ export function DashboardPage() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
+      if (
+        datePickerRef.current &&
+        !datePickerRef.current.contains(event.target as Node)
+      ) {
         setShowDatePicker(false)
       }
     }
@@ -30,29 +40,50 @@ export function DashboardPage() {
   }, [])
 
   // Mock statistics
-  const stats: DashboardStatsType = { total: 156, completed: 142, inProgress: 3, failed: 11 }
+  const stats: DashboardStatsType = {
+    total: 156,
+    completed: 142,
+    inProgress: 3,
+    failed: 11,
+  }
 
   const formatDateFilterLabel = () => {
-    if (dateFilter.type === 'month' && dateFilter.month) return `${dateFilter.month}월`
-    if (dateFilter.type === 'custom' && dateFilter.startDate && dateFilter.endDate) {
+    if (dateFilter.type === 'month' && dateFilter.month)
+      return `${dateFilter.month}월`
+    if (
+      dateFilter.type === 'custom' &&
+      dateFilter.startDate &&
+      dateFilter.endDate
+    ) {
       return `${dateFilter.startDate.replace(/-/g, '.')}~${dateFilter.endDate.replace(/-/g, '.')}`
     }
     return '기간 선택'
   }
 
   const handleMonthSelect = (month: number) => {
-    setDateFilter({ type: 'month', month, year: dateFilter.year || currentDate.getFullYear() })
+    setDateFilter({
+      type: 'month',
+      month,
+      year: dateFilter.year || currentDate.getFullYear(),
+    })
     setShowDatePicker(false)
   }
 
   const handleCustomDateApply = () => {
     if (customStartDate && customEndDate) {
-      setDateFilter({ type: 'custom', startDate: customStartDate, endDate: customEndDate })
+      setDateFilter({
+        type: 'custom',
+        startDate: customStartDate,
+        endDate: customEndDate,
+      })
       setShowDatePicker(false)
     }
   }
 
-  const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `${i + 1}월` }))
+  const months = Array.from({ length: 12 }, (_, i) => ({
+    value: i + 1,
+    label: `${i + 1}월`,
+  }))
 
   return (
     <div className="space-y-3">
@@ -62,22 +93,25 @@ export function DashboardPage() {
           <div className="relative" ref={datePickerRef}>
             <button
               onClick={() => setShowDatePicker(!showDatePicker)}
-              className="text-2xl font-bold text-primary hover:text-primary/80 transition-colors underline decoration-2 underline-offset-4 decoration-primary/40 hover:decoration-primary"
+              className="text-primary hover:text-primary/80 decoration-primary/40 hover:decoration-primary text-2xl font-bold underline decoration-2 underline-offset-4 transition-colors"
             >
               {formatDateFilterLabel()}
             </button>
 
             {showDatePicker && (
-              <div className="absolute left-0 top-full mt-2 w-96 bg-card border border-border shadow-lg z-10 p-4">
+              <div className="bg-card border-border absolute top-full left-0 z-10 mt-2 w-96 border p-4 shadow-lg">
                 <div className="mb-4">
-                  <h3 className="text-sm font-semibold text-foreground mb-2">월 선택</h3>
+                  <h3 className="text-foreground mb-2 text-sm font-semibold">
+                    월 선택
+                  </h3>
                   <div className="grid grid-cols-4 gap-2">
                     {months.map((month) => (
                       <button
                         key={month.value}
                         onClick={() => handleMonthSelect(month.value)}
                         className={`px-3 py-2 text-sm font-medium transition-colors ${
-                          dateFilter.type === 'month' && dateFilter.month === month.value
+                          dateFilter.type === 'month' &&
+                          dateFilter.month === month.value
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-muted text-foreground hover:bg-muted/80'
                         }`}
@@ -87,26 +121,49 @@ export function DashboardPage() {
                     ))}
                   </div>
                 </div>
-                <div className="border-t border-border pt-4">
-                  <h3 className="text-sm font-semibold text-foreground mb-2">기간 선택</h3>
+                <div className="border-border border-t pt-4">
+                  <h3 className="text-foreground mb-2 text-sm font-semibold">
+                    기간 선택
+                  </h3>
                   <div className="space-y-2">
                     <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">시작일</label>
-                      <input type="date" value={customStartDate} onChange={(e) => setCustomStartDate(e.target.value)} className="w-full px-3 py-2 border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+                      <label className="text-muted-foreground mb-1 block text-xs">
+                        시작일
+                      </label>
+                      <input
+                        type="date"
+                        value={customStartDate}
+                        onChange={(e) => setCustomStartDate(e.target.value)}
+                        className="border-border bg-card focus:ring-primary w-full border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+                      />
                     </div>
                     <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">종료일</label>
-                      <input type="date" value={customEndDate} onChange={(e) => setCustomEndDate(e.target.value)} className="w-full px-3 py-2 border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+                      <label className="text-muted-foreground mb-1 block text-xs">
+                        종료일
+                      </label>
+                      <input
+                        type="date"
+                        value={customEndDate}
+                        onChange={(e) => setCustomEndDate(e.target.value)}
+                        className="border-border bg-card focus:ring-primary w-full border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+                      />
                     </div>
-                    <button onClick={handleCustomDateApply} className="w-full mt-2 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium">적용</button>
+                    <button
+                      onClick={handleCustomDateApply}
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2 w-full px-4 py-2 text-sm font-medium transition-colors"
+                    >
+                      적용
+                    </button>
                   </div>
                 </div>
               </div>
             )}
           </div>
-          <h2 className="text-2xl font-bold text-foreground">의 대시보드</h2>
+          <h2 className="text-foreground text-2xl font-bold">의 대시보드</h2>
         </div>
-        <p className="text-sm text-muted-foreground">전체 문서 처리 현황을 한눈에 확인하세요</p>
+        <p className="text-muted-foreground text-sm">
+          전체 문서 처리 현황을 한눈에 확인하세요
+        </p>
       </div>
 
       <RecentJobs />

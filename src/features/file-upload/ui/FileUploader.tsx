@@ -21,7 +21,7 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
     const processEntry = async (entry: FileSystemEntry): Promise<void> => {
       return new Promise((resolve) => {
         if (entry.isFile) {
-          (entry as FileSystemFileEntry).file((file: File) => {
+          ;(entry as FileSystemFileEntry).file((file: File) => {
             files.push(file)
             resolve()
           })
@@ -65,12 +65,12 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-foreground mb-2">
+      <label className="text-foreground mb-2 block text-sm font-medium">
         문서 파일
       </label>
 
       <div
-        className={`border-2 border-dashed p-8 text-center transition-all cursor-pointer ${
+        className={`cursor-pointer border-2 border-dashed p-8 text-center transition-all ${
           isDragging
             ? 'border-primary bg-accent scale-[1.02]'
             : 'border-border hover:border-primary hover:bg-muted/50'
@@ -87,14 +87,14 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
         onClick={() => fileInputRef.current?.click()}
       >
         <Upload
-          className={`mx-auto h-12 w-12 mb-3 transition-colors ${isDragging ? 'text-primary' : 'text-muted-foreground'}`}
+          className={`mx-auto mb-3 h-12 w-12 transition-colors ${isDragging ? 'text-primary' : 'text-muted-foreground'}`}
         />
-        <p className="text-sm text-foreground font-medium mb-1">
+        <p className="text-foreground mb-1 text-sm font-medium">
           {isDragging
             ? '파일을 여기에 놓으세요'
             : '클릭하거나 파일을 드래그하여 업로드'}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           HWP, HWPX, PDF, PNG, JPG, BMP, TIFF
         </p>
         <input
@@ -115,7 +115,7 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
           folderInputRef.current?.click()
         }}
       >
-        <Folder className="h-4 w-4 mr-2" />
+        <Folder className="mr-2 h-4 w-4" />
         폴더 전체 업로드
       </Button>
       <input

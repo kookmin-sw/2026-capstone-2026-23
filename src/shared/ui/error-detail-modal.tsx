@@ -19,22 +19,22 @@ export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
 
   return (
     <Dialog open={!!error} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#fff1f1]">
+            <div className="bg-[#fff1f1] p-2">
               <AlertTriangle className="h-6 w-6 text-[#da1e28]" />
             </div>
             <div>
               <DialogTitle>에러 상세 정보</DialogTitle>
-              <p className="text-sm text-muted-foreground">ID: {error.id}</p>
+              <p className="text-muted-foreground text-sm">ID: {error.id}</p>
             </div>
           </div>
         </DialogHeader>
 
         {/* Error Type Badge */}
         <div className="mb-4">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#fff1f1] text-[#da1e28] font-medium">
+          <span className="inline-flex items-center gap-2 bg-[#fff1f1] px-3 py-1.5 font-medium text-[#da1e28]">
             <AlertCircle className="h-4 w-4" />
             {error.type}
           </span>
@@ -42,11 +42,11 @@ export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
 
         {/* Error Message */}
         <div className="mb-4">
-          <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+          <h4 className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
             <AlertTriangle className="h-4 w-4" />
             에러 메시지
           </h4>
-          <p className="text-sm text-foreground bg-[#fff1f1] p-4 border border-[#fa4d56]">
+          <p className="text-foreground border border-[#fa4d56] bg-[#fff1f1] p-4 text-sm">
             {error.message}
           </p>
         </div>
@@ -54,11 +54,11 @@ export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
         {/* File Information */}
         <div className="mb-4 grid grid-cols-2 gap-4">
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+            <h4 className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
               <FileText className="h-4 w-4" />
               파일 정보
             </h4>
-            <div className="bg-muted p-3 space-y-2">
+            <div className="bg-muted space-y-2 p-3">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">파일명:</span>
                 <span className="text-foreground font-mono">
@@ -93,12 +93,12 @@ export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+            <h4 className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
               <Clock className="h-4 w-4" />
               발생 시각
             </h4>
             <div className="bg-muted p-3">
-              <p className="text-sm text-foreground font-mono">
+              <p className="text-foreground font-mono text-sm">
                 {error.timestamp}
               </p>
             </div>
@@ -108,21 +108,21 @@ export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
         {/* Stack Trace */}
         {error.stackTrace && (
           <div className="mb-4">
-            <h4 className="text-sm font-semibold text-foreground mb-2">
+            <h4 className="text-foreground mb-2 text-sm font-semibold">
               스택 트레이스
             </h4>
-            <pre className="bg-[#161616] text-[#42be65] p-4 overflow-x-auto text-xs font-mono whitespace-pre-wrap">
+            <pre className="overflow-x-auto bg-[#161616] p-4 font-mono text-xs whitespace-pre-wrap text-[#42be65]">
               {error.stackTrace}
             </pre>
           </div>
         )}
 
         {/* Action Suggestions */}
-        <div className="bg-[#edf5ff] border border-[#78a9ff] p-4">
-          <h4 className="text-sm font-semibold text-[#002d9c] mb-2">
+        <div className="border border-[#78a9ff] bg-[#edf5ff] p-4">
+          <h4 className="mb-2 text-sm font-semibold text-[#002d9c]">
             권장 조치
           </h4>
-          <ul className="text-sm text-[#0043ce] space-y-1 list-disc list-inside">
+          <ul className="list-inside list-disc space-y-1 text-sm text-[#0043ce]">
             {error.type === 'VLM 타임아웃' && (
               <>
                 <li>이미지 크기를 줄여 재시도</li>

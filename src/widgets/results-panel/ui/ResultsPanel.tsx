@@ -29,9 +29,9 @@ export function ResultsPanel({
   if (!selectedFile) {
     return (
       <Card className="h-full">
-        <CardContent className="p-8 text-center h-full flex items-center justify-center">
+        <CardContent className="flex h-full items-center justify-center p-8 text-center">
           <div>
-            <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
+            <FileText className="text-muted-foreground mx-auto mb-3 h-12 w-12" />
             <p className="text-muted-foreground">
               변환된 파일을 선택하면 내용이 여기에 표시됩니다.
             </p>
@@ -44,12 +44,10 @@ export function ResultsPanel({
   if (!content) {
     return (
       <Card className="h-full">
-        <CardContent className="p-8 text-center h-full flex items-center justify-center">
+        <CardContent className="flex h-full items-center justify-center p-8 text-center">
           <div>
-            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-3" />
-            <p className="text-muted-foreground">
-              변환 결과를 불러오는 중...
-            </p>
+            <div className="border-primary mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
+            <p className="text-muted-foreground">변환 결과를 불러오는 중...</p>
           </div>
         </CardContent>
       </Card>
@@ -59,12 +57,12 @@ export function ResultsPanel({
   return (
     <Card className="h-full overflow-y-auto">
       <CardContent className="p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
+        <h2 className="text-foreground mb-4 text-lg font-semibold">
           변환 결과 미리보기
         </h2>
 
         {/* Metadata */}
-        <div className="mb-6 p-4 bg-muted/50 font-mono text-xs">
+        <div className="bg-muted/50 mb-6 p-4 font-mono text-xs">
           <p>원본 파일 경로: {content.metadata.originalPath}</p>
           <p>페이지 수: {content.metadata.pageCount}</p>
         </div>
@@ -72,9 +70,9 @@ export function ResultsPanel({
         {/* HTML Tables */}
         {content.htmlTables.length > 0 && (
           <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <Table className="h-5 w-5 text-primary" />
-              <h3 className="font-semibold text-foreground">HTML 미리보기</h3>
+            <div className="mb-3 flex items-center gap-2">
+              <Table className="text-primary h-5 w-5" />
+              <h3 className="text-foreground font-semibold">HTML 미리보기</h3>
             </div>
             {content.htmlTables.map((table, idx) => (
               <div
@@ -89,39 +87,37 @@ export function ResultsPanel({
         {/* Markdown Tables */}
         {content.markdownTables.length > 0 && (
           <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <Code className="h-5 w-5 text-primary" />
-              <h3 className="font-semibold text-foreground">
-                Markdown 선형화
-              </h3>
+            <div className="mb-3 flex items-center gap-2">
+              <Code className="text-primary h-5 w-5" />
+              <h3 className="text-foreground font-semibold">Markdown 선형화</h3>
             </div>
             {content.markdownTables.map((table, idx) => (
               <div
                 key={idx}
-                className="mb-4 p-4 bg-muted/50 border-l-4 border-primary"
+                className="bg-muted/50 border-primary mb-4 border-l-4 p-4"
               >
-                <h4 className="font-semibold text-primary mb-2">
+                <h4 className="text-primary mb-2 font-semibold">
                   # {table.title}
                 </h4>
                 <div className="mb-2">
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-foreground text-sm font-medium">
                     ## HeaderPath 구조
                   </p>
-                  <ul className="ml-4 mt-1 space-y-1">
+                  <ul className="mt-1 ml-4 space-y-1">
                     {table.headerPath.map((path, i) => (
-                      <li key={i} className="text-sm text-muted-foreground">
+                      <li key={i} className="text-muted-foreground text-sm">
                         - {path.trim()}
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-foreground text-sm font-medium">
                     ## 데이터 (사실 문장)
                   </p>
-                  <ul className="ml-4 mt-1 space-y-1">
+                  <ul className="mt-1 ml-4 space-y-1">
                     {table.rows.map((row, i) => (
-                      <li key={i} className="text-sm text-muted-foreground">
+                      <li key={i} className="text-muted-foreground text-sm">
                         - {row}
                       </li>
                     ))}
@@ -135,16 +131,16 @@ export function ResultsPanel({
         {/* Image Descriptions */}
         {content.imageDescriptions.length > 0 && (
           <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <Image className="h-5 w-5 text-primary" />
-              <h3 className="font-semibold text-foreground">이미지 설명</h3>
+            <div className="mb-3 flex items-center gap-2">
+              <Image className="text-primary h-5 w-5" />
+              <h3 className="text-foreground font-semibold">이미지 설명</h3>
             </div>
             {content.imageDescriptions.map((img) => (
               <div
                 key={img.id}
-                className="mb-4 p-4 bg-muted/50 border-l-4 border-primary"
+                className="bg-muted/50 border-primary mb-4 border-l-4 p-4"
               >
-                <p className="text-sm text-foreground whitespace-pre-line">
+                <p className="text-foreground text-sm whitespace-pre-line">
                   {img.description}
                 </p>
               </div>
@@ -154,8 +150,8 @@ export function ResultsPanel({
 
         {/* Plain Text */}
         <div>
-          <h3 className="font-semibold text-foreground mb-3">원본 텍스트</h3>
-          <pre className="p-4 bg-muted/50 font-mono text-xs whitespace-pre-wrap overflow-x-auto">
+          <h3 className="text-foreground mb-3 font-semibold">원본 텍스트</h3>
+          <pre className="bg-muted/50 overflow-x-auto p-4 font-mono text-xs whitespace-pre-wrap">
             {content.plainText}
           </pre>
         </div>
@@ -191,7 +187,7 @@ function parseConvertedContent(text: string): ParsedContent {
     const titleMatch = tableContent.match(/# TableTitle: (.+)/)
     const title = titleMatch ? titleMatch[1] : ''
     const headerPathSection = tableContent.match(
-      /## HeaderPath 구조([\s\S]*?)## 데이터/
+      /## HeaderPath 구조([\s\S]*?)## 데이터/,
     )
     const headerPath: string[] = []
     if (headerPathSection) {
@@ -228,7 +224,7 @@ function parseConvertedContent(text: string): ParsedContent {
     .replace(/\[\[TABLE\]\][\s\S]*?\[\[\/TABLE\]\]/g, '[표 생략]')
     .replace(
       /\[\[TABLE_MARKDOWN\]\][\s\S]*?\[\[\/TABLE_MARKDOWN\]\]/g,
-      '[Markdown 표 생략]'
+      '[Markdown 표 생략]',
     )
     .replace(/\[\[IMAGE\]\][\s\S]*?\[\[\/IMAGE\]\]/g, '[이미지 설명 생략]')
 

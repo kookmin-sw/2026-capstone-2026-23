@@ -73,10 +73,10 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed right-6 bottom-6 z-50">
         <button
           onClick={() => setIsMinimized(false)}
-          className="bg-[#198038] text-white p-4 rounded-full shadow-2xl hover:bg-[#0e6027] transition-all hover:scale-110"
+          className="rounded-full bg-[#198038] p-4 text-white shadow-2xl transition-all hover:scale-110 hover:bg-[#0e6027]"
         >
           <MessageCircle className="h-6 w-6" />
         </button>
@@ -85,18 +85,18 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[420px] h-[600px] flex flex-col bg-card shadow-2xl border border-border">
+    <div className="bg-card border-border fixed right-6 bottom-6 z-50 flex h-[600px] w-[420px] flex-col border shadow-2xl">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-[#defbe6]">
+      <div className="border-border flex items-center justify-between border-b bg-[#defbe6] px-4 py-3">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-[#198038]/20">
+          <div className="bg-[#198038]/20 p-1.5">
             <Bot className="h-5 w-5 text-[#198038]" />
           </div>
           <div>
-            <h3 className="font-semibold text-sm text-foreground">
+            <h3 className="text-foreground text-sm font-semibold">
               AI 질의응답
             </h3>
-            <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+            <p className="text-muted-foreground max-w-[200px] truncate text-xs">
               {selectedFile.split('/').pop()}
             </p>
           </div>
@@ -104,13 +104,13 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
         <div className="flex items-center gap-1">
           <button
             onClick={() => setIsMinimized(true)}
-            className="text-muted-foreground hover:text-foreground transition-colors p-1"
+            className="text-muted-foreground hover:text-foreground p-1 transition-colors"
           >
             <Minimize2 className="h-4 w-4" />
           </button>
           <button
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground transition-colors p-1"
+            className="text-muted-foreground hover:text-foreground p-1 transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -118,14 +118,14 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/30">
+      <div className="bg-muted/30 flex-1 space-y-3 overflow-y-auto p-4">
         {messages.map((message) => (
           <div
             key={message.id}
             className={`flex gap-2 ${message.type === 'user' ? 'flex-row-reverse' : ''}`}
           >
             <div
-              className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.type === 'user' ? 'bg-primary' : 'bg-[#198038]'}`}
+              className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${message.type === 'user' ? 'bg-primary' : 'bg-[#198038]'}`}
             >
               {message.type === 'user' ? (
                 <User className="h-4 w-4 text-white" />
@@ -134,16 +134,16 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
               )}
             </div>
             <div
-              className={`flex-1 max-w-[75%] ${message.type === 'user' ? 'flex justify-end' : ''}`}
+              className={`max-w-[75%] flex-1 ${message.type === 'user' ? 'flex justify-end' : ''}`}
             >
               <div
-                className={`px-3 py-2 shadow-sm ${message.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground border border-border'}`}
+                className={`px-3 py-2 shadow-sm ${message.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground border-border border'}`}
               >
-                <p className="text-xs whitespace-pre-wrap leading-relaxed">
+                <p className="text-xs leading-relaxed whitespace-pre-wrap">
                   {message.content}
                 </p>
                 <p
-                  className={`text-[10px] mt-1 ${message.type === 'user' ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}
+                  className={`mt-1 text-[10px] ${message.type === 'user' ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}
                 >
                   {message.timestamp.toLocaleTimeString('ko-KR', {
                     hour: '2-digit',
@@ -156,21 +156,21 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
         ))}
         {isLoading && (
           <div className="flex gap-2">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#198038] flex items-center justify-center">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#198038]">
               <Bot className="h-4 w-4 text-white" />
             </div>
-            <div className="bg-card px-3 py-2 border border-border shadow-sm">
+            <div className="bg-card border-border border px-3 py-2 shadow-sm">
               <div className="flex gap-1">
                 <div
-                  className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce"
+                  className="bg-muted-foreground h-1.5 w-1.5 animate-bounce rounded-full"
                   style={{ animationDelay: '0ms' }}
                 />
                 <div
-                  className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce"
+                  className="bg-muted-foreground h-1.5 w-1.5 animate-bounce rounded-full"
                   style={{ animationDelay: '150ms' }}
                 />
                 <div
-                  className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce"
+                  className="bg-muted-foreground h-1.5 w-1.5 animate-bounce rounded-full"
                   style={{ animationDelay: '300ms' }}
                 />
               </div>
@@ -181,26 +181,26 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t border-border bg-card">
+      <div className="border-border bg-card border-t p-3">
         <div className="flex gap-2">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="메시지를 입력하세요..."
-            className="flex-1 px-3 py-2 border border-border bg-card resize-none focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+            className="border-border bg-card focus:ring-primary flex-1 resize-none border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             rows={2}
             disabled={isLoading}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="px-3 bg-[#198038] text-white hover:bg-[#0e6027] disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors self-end"
+            className="disabled:bg-muted disabled:text-muted-foreground self-end bg-[#198038] px-3 text-white transition-colors hover:bg-[#0e6027] disabled:cursor-not-allowed"
           >
             <Send className="h-4 w-4" />
           </button>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-1.5">
+        <p className="text-muted-foreground mt-1.5 text-[10px]">
           Enter로 전송, Shift+Enter로 줄바꿈
         </p>
       </div>

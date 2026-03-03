@@ -4,22 +4,22 @@
 
 ## Dependencies (런타임)
 
-| 패키지                           | 설치 사유                                                                                  |
-| -------------------------------- | ------------------------------------------------------------------------------------------ |
-| `react`                          | UI 프레임워크. 컴포넌트 기반으로 사용자 인터페이스를 구성하기 위해 사용                    |
-| `react-dom`                      | React 컴포넌트를 브라우저 DOM에 렌더링하기 위해 사용                                       |
-| `@tanstack/react-router`         | 타입 안전한 파일 기반 라우팅을 위해 사용. URL 파라미터, 검색 파라미터 등을 타입으로 관리   |
-| `@tanstack/react-query`          | 서버 상태 관리 및 데이터 페칭을 위해 사용. 캐싱, 리페칭, 로딩/에러 상태 자동 관리          |
-| `@tanstack/react-query-devtools` | React Query의 캐시 상태를 시각적으로 디버깅하기 위한 개발 도구                             |
-| `zustand`                        | 클라이언트 전역 상태 관리를 위해 사용. 보일러플레이트가 적고 간결한 API 제공               |
-| `axios`                          | HTTP API 통신을 위해 사용. 인터셉터, 타임아웃, 요청/응답 변환 기능 활용                    |
-| `clsx`                           | 조건부 className 문자열 조합을 위해 사용. shadcn/ui의 cn() 유틸리티 내부에서 활용          |
-| `tailwind-merge`                 | TailwindCSS 클래스 충돌 시 후순위 클래스로 병합하기 위해 사용. cn() 유틸리티 내부에서 활용 |
-| `class-variance-authority`       | shadcn/ui 컴포넌트의 변형(variant) 스타일을 타입 안전하게 정의하기 위해 사용               |
-| `lucide-react`                   | shadcn/ui 기본 아이콘 라이브러리. 일관된 아이콘 시스템 제공                                |
-| `radix-ui`                       | shadcn/ui의 기반 헤드리스 UI 프리미티브. 접근성이 보장된 컴포넌트 동작 로직 제공           |
+| 패키지                           | 설치 사유                                                                                   |
+| -------------------------------- | ------------------------------------------------------------------------------------------- |
+| `react`                          | UI 프레임워크. 컴포넌트 기반으로 사용자 인터페이스를 구성하기 위해 사용                     |
+| `react-dom`                      | React 컴포넌트를 브라우저 DOM에 렌더링하기 위해 사용                                        |
+| `@tanstack/react-router`         | 타입 안전한 파일 기반 라우팅을 위해 사용. URL 파라미터, 검색 파라미터 등을 타입으로 관리    |
+| `@tanstack/react-query`          | 서버 상태 관리 및 데이터 페칭을 위해 사용. 캐싱, 리페칭, 로딩/에러 상태 자동 관리           |
+| `@tanstack/react-query-devtools` | React Query의 캐시 상태를 시각적으로 디버깅하기 위한 개발 도구                              |
+| `zustand`                        | 클라이언트 전역 상태 관리를 위해 사용. 보일러플레이트가 적고 간결한 API 제공                |
+| `axios`                          | HTTP API 통신을 위해 사용. 인터셉터, 타임아웃, 요청/응답 변환 기능 활용                     |
+| `clsx`                           | 조건부 className 문자열 조합을 위해 사용. shadcn/ui의 cn() 유틸리티 내부에서 활용           |
+| `tailwind-merge`                 | TailwindCSS 클래스 충돌 시 후순위 클래스로 병합하기 위해 사용. cn() 유틸리티 내부에서 활용  |
+| `class-variance-authority`       | shadcn/ui 컴포넌트의 변형(variant) 스타일을 타입 안전하게 정의하기 위해 사용                |
+| `lucide-react`                   | shadcn/ui 기본 아이콘 라이브러리. 일관된 아이콘 시스템 제공                                 |
+| `radix-ui`                       | shadcn/ui의 기반 헤드리스 UI 프리미티브. 접근성이 보장된 컴포넌트 동작 로직 제공            |
 | `recharts`                       | 대시보드 차트(LineChart, PieChart 등) 시각화를 위해 사용. React 기반 선언적 차트 라이브러리 |
-| `sonner`                         | shadcn/ui Toast 알림(Toaster) 컴포넌트 의존성. 전역 알림 표시를 위해 사용                  |
+| `sonner`                         | shadcn/ui Toast 알림(Toaster) 컴포넌트 의존성. 전역 알림 표시를 위해 사용                   |
 
 ## DevDependencies (개발)
 

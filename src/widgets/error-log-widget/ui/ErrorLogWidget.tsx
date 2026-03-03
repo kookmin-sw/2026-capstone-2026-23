@@ -51,30 +51,30 @@ export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <AlertTriangle className="h-4 w-4 text-destructive" />
-          <h3 className="text-lg font-semibold text-foreground">
+        <div className="mb-2 flex items-center gap-2">
+          <AlertTriangle className="text-destructive h-4 w-4" />
+          <h3 className="text-foreground text-lg font-semibold">
             에러 로그 모니터링
           </h3>
         </div>
 
         {/* Error Type Statistics */}
-        <div className="mb-4 p-3 bg-muted/50">
-          <h4 className="text-sm font-medium text-foreground mb-3">
+        <div className="bg-muted/50 mb-4 p-3">
+          <h4 className="text-foreground mb-3 text-sm font-medium">
             에러 유형별 통계
           </h4>
           <div className="space-y-3">
             {errorStats.map((stat, index) => (
               <div key={index}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm text-muted-foreground">
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="text-muted-foreground text-sm">
                     {stat.type}
                   </span>
-                  <span className="text-sm font-semibold text-foreground">
+                  <span className="text-foreground text-sm font-semibold">
                     {stat.count}건
                   </span>
                 </div>
-                <div className="w-full bg-muted h-2">
+                <div className="bg-muted h-2 w-full">
                   <div
                     className={`${stat.color} h-2 transition-all duration-300`}
                     style={{ width: `${(stat.count / 11) * 100}%` }}
@@ -87,57 +87,57 @@ export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
 
         {/* Recent Errors Table */}
         <div>
-          <h4 className="text-sm font-medium text-foreground mb-3">
+          <h4 className="text-foreground mb-3 text-sm font-medium">
             최근 발생한 에러 내역 상위 5개
           </h4>
           <div className="overflow-x-auto">
             <table className="w-full whitespace-nowrap">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <tr className="border-border border-b">
+                  <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     에러 유형
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     에러 메시지
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     파일명
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     페이지
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     발생 시각
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-border divide-y">
                 {errors.map((error) => (
                   <tr
                     key={error.id}
                     onClick={() => setSelectedError(error)}
-                    className="hover:bg-muted/50 transition-colors cursor-pointer"
+                    className="hover:bg-muted/50 cursor-pointer transition-colors"
                   >
                     <td className="px-4 py-2">
                       <ErrorTypeBadge type={error.type} />
                     </td>
                     <td className="px-4 py-2">
-                      <span className="text-sm text-foreground">
+                      <span className="text-foreground text-sm">
                         {error.message}
                       </span>
                     </td>
                     <td className="px-4 py-2">
-                      <span className="text-sm font-medium text-foreground font-mono">
+                      <span className="text-foreground font-mono text-sm font-medium">
                         {error.fileName}
                       </span>
                     </td>
                     <td className="px-4 py-2">
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-muted-foreground text-sm">
                         {error.pageNumber || '-'}
                       </span>
                     </td>
                     <td className="px-4 py-2">
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-muted-foreground text-sm">
                         {error.timestamp}
                       </span>
                     </td>
@@ -151,7 +151,7 @@ export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
         <div className="mt-4 text-center">
           <button
             onClick={onViewAll}
-            className="text-sm text-primary hover:text-primary/80 font-medium"
+            className="text-primary hover:text-primary/80 text-sm font-medium"
           >
             전체 에러 로그 보기 →
           </button>

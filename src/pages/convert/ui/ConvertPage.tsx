@@ -18,21 +18,28 @@ export function ConvertPage() {
           <ConversionPanel />
         </div>
         <div className="col-span-3">
-          <ResultsPanel selectedFile={selectedResultPath} convertedContent={selectedFile?.convertedContent} />
+          <ResultsPanel
+            selectedFile={selectedResultPath}
+            convertedContent={selectedFile?.convertedContent}
+          />
         </div>
       </div>
 
       {selectedResultPath && !isChatOpen && (
         <button
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-5 py-3 bg-[#198038] text-white shadow-2xl hover:bg-[#0e6027] transition-all hover:scale-110"
+          className="fixed right-6 bottom-6 z-40 flex items-center gap-2 bg-[#198038] px-5 py-3 text-white shadow-2xl transition-all hover:scale-110 hover:bg-[#0e6027]"
         >
           <MessageCircle className="h-5 w-5" />
           <span className="font-medium">AI 질의응답</span>
         </button>
       )}
 
-      <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} selectedFile={selectedResultPath} />
+      <ChatModal
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        selectedFile={selectedResultPath}
+      />
     </>
   )
 }

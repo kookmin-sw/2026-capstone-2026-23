@@ -76,12 +76,12 @@
   --radius: 0px; /* Carbon uses sharp corners */
 
   /* Core */
-  --background: #f4f4f4;       /* Gray 10 */
-  --foreground: #161616;       /* Gray 100 */
+  --background: #f4f4f4; /* Gray 10 */
+  --foreground: #161616; /* Gray 100 */
 
   /* Card / Popover */
-  --card: #ffffff;             /* White */
-  --card-foreground: #161616;  /* Gray 100 */
+  --card: #ffffff; /* White */
+  --card-foreground: #161616; /* Gray 100 */
   --popover: #ffffff;
   --popover-foreground: #161616;
 
@@ -105,42 +105,42 @@
   --destructive: #da1e28;
 
   /* Border / Input / Ring */
-  --border: #e0e0e0;          /* Gray 20 */
+  --border: #e0e0e0; /* Gray 20 */
   --input: #e0e0e0;
-  --ring: #0f62fe;             /* Blue 60 for focus ring */
+  --ring: #0f62fe; /* Blue 60 for focus ring */
 
   /* Chart palette (Carbon Data Vis) */
-  --chart-1: #0f62fe;          /* Blue 60 */
-  --chart-2: #24a148;          /* Green 50 */
-  --chart-3: #f1c21b;          /* Yellow 30 */
-  --chart-4: #8a3ffc;          /* Purple 60 */
-  --chart-5: #ff832b;          /* Orange 40 */
+  --chart-1: #0f62fe; /* Blue 60 */
+  --chart-2: #24a148; /* Green 50 */
+  --chart-3: #f1c21b; /* Yellow 30 */
+  --chart-4: #8a3ffc; /* Purple 60 */
+  --chart-5: #ff832b; /* Orange 40 */
 
   /* Sidebar — White base */
   --sidebar: #ffffff;
   --sidebar-foreground: #161616;
   --sidebar-primary: #0f62fe;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f4f4f4;    /* Gray 10 */
+  --sidebar-accent: #f4f4f4; /* Gray 10 */
   --sidebar-accent-foreground: #161616;
-  --sidebar-border: #e0e0e0;    /* Gray 20 */
+  --sidebar-border: #e0e0e0; /* Gray 20 */
   --sidebar-ring: #0f62fe;
 }
 
 /* ───── Carbon Dark Theme (IBM Carbon Gray 100 base) ───── */
 .dark {
-  --background: #161616;       /* Gray 100 */
-  --foreground: #f4f4f4;       /* Gray 10 */
+  --background: #161616; /* Gray 100 */
+  --foreground: #f4f4f4; /* Gray 10 */
 
-  --card: #262626;             /* Gray 90 */
+  --card: #262626; /* Gray 90 */
   --card-foreground: #f4f4f4;
   --popover: #262626;
   --popover-foreground: #f4f4f4;
 
-  --primary: #78a9ff;          /* Blue 40 */
+  --primary: #78a9ff; /* Blue 40 */
   --primary-foreground: #161616;
 
-  --secondary: #393939;        /* Gray 80 */
+  --secondary: #393939; /* Gray 80 */
   --secondary-foreground: #f4f4f4;
 
   --muted: #393939;
@@ -149,17 +149,17 @@
   --accent: #393939;
   --accent-foreground: #f4f4f4;
 
-  --destructive: #fa4d56;      /* Red 50 */
+  --destructive: #fa4d56; /* Red 50 */
 
-  --border: #393939;           /* Gray 80 */
+  --border: #393939; /* Gray 80 */
   --input: #393939;
-  --ring: #78a9ff;             /* Blue 40 */
+  --ring: #78a9ff; /* Blue 40 */
 
-  --chart-1: #78a9ff;          /* Blue 40 */
-  --chart-2: #42be65;          /* Green 40 */
-  --chart-3: #f1c21b;          /* Yellow 30 */
-  --chart-4: #a56eff;          /* Purple 40 */
-  --chart-5: #ff832b;          /* Orange 40 */
+  --chart-1: #78a9ff; /* Blue 40 */
+  --chart-2: #42be65; /* Green 40 */
+  --chart-3: #f1c21b; /* Yellow 30 */
+  --chart-4: #a56eff; /* Purple 40 */
+  --chart-5: #ff832b; /* Orange 40 */
 
   --sidebar: #262626;
   --sidebar-foreground: #f4f4f4;
@@ -167,7 +167,7 @@
   --sidebar-primary-foreground: #161616;
   --sidebar-accent: #393939;
   --sidebar-accent-foreground: #f4f4f4;
-  --sidebar-border: #525252;   /* Gray 70 */
+  --sidebar-border: #525252; /* Gray 70 */
   --sidebar-ring: #78a9ff;
 }
 
@@ -177,11 +177,17 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family:
+      'IBM Plex Sans',
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  code, pre, .font-mono {
+  code,
+  pre,
+  .font-mono {
     font-family: 'IBM Plex Mono', monospace;
   }
 }

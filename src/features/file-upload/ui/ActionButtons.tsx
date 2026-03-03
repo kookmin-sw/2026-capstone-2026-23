@@ -26,12 +26,12 @@ export function ActionButtons({
       >
         {isConverting ? (
           <>
-            <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
             변환 중...
           </>
         ) : (
           <>
-            <Play className="h-4 w-4 mr-2" />
+            <Play className="mr-2 h-4 w-4" />
             변환 실행
           </>
         )}
@@ -44,7 +44,7 @@ export function ActionButtons({
           onClick={onStop}
           disabled={!isConverting}
         >
-          <Square className="h-3 w-3 mr-1" />
+          <Square className="mr-1 h-3 w-3" />
           중지
         </Button>
         <Button
@@ -53,12 +53,12 @@ export function ActionButtons({
           onClick={onResume}
           disabled={isConverting}
         >
-          <RotateCw className="h-3 w-3 mr-1" />
+          <RotateCw className="mr-1 h-3 w-3" />
           이어서
         </Button>
       </div>
 
-      <p className="text-xs text-muted-foreground text-center">
+      <p className="text-muted-foreground text-center text-xs">
         중지: 현재 진행중인 작업을 유지하고 새 작업 시작 가능
       </p>
     </div>

@@ -23,11 +23,15 @@ export function StatCard({
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-muted-foreground">{label}</p>
-            <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
-            <p className={`text-sm text-muted-foreground ${subtitle ? '' : 'invisible'}`}>{subtitle || '-'}</p>
+            <p className="text-muted-foreground text-sm font-medium">{label}</p>
+            <p className="text-foreground mt-1 text-2xl font-bold">{value}</p>
+            <p
+              className={`text-muted-foreground text-sm ${subtitle ? '' : 'invisible'}`}
+            >
+              {subtitle || '-'}
+            </p>
           </div>
-          <div className={`${bgColor} p-3 shrink-0`}>
+          <div className={`${bgColor} shrink-0 p-3`}>
             <Icon className={`h-6 w-6 ${iconColor}`} />
           </div>
         </div>

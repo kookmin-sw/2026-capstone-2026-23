@@ -65,44 +65,51 @@ export function RecentJobs() {
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-2">
+        <div className="mb-2 flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-foreground">최근 작업 내역</h3>
-            <p className="text-xs text-muted-foreground">최근 처리된 파일 목록</p>
+            <h3 className="text-foreground text-lg font-semibold">
+              최근 작업 내역
+            </h3>
+            <p className="text-muted-foreground text-xs">
+              최근 처리된 파일 목록
+            </p>
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full whitespace-nowrap">
             <thead>
-              <tr className="border-b border-border">
-                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <tr className="border-border border-b">
+                <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                   파일명
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                   유형
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                   페이지
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                   처리 시간
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                   모델
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                   상태
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <th className="text-muted-foreground px-4 py-2 text-left text-xs font-medium tracking-wider uppercase">
                   날짜
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-border divide-y">
               {jobs.map((job) => (
-                <tr key={job.id} className="hover:bg-muted/50 transition-colors">
+                <tr
+                  key={job.id}
+                  className="hover:bg-muted/50 transition-colors"
+                >
                   <td className="px-4 py-2">
-                    <span className="text-sm font-medium text-foreground font-mono">
+                    <span className="text-foreground font-mono text-sm font-medium">
                       {job.fileName}
                     </span>
                   </td>
@@ -110,13 +117,17 @@ export function RecentJobs() {
                     <FileTypeBadge fileName={job.fileName} />
                   </td>
                   <td className="px-4 py-2">
-                    <span className="text-sm text-muted-foreground">{job.pages}</span>
+                    <span className="text-muted-foreground text-sm">
+                      {job.pages}
+                    </span>
                   </td>
                   <td className="px-4 py-2">
-                    <span className="text-sm text-muted-foreground">{job.duration}</span>
+                    <span className="text-muted-foreground text-sm">
+                      {job.duration}
+                    </span>
                   </td>
                   <td className="px-4 py-2">
-                    <span className="text-xs px-2 py-1 whitespace-nowrap bg-muted text-muted-foreground font-mono">
+                    <span className="bg-muted text-muted-foreground px-2 py-1 font-mono text-xs whitespace-nowrap">
                       {job.model}
                     </span>
                   </td>
@@ -124,7 +135,9 @@ export function RecentJobs() {
                     <StatusBadge status={job.status} />
                   </td>
                   <td className="px-4 py-2">
-                    <span className="text-sm text-muted-foreground">{job.date}</span>
+                    <span className="text-muted-foreground text-sm">
+                      {job.date}
+                    </span>
                   </td>
                 </tr>
               ))}
