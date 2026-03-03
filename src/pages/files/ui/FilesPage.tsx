@@ -10,13 +10,13 @@ export function FilesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <div>
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <FolderOpen className="h-7 w-7 text-primary" />
+          <FolderOpen className="h-6 w-6 text-primary" />
           파일 관리
         </h2>
-        <p className="text-muted-foreground mt-1">변환된 문서를 관리하고 다운로드하세요</p>
+        <p className="text-sm text-muted-foreground">변환된 문서를 관리하고 다운로드하세요</p>
       </div>
       <DocumentTable onFileSelect={handleFileSelect} />
     </div>

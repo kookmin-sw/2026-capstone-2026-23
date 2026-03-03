@@ -20,16 +20,14 @@ export function StatCard({
 }: StatCardProps) {
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-muted-foreground">{label}</p>
-            <p className="text-3xl font-bold text-foreground mt-2">{value}</p>
-            {subtitle && (
-              <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
-            )}
+            <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
+            <p className={`text-sm text-muted-foreground ${subtitle ? '' : 'invisible'}`}>{subtitle || '-'}</p>
           </div>
-          <div className={`${bgColor} p-3`}>
+          <div className={`${bgColor} p-3 shrink-0`}>
             <Icon className={`h-6 w-6 ${iconColor}`} />
           </div>
         </div>

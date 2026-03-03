@@ -50,16 +50,16 @@ export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex items-center gap-2 mb-6">
-          <AlertTriangle className="h-5 w-5 text-destructive" />
+      <CardContent className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <AlertTriangle className="h-4 w-4 text-destructive" />
           <h3 className="text-lg font-semibold text-foreground">
             에러 로그 모니터링
           </h3>
         </div>
 
         {/* Error Type Statistics */}
-        <div className="mb-6 p-4 bg-muted/50">
+        <div className="mb-4 p-3 bg-muted/50">
           <h4 className="text-sm font-medium text-foreground mb-3">
             에러 유형별 통계
           </h4>
@@ -91,22 +91,22 @@ export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
             최근 발생한 에러 내역 상위 5개
           </h4>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full whitespace-nowrap">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     에러 유형
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     에러 메시지
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     파일명
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     페이지
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     발생 시각
                   </th>
                 </tr>
@@ -118,25 +118,25 @@ export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
                     onClick={() => setSelectedError(error)}
                     className="hover:bg-muted/50 transition-colors cursor-pointer"
                   >
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2">
                       <ErrorTypeBadge type={error.type} />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2">
                       <span className="text-sm text-foreground">
                         {error.message}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2">
                       <span className="text-sm font-medium text-foreground font-mono">
                         {error.fileName}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2">
                       <span className="text-sm text-muted-foreground">
                         {error.pageNumber || '-'}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2">
                       <span className="text-sm text-muted-foreground">
                         {error.timestamp}
                       </span>

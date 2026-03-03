@@ -6,16 +6,16 @@ export function SystemMonitor() {
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex items-center gap-2 mb-6">
-          <Activity className="h-5 w-5 text-primary" />
+      <CardContent className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Activity className="h-4 w-4 text-primary" />
           <h3 className="text-lg font-semibold text-foreground">실시간 시스템 모니터링</h3>
           <span className="ml-auto text-xs text-muted-foreground">5초마다 갱신</span>
         </div>
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-4 gap-4">
           {/* CPU */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2">
               <Cpu className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium text-foreground">CPU 사용률</span>
             </div>
@@ -29,7 +29,7 @@ export function SystemMonitor() {
           </div>
           {/* Memory */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2">
               <HardDrive className="h-4 w-4 text-[#198038]" />
               <span className="text-sm font-medium text-foreground">메모리 사용률</span>
             </div>
@@ -43,7 +43,7 @@ export function SystemMonitor() {
           </div>
           {/* Workers */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2">
               <Zap className="h-4 w-4 text-[#684e00]" />
               <span className="text-sm font-medium text-foreground">활성 워커</span>
             </div>
@@ -60,7 +60,7 @@ export function SystemMonitor() {
           </div>
           {/* Queue */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2">
               <Activity className="h-4 w-4 text-[#8a3ffc]" />
               <span className="text-sm font-medium text-foreground">대기열</span>
             </div>

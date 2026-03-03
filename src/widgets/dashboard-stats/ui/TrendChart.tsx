@@ -23,14 +23,14 @@ export function TrendChart() {
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-6">
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-2">
           <div>
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
+              <TrendingUp className="h-4 w-4 text-primary" />
               <h3 className="text-lg font-semibold text-foreground">일별 처리량</h3>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">최근 7일간 처리된 파일 수</p>
+            <p className="text-xs text-muted-foreground">최근 7일간 처리된 파일 수</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={250}>

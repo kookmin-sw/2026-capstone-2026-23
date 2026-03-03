@@ -11,7 +11,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
   const failureRate = stats.total > 0 ? ((stats.failed / stats.total) * 100).toFixed(1) : '0'
 
   return (
-    <div className="grid grid-cols-4 gap-6">
+    <div className="grid grid-cols-4 gap-4">
       <StatCard
         icon={FileText}
         label="전체 작업"

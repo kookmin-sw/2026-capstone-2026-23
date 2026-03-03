@@ -30,10 +30,10 @@ export function SettingsPage() {
   const storageColor = getStorageColor()
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-3">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">설정</h1>
-        <p className="mt-2 text-sm text-muted-foreground">시스템 설정 및 계정 정보를 관리합니다.</p>
+        <h1 className="text-2xl font-bold text-foreground">설정</h1>
+        <p className="mt-1 text-sm text-muted-foreground">시스템 설정 및 계정 정보를 관리합니다.</p>
       </div>
 
       <Tabs defaultValue="personal">
@@ -45,41 +45,41 @@ export function SettingsPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="personal" className="space-y-6 mt-6">
+        <TabsContent value="personal" className="space-y-3 mt-3">
           {/* Account */}
           <Card>
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-center gap-2 pb-4 border-b border-border">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-2 pb-2 border-b border-border">
                 <User className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-semibold text-foreground">계정 정보</h2>
+                <h2 className="text-lg font-semibold text-foreground">계정 정보</h2>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">본명</label>
+                <label className="block text-sm font-medium text-foreground mb-1">본명</label>
                 <div className="flex gap-3">
                   <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="flex-1 px-3 py-2 border border-border bg-card focus:outline-none focus:ring-2 focus:ring-primary" />
                   <Button><Save className="h-4 w-4 mr-2" />저장</Button>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">아이디</label>
+                <label className="block text-sm font-medium text-foreground mb-1">아이디</label>
                 <div className="flex gap-3">
                   <input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} className="flex-1 px-3 py-2 border border-border bg-card focus:outline-none focus:ring-2 focus:ring-primary" />
                   <Button><Save className="h-4 w-4 mr-2" />변경</Button>
                 </div>
               </div>
-              <div className="pt-4 border-t border-border">
-                <div className="flex items-center gap-2 mb-4">
+              <div className="pt-3 border-t border-border">
+                <div className="flex items-center gap-2 mb-2">
                   <Lock className="h-5 w-5 text-muted-foreground" />
-                  <h3 className="text-lg font-semibold text-foreground">비밀번호 변경</h3>
+                  <h3 className="text-base font-semibold text-foreground">비밀번호 변경</h3>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {[
                     { label: '현재 비밀번호', value: currentPassword, onChange: setCurrentPassword, show: showCurrentPassword, toggleShow: () => setShowCurrentPassword(!showCurrentPassword) },
                     { label: '새 비밀번호', value: newPassword, onChange: setNewPassword, show: showNewPassword, toggleShow: () => setShowNewPassword(!showNewPassword) },
                     { label: '새 비밀번호 확인', value: confirmPassword, onChange: setConfirmPassword, show: showConfirmPassword, toggleShow: () => setShowConfirmPassword(!showConfirmPassword) },
                   ].map((field) => (
                     <div key={field.label}>
-                      <label className="block text-sm font-medium text-foreground mb-2">{field.label}</label>
+                      <label className="block text-sm font-medium text-foreground mb-1">{field.label}</label>
                       <div className="relative">
                         <input type={field.show ? 'text' : 'password'} value={field.value} onChange={(e) => field.onChange(e.target.value)} className="w-full px-3 py-2 pr-10 border border-border bg-card focus:outline-none focus:ring-2 focus:ring-primary" />
                         <button type="button" onClick={field.toggleShow} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
@@ -96,13 +96,13 @@ export function SettingsPage() {
 
           {/* File Conversion */}
           <Card>
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-center gap-2 pb-4 border-b border-border">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-2 pb-2 border-b border-border">
                 <FileBox className="h-5 w-5 text-[#ff832b]" />
-                <h2 className="text-xl font-semibold text-foreground">파일 변환 설정</h2>
+                <h2 className="text-lg font-semibold text-foreground">파일 변환 설정</h2>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-3">중복 문서 처리 방식</label>
+                <label className="block text-sm font-medium text-foreground mb-1">중복 문서 처리 방식</label>
                 <div className="space-y-3">
                   {[
                     { value: 'overwrite' as const, label: '강제 덮어쓰기', desc: '동일한 이름의 파일이 있을 경우 기존 파일을 삭제하고 새로 변환합니다.' },
@@ -118,16 +118,16 @@ export function SettingsPage() {
                   ))}
                 </div>
               </div>
-              <div className="pt-4 border-t border-border"><Button><Save className="h-4 w-4 mr-2" />설정 저장</Button></div>
+              <div className="pt-3 border-t border-border"><Button><Save className="h-4 w-4 mr-2" />설정 저장</Button></div>
             </CardContent>
           </Card>
 
           {/* QA AI */}
           <Card>
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-center gap-2 pb-4 border-b border-border">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-2 pb-2 border-b border-border">
                 <Bot className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-semibold text-foreground">질의응답 AI 설정</h2>
+                <h2 className="text-lg font-semibold text-foreground">질의응답 AI 설정</h2>
               </div>
               <div className="flex items-center justify-between">
                 <div>
@@ -141,20 +141,20 @@ export function SettingsPage() {
                   <span className="text-sm font-medium text-foreground">{saveQALogs ? '활성화' : '비활성화'}</span>
                 </div>
               </div>
-              <div className="pt-4 border-t border-border"><Button><Save className="h-4 w-4 mr-2" />설정 저장</Button></div>
+              <div className="pt-3 border-t border-border"><Button><Save className="h-4 w-4 mr-2" />설정 저장</Button></div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="admin" className="space-y-6 mt-6">
+        <TabsContent value="admin" className="space-y-3 mt-3">
           <Card>
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-center gap-2 pb-4 border-b border-border">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-2 pb-2 border-b border-border">
                 <Shield className="h-5 w-5 text-[#8a3ffc]" />
-                <h2 className="text-xl font-semibold text-foreground">관리자 설정</h2>
+                <h2 className="text-lg font-semibold text-foreground">관리자 설정</h2>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">앱 타이틀</label>
+                <label className="block text-sm font-medium text-foreground mb-1">앱 타이틀</label>
                 <div className="flex gap-3">
                   <input type="text" value={appTitle} onChange={(e) => setAppTitle(e.target.value)} className="flex-1 px-3 py-2 border border-border bg-card focus:outline-none focus:ring-2 focus:ring-primary" />
                   <Button><Save className="h-4 w-4 mr-2" />저장</Button>
@@ -162,7 +162,7 @@ export function SettingsPage() {
                 <p className="mt-1 text-xs text-muted-foreground">앱의 표시 이름을 변경합니다.</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">사용자 초대</label>
+                <label className="block text-sm font-medium text-foreground mb-1">사용자 초대</label>
                 <div className="flex gap-3">
                   <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="초대할 사용자의 이메일 주소" className="flex-1 px-3 py-2 border border-border bg-card focus:outline-none focus:ring-2 focus:ring-primary" />
                   <Button className="bg-[#198038] hover:bg-[#0e6027]"><UserPlus className="h-4 w-4 mr-2" />초대</Button>
@@ -173,14 +173,14 @@ export function SettingsPage() {
 
           {/* Storage */}
           <Card>
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-center gap-2 pb-4 border-b border-border">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-2 pb-2 border-b border-border">
                 <HardDrive className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-semibold text-foreground">스토리지 관리</h2>
+                <h2 className="text-lg font-semibold text-foreground">스토리지 관리</h2>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-3">현재 사용량</label>
-                <div className="space-y-3 p-4 bg-muted/50 border border-border">
+                <label className="block text-sm font-medium text-foreground mb-1">현재 사용량</label>
+                <div className="space-y-2 p-3 bg-muted/50 border border-border">
                   <div className="flex items-center justify-between"><span className="text-sm text-muted-foreground">사용 중</span><span className={`text-sm font-semibold ${storageColor.text}`}>{storageUsedGB.toFixed(1)} GB</span></div>
                   <div className="flex items-center justify-between"><span className="text-sm text-muted-foreground">전체 용량</span><span className="text-sm font-medium text-foreground">{storageLimitGB} GB</span></div>
                   <div className="w-full h-3 bg-muted overflow-hidden"><div className={`h-full ${storageColor.bg} transition-all duration-300`} style={{ width: `${Math.min(storagePercent, 100)}%` }} /></div>
@@ -188,7 +188,7 @@ export function SettingsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">데이터 저장 경로</label>
+                <label className="block text-sm font-medium text-foreground mb-1">데이터 저장 경로</label>
                 <div className="flex gap-3">
                   <div className="flex-1 relative">
                     <FolderOpen className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

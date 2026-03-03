@@ -11,9 +11,9 @@ export function SuccessRateChart() {
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex items-center gap-2 mb-6">
-          <Activity className="h-5 w-5 text-primary" />
+      <CardContent className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Activity className="h-4 w-4 text-primary" />
           <h3 className="text-lg font-semibold text-foreground">성공률 분석</h3>
         </div>
         <ResponsiveContainer width="100%" height={250}>

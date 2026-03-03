@@ -21,7 +21,7 @@ function LayoutComponent() {
           <Separator orientation="vertical" className="mr-2 h-4" />
           <span className="text-sm font-medium text-muted-foreground">Luminir Document Parser</span>
         </header>
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto px-4 py-3">
           <Outlet />
         </main>
       </SidebarInset>

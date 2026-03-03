@@ -55,7 +55,7 @@ export function DashboardPage() {
   const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `${i + 1}월` }))
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Page Title with Date Filter */}
       <div>
         <div className="flex items-center gap-1">
@@ -106,13 +106,13 @@ export function DashboardPage() {
           </div>
           <h2 className="text-2xl font-bold text-foreground">의 대시보드</h2>
         </div>
-        <p className="text-muted-foreground mt-1">전체 문서 처리 현황을 한눈에 확인하세요</p>
+        <p className="text-sm text-muted-foreground">전체 문서 처리 현황을 한눈에 확인하세요</p>
       </div>
 
       <RecentJobs />
       <DashboardStats stats={stats} />
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-4">
         <TrendChart />
         <SuccessRateChart />
       </div>

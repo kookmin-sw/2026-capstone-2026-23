@@ -38,17 +38,17 @@ export function ErrorLogPage() {
   const errorTypes = ['all', 'VLM 타임아웃', '메모리 부족', '변환 실패', '파일 형식 오류']
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <div>
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <AlertTriangle className="h-7 w-7 text-destructive" />
+          <AlertTriangle className="h-6 w-6 text-destructive" />
           전체 에러 로그
         </h2>
-        <p className="text-muted-foreground mt-1">시스템에서 발생한 모든 에러를 확인하고 관리하세요</p>
+        <p className="text-sm text-muted-foreground">시스템에서 발생한 모든 에러를 확인하고 관리하세요</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-card border border-border p-4">
+      <div className="bg-card border border-border p-3">
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -87,7 +87,7 @@ export function ErrorLogPage() {
       {/* Error Table */}
       <div className="bg-card border border-border overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full whitespace-nowrap">
             <thead className="bg-muted/50 border-b border-border">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">ID</th>
