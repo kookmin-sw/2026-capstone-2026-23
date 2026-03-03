@@ -9,50 +9,215 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
+import { Route as LayoutFilesRouteImport } from './routes/_layout/files'
+import { Route as LayoutErrorsRouteImport } from './routes/_layout/errors'
+import { Route as LayoutDashboardRouteImport } from './routes/_layout/dashboard'
+import { Route as LayoutConvertRouteImport } from './routes/_layout/convert'
+import { Route as LayoutFilesFileIdRouteImport } from './routes/_layout/files.$fileId'
 
-const IndexRoute = IndexRouteImport.update({
+const LayoutRoute = LayoutRouteImport.update({
+  id: '/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutFilesRoute = LayoutFilesRouteImport.update({
+  id: '/files',
+  path: '/files',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutErrorsRoute = LayoutErrorsRouteImport.update({
+  id: '/errors',
+  path: '/errors',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutDashboardRoute = LayoutDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutConvertRoute = LayoutConvertRouteImport.update({
+  id: '/convert',
+  path: '/convert',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutFilesFileIdRoute = LayoutFilesFileIdRouteImport.update({
+  id: '/$fileId',
+  path: '/$fileId',
+  getParentRoute: () => LayoutFilesRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof LayoutIndexRoute
+  '/convert': typeof LayoutConvertRoute
+  '/dashboard': typeof LayoutDashboardRoute
+  '/errors': typeof LayoutErrorsRoute
+  '/files': typeof LayoutFilesRouteWithChildren
+  '/settings': typeof LayoutSettingsRoute
+  '/files/$fileId': typeof LayoutFilesFileIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/convert': typeof LayoutConvertRoute
+  '/dashboard': typeof LayoutDashboardRoute
+  '/errors': typeof LayoutErrorsRoute
+  '/files': typeof LayoutFilesRouteWithChildren
+  '/settings': typeof LayoutSettingsRoute
+  '/': typeof LayoutIndexRoute
+  '/files/$fileId': typeof LayoutFilesFileIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_layout': typeof LayoutRouteWithChildren
+  '/_layout/convert': typeof LayoutConvertRoute
+  '/_layout/dashboard': typeof LayoutDashboardRoute
+  '/_layout/errors': typeof LayoutErrorsRoute
+  '/_layout/files': typeof LayoutFilesRouteWithChildren
+  '/_layout/settings': typeof LayoutSettingsRoute
+  '/_layout/': typeof LayoutIndexRoute
+  '/_layout/files/$fileId': typeof LayoutFilesFileIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/convert'
+    | '/dashboard'
+    | '/errors'
+    | '/files'
+    | '/settings'
+    | '/files/$fileId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/convert'
+    | '/dashboard'
+    | '/errors'
+    | '/files'
+    | '/settings'
+    | '/'
+    | '/files/$fileId'
+  id:
+    | '__root__'
+    | '/_layout'
+    | '/_layout/convert'
+    | '/_layout/dashboard'
+    | '/_layout/errors'
+    | '/_layout/files'
+    | '/_layout/settings'
+    | '/_layout/'
+    | '/_layout/files/$fileId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  LayoutRoute: typeof LayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_layout/': {
+      id: '/_layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof LayoutIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/settings': {
+      id: '/_layout/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof LayoutSettingsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/files': {
+      id: '/_layout/files'
+      path: '/files'
+      fullPath: '/files'
+      preLoaderRoute: typeof LayoutFilesRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/errors': {
+      id: '/_layout/errors'
+      path: '/errors'
+      fullPath: '/errors'
+      preLoaderRoute: typeof LayoutErrorsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/dashboard': {
+      id: '/_layout/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof LayoutDashboardRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/convert': {
+      id: '/_layout/convert'
+      path: '/convert'
+      fullPath: '/convert'
+      preLoaderRoute: typeof LayoutConvertRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/files/$fileId': {
+      id: '/_layout/files/$fileId'
+      path: '/$fileId'
+      fullPath: '/files/$fileId'
+      preLoaderRoute: typeof LayoutFilesFileIdRouteImport
+      parentRoute: typeof LayoutFilesRoute
     }
   }
 }
 
+interface LayoutFilesRouteChildren {
+  LayoutFilesFileIdRoute: typeof LayoutFilesFileIdRoute
+}
+
+const LayoutFilesRouteChildren: LayoutFilesRouteChildren = {
+  LayoutFilesFileIdRoute: LayoutFilesFileIdRoute,
+}
+
+const LayoutFilesRouteWithChildren = LayoutFilesRoute._addFileChildren(
+  LayoutFilesRouteChildren,
+)
+
+interface LayoutRouteChildren {
+  LayoutConvertRoute: typeof LayoutConvertRoute
+  LayoutDashboardRoute: typeof LayoutDashboardRoute
+  LayoutErrorsRoute: typeof LayoutErrorsRoute
+  LayoutFilesRoute: typeof LayoutFilesRouteWithChildren
+  LayoutSettingsRoute: typeof LayoutSettingsRoute
+  LayoutIndexRoute: typeof LayoutIndexRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutConvertRoute: LayoutConvertRoute,
+  LayoutDashboardRoute: LayoutDashboardRoute,
+  LayoutErrorsRoute: LayoutErrorsRoute,
+  LayoutFilesRoute: LayoutFilesRouteWithChildren,
+  LayoutSettingsRoute: LayoutSettingsRoute,
+  LayoutIndexRoute: LayoutIndexRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  LayoutRoute: LayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
