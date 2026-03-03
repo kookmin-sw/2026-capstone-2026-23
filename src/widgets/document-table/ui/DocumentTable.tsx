@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
-import { Download, RefreshCw, Trash2 } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  RefreshCw,
+  Trash2,
+} from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import type { DocumentItem } from '@/shared/types'
 
@@ -77,6 +83,8 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   const [activeRowDropdown, setActiveRowDropdown] = useState<string | null>(
     null,
   )
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
   const deleteDropdownRef = useRef<HTMLDivElement>(null)
 
   const loadDocuments = () => {
@@ -160,6 +168,12 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   }
 
   const selectedCount = documents.filter((doc) => doc.selected).length
+  const totalPages = Math.max(1, Math.ceil(documents.length / itemsPerPage))
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedDocuments = documents.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  )
 
   return (
     <div className="space-y-3">
@@ -283,7 +297,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                   </td>
                 </tr>
               ) : (
-                documents.map((doc) => (
+                paginatedDocuments.map((doc) => (
                   <tr key={doc.id} className="hover:bg-muted/30">
                     <td className="px-4 py-3">
                       <input
@@ -306,12 +320,6 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                         <div className="text-muted-foreground">
                           <span className="font-medium">날짜:</span> {doc.date}
                         </div>
-                        {doc.summary && (
-                          <div className="text-muted-foreground">
-                            <span className="font-medium">요약:</span>{' '}
-                            {doc.summary}
-                          </div>
-                        )}
                         <div className="text-muted-foreground">
                           <span className="font-medium">변환자:</span>{' '}
                           {doc.convertedBy}
@@ -389,6 +397,36 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="border-border bg-muted/30 flex items-center justify-between border-t px-4 py-3">
+          <div className="text-muted-foreground text-sm">
+            {startIndex + 1}-
+            {Math.min(startIndex + itemsPerPage, documents.length)} /{' '}
+            {documents.length}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="border-border hover:bg-card border px-3 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className="text-foreground text-sm font-medium">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
+              disabled={currentPage === totalPages}
+              className="border-border hover:bg-card border px-3 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
