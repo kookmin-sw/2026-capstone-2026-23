@@ -29,6 +29,13 @@
 - `lib` — 해당 slice 내부에서 쓰는 유틸리티
 - `config` — 설정, 상수
 
+## Git 브랜치 정책
+
+- **`main` 브랜치에 직접 push는 절대 금지.** 모든 변경은 반드시 `develop` 브랜치를 거쳐 PR로만 main에 머지한다.
+- 작업 흐름: `feature/xxx` → `develop` → `main` (PR 필수)
+- hotfix도 `fix/xxx` 브랜치를 만들어 `develop`에 먼저 머지한 후 `main`으로 올린다.
+- main에 직접 커밋하거나 force push하면 CI/CD 파이프라인과 배포가 꼬이므로 **어떤 상황에서도 허용하지 않는다.**
+
 ## 코드 품질 검사 필수
 
 코드를 커밋하기 전에는 반드시 아래 검사를 통과시켜야 한다.
