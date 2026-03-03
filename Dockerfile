@@ -1,8 +1,7 @@
 FROM node:22-slim AS build
 WORKDIR /app
-RUN npm install -g npm@latest
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 RUN npm run build
 
