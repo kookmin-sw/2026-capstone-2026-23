@@ -6,6 +6,8 @@ import {
   AlertTriangle,
   Settings,
   HardDrive,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -17,6 +19,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/shared/ui/sidebar'
 
 const menuItems = [
@@ -29,6 +32,8 @@ const menuItems = [
 export function AppSidebar() {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
+  const { state, toggleSidebar } = useSidebar()
+  const isCollapsed = state === 'collapsed'
 
   // Mock storage data
   const storageUsedGB = 847.3
@@ -45,14 +50,40 @@ export function AppSidebar() {
   const storageColor = getStorageColor()
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-sidebar-border border-b p-6">
-        <div className="flex items-center gap-2">
-          <div className="bg-primary flex h-8 w-8 items-center justify-center">
-            <span className="text-primary-foreground text-lg font-bold">L</span>
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="border-sidebar-border border-b p-3">
+        {isCollapsed ? (
+          <div className="flex justify-center">
+            <button
+              onClick={toggleSidebar}
+              className="text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent p-1"
+            >
+              <PanelLeftOpen className="h-4 w-4" />
+            </button>
           </div>
-          <span className="text-sidebar-foreground font-bold">Luminir</span>
-        </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-2 overflow-hidden"
+            >
+              <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center">
+                <span className="text-primary-foreground text-lg font-bold">
+                  L
+                </span>
+              </div>
+              <span className="text-sidebar-foreground truncate font-bold">
+                Luminir
+              </span>
+            </Link>
+            <button
+              onClick={toggleSidebar}
+              className="text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent shrink-0 p-1"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </button>
+          </div>
+        )}
       </SidebarHeader>
 
       <SidebarContent>
@@ -64,7 +95,11 @@ export function AppSidebar() {
                 const isActive = currentPath === item.path
                 return (
                   <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild isActive={isActive}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.label}
+                    >
                       <Link to={item.path}>
                         <Icon className="h-5 w-5" />
                         <span>{item.label}</span>
@@ -80,7 +115,7 @@ export function AppSidebar() {
 
       <SidebarFooter>
         {/* Storage */}
-        <div className="border-sidebar-border border-t p-4">
+        <div className="border-sidebar-border border-t p-4 group-data-[collapsible=icon]:hidden">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -106,10 +141,14 @@ export function AppSidebar() {
         </div>
 
         {/* Settings */}
-        <div className="border-sidebar-border border-t p-4">
+        <div className="border-sidebar-border border-t p-4 group-data-[collapsible=icon]:p-2">
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={currentPath === '/settings'}>
+              <SidebarMenuButton
+                asChild
+                isActive={currentPath === '/settings'}
+                tooltip="설정"
+              >
                 <Link to="/settings">
                   <Settings className="h-5 w-5" />
                   <span>설정</span>

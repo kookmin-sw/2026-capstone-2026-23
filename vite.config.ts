@@ -19,6 +19,11 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    watch: {
+      ignored: ['**/routeTree.gen.ts'],
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',
