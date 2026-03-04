@@ -2,7 +2,7 @@ name: Discord Notifications
 
 on:
   push:
-    branches: ["**"]
+    branches: ['**']
   pull_request:
     types: [opened, closed, reopened]
   issues:
