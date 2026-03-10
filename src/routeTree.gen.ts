@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ApiTestRouteImport } from './routes/api-test'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
@@ -18,6 +19,11 @@ import { Route as LayoutDashboardRouteImport } from './routes/_layout/dashboard'
 import { Route as LayoutConvertRouteImport } from './routes/_layout/convert'
 import { Route as LayoutFilesFileIdRouteImport } from './routes/_layout/files.$fileId'
 
+const ApiTestRoute = ApiTestRouteImport.update({
+  id: '/api-test',
+  path: '/api-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
@@ -60,6 +66,7 @@ const LayoutFilesFileIdRoute = LayoutFilesFileIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
+  '/api-test': typeof ApiTestRoute
   '/convert': typeof LayoutConvertRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/errors': typeof LayoutErrorsRoute
@@ -68,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/files/$fileId': typeof LayoutFilesFileIdRoute
 }
 export interface FileRoutesByTo {
+  '/api-test': typeof ApiTestRoute
   '/convert': typeof LayoutConvertRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/errors': typeof LayoutErrorsRoute
@@ -79,6 +87,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
+  '/api-test': typeof ApiTestRoute
   '/_layout/convert': typeof LayoutConvertRoute
   '/_layout/dashboard': typeof LayoutDashboardRoute
   '/_layout/errors': typeof LayoutErrorsRoute
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api-test'
     | '/convert'
     | '/dashboard'
     | '/errors'
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/files/$fileId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/api-test'
     | '/convert'
     | '/dashboard'
     | '/errors'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_layout'
+    | '/api-test'
     | '/_layout/convert'
     | '/_layout/dashboard'
     | '/_layout/errors'
@@ -120,10 +132,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
+  ApiTestRoute: typeof ApiTestRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/api-test': {
+      id: '/api-test'
+      path: '/api-test'
+      fullPath: '/api-test'
+      preLoaderRoute: typeof ApiTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout': {
       id: '/_layout'
       path: ''
@@ -218,6 +238,7 @@ const LayoutRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
+  ApiTestRoute: ApiTestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
