@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import DOMPurify from 'dompurify'
 import { FileText, Table, Image, Code } from 'lucide-react'
 import { Card, CardContent } from '@/shared/ui/card'
 
@@ -78,7 +79,9 @@ export function ResultsPanel({
               <div
                 key={idx}
                 className="mb-4 overflow-x-auto"
-                dangerouslySetInnerHTML={{ __html: table.html }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(table.html),
+                }}
               />
             ))}
           </div>

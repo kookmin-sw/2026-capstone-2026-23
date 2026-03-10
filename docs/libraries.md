@@ -20,6 +20,8 @@
 | `radix-ui`                       | shadcn/ui의 기반 헤드리스 UI 프리미티브. 접근성이 보장된 컴포넌트 동작 로직 제공            |
 | `recharts`                       | 대시보드 차트(LineChart, PieChart 등) 시각화를 위해 사용. React 기반 선언적 차트 라이브러리 |
 | `sonner`                         | shadcn/ui Toast 알림(Toaster) 컴포넌트 의존성. 전역 알림 표시를 위해 사용                   |
+| `pretendard`                     | 한국어 최적화 본문 폰트. 폐쇄망 환경 지원을 위해 npm 패키지로 설치                          |
+| `dompurify`                      | HTML sanitize 라이브러리. dangerouslySetInnerHTML의 XSS 공격 방지를 위해 사용               |
 
 ## DevDependencies (개발)
 
