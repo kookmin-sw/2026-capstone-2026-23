@@ -190,7 +190,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
           </div>
           <div className="flex-1" />
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               size="sm"
               onClick={() => downloadSelected('original')}
               disabled={selectedCount === 0}
@@ -206,7 +206,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
             >
               <Download className="mr-1 h-4 w-4" />
               tmp
-            </Button>
+            </Button> */}
             <Button
               size="sm"
               className="bg-[#198038] text-white hover:bg-[#0e6027]"
@@ -214,7 +214,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
               disabled={selectedCount === 0}
             >
               <Download className="mr-1 h-4 w-4" />
-              output
+              다운로드
             </Button>
             <div className="relative" ref={deleteDropdownRef}>
               <Button
@@ -269,19 +269,19 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                 <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
                   문서명
                 </th>
-                <th className="text-foreground w-64 px-4 py-3 text-left text-sm font-semibold">
+                <th className="text-foreground w-110 px-4 py-3 text-left text-sm font-semibold">
                   세부사항
                 </th>
-                <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
+                {/* <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
                   원본
                 </th>
                 <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
                   tmp
-                </th>
-                <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
+                </th> */}
+                <th className="text-foreground w-48 px-4 py-3 text-center text-sm font-semibold">
                   output
                 </th>
-                <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
+                <th className="text-foreground w-48 px-4 py-3 text-center text-sm font-semibold">
                   삭제
                 </th>
               </tr>
@@ -326,7 +326,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    {/* <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => downloadSingle(doc.id, 'original')}
                         disabled={!doc.hasOriginal}
@@ -343,7 +343,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                       >
                         <Download className="h-6 w-6 text-[#ff832b]" />
                       </button>
-                    </td>
+                    </td> */}
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => downloadSingle(doc.id, 'output')}
