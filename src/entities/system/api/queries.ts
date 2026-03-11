@@ -10,7 +10,8 @@ export function useSystemStats() {
       const { data } = await api.get<SystemStats>('/system/stats')
       return data
     },
-    refetchInterval: 5000,
+    refetchInterval: 30000,
+    refetchIntervalInBackground: false,
   })
 }
 

@@ -1,3 +1,4 @@
+@import 'pretendard/dist/web/variable/pretendardvariable.css';
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
@@ -66,6 +67,22 @@
   --color-carbon-red-50: #fa4d56;
   --color-carbon-purple-60: #8a3ffc;
   --color-carbon-orange-40: #ff832b;
+
+  /* Luminir brand palette */
+  --color-luminir-pink-80: #c41aff;
+  --color-luminir-pink-50: #e0a6ff;
+  --color-luminir-pink-20: #f4deff;
+  --color-luminir-blue-50: #149de6;
+  --color-luminir-blue-30: #5ebdf0;
+  --color-luminir-blue-10: #dbf2ff;
+  --color-luminir-green-60: #00ad85;
+  --color-luminir-green-40: #5de1c2;
+  --color-luminir-green-10: #d9fbf3;
+  --color-luminir-purple-50: #9d80f7;
+  --color-luminir-purple-20: #d5d1ff;
+  --color-luminir-yellow-60: #caaf00;
+  --color-luminir-yellow-50: #ffd900;
+  --color-luminir-yellow-10: #fff9d1;
 }
 
 /* ───── Carbon Light Theme (IBM Carbon Gray 10 base) ───── */
@@ -175,7 +192,8 @@
   body {
     @apply bg-background text-foreground;
     font-family:
-      'IBM Plex Sans',
+      'Pretendard Variable',
+      Pretendard,
       -apple-system,
       BlinkMacSystemFont,
       sans-serif;
@@ -186,5 +204,152 @@
   pre,
   .font-mono {
     font-family: 'IBM Plex Mono', monospace;
+  }
+}
+
+/* ───── Luminir Typography Scale ───── */
+@layer utilities {
+  /* Display — 랜딩, 히어로 섹션 */
+  .typo-display {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  /* Heading 1 — 페이지 제목 */
+  .typo-h1 {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  /* Heading 2 — 섹션 제목 */
+  .typo-h2 {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  /* Heading 3 — 위젯/카드 제목 */
+  .typo-h3 {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  /* Body 1 — 주요 본문 */
+  .typo-body1 {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  /* Body 2 — 보조 본문, 설명 */
+  .typo-body2 {
+    font-size: 0.8125rem; /* 13px */
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* Label — 버튼, 폼 라벨, 인터랙티브 텍스트 */
+  .typo-label {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* Caption — 힌트, 타임스탬프, 부가 정보 */
+  .typo-caption {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* Overline — 작은 라벨, 카테고리 태그 */
+  .typo-overline {
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Stat — 대시보드 숫자, 큰 수치 강조 */
+  .typo-stat {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Code — 코드, 경로, 기술 텍스트 */
+  .typo-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8125rem; /* 13px */
+    font-weight: 400;
+    line-height: 1.5;
+  }
+}
+
+/* ───── Luminir Color Combos (bg + text matching) ───── */
+@layer utilities {
+  .luminir-pink-80 {
+    background-color: var(--color-luminir-pink-80);
+    color: #ffffff;
+  }
+  .luminir-pink-50 {
+    background-color: var(--color-luminir-pink-50);
+    color: #ffffff;
+  }
+  .luminir-pink-20 {
+    background-color: var(--color-luminir-pink-20);
+    color: var(--color-luminir-pink-80);
+  }
+  .luminir-blue-50 {
+    background-color: var(--color-luminir-blue-50);
+    color: #ffffff;
+  }
+  .luminir-blue-30 {
+    background-color: var(--color-luminir-blue-30);
+    color: #ffffff;
+  }
+  .luminir-blue-10 {
+    background-color: var(--color-luminir-blue-10);
+    color: var(--color-luminir-blue-50);
+  }
+  .luminir-green-60 {
+    background-color: var(--color-luminir-green-60);
+    color: #ffffff;
+  }
+  .luminir-green-40 {
+    background-color: var(--color-luminir-green-40);
+    color: #ffffff;
+  }
+  .luminir-green-10 {
+    background-color: var(--color-luminir-green-10);
+    color: var(--color-luminir-green-60);
+  }
+  .luminir-purple-50 {
+    background-color: var(--color-luminir-purple-50);
+    color: #ffffff;
+  }
+  .luminir-purple-20 {
+    background-color: var(--color-luminir-purple-20);
+    color: var(--color-luminir-purple-50);
+  }
+  .luminir-yellow-60 {
+    background-color: var(--color-luminir-yellow-60);
+    color: #ffffff;
+  }
+  .luminir-yellow-50 {
+    background-color: var(--color-luminir-yellow-50);
+    color: var(--color-luminir-yellow-60);
+  }
+  .luminir-yellow-10 {
+    background-color: var(--color-luminir-yellow-10);
+    color: var(--color-luminir-yellow-60);
   }
 }

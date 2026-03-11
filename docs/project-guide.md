@@ -9,19 +9,19 @@ Lemong은 React 기반 웹 애플리케이션입니다.
 
 ## 사용 기술 요약
 
-| 분류            | 기술                    | 역할                          |
-| --------------- | ----------------------- | ----------------------------- |
-| 프레임워크      | React + TypeScript      | 화면을 만드는 핵심 도구       |
-| 빌드 도구       | Vite                    | 개발 서버 실행, 배포용 빌드   |
-| 스타일링        | TailwindCSS + shadcn/ui | 디자인, UI 컴포넌트           |
-| 라우팅          | TanStack Router         | 페이지 이동 (URL 관리)        |
-| 서버 데이터     | TanStack Query          | API 호출, 데이터 캐싱         |
-| 클라이언트 상태 | Zustand                 | 앱 내부 상태 관리             |
-| HTTP 통신       | Axios                   | 백엔드 API 호출               |
-| 테스트          | Vitest + Playwright     | 단위 테스트 + 화면 테스트     |
-| 컴포넌트 문서   | Storybook               | UI 컴포넌트를 독립적으로 확인 |
-| 코드 품질       | ESLint + Prettier       | 코드 스타일 자동 검사/정리    |
-| CI/CD           | GitHub Actions + Vercel | 자동 검사 + 자동 배포         |
+| 분류            | 기술                                       | 역할                                       |
+| --------------- | ------------------------------------------ | ------------------------------------------ |
+| 프레임워크      | React + TypeScript                         | 화면을 만드는 핵심 도구                    |
+| 빌드 도구       | Vite                                       | 개발 서버 실행, 배포용 빌드                |
+| 스타일링        | TailwindCSS + shadcn/ui                    | 디자인, UI 컴포넌트                        |
+| 라우팅          | TanStack Router                            | 페이지 이동 (URL 관리)                     |
+| 서버 데이터     | TanStack Query                             | API 호출, 데이터 캐싱                      |
+| 클라이언트 상태 | Zustand                                    | 앱 내부 상태 관리                          |
+| HTTP 통신       | Axios                                      | 백엔드 API 호출                            |
+| 테스트          | Vitest + Playwright                        | 단위 테스트 + 화면 테스트                  |
+| 컴포넌트 문서   | Storybook                                  | UI 컴포넌트를 독립적으로 확인              |
+| 코드 품질       | ESLint + Prettier                          | 코드 스타일 자동 검사/정리                 |
+| CI/CD           | GitHub Actions + GHCR + Self-Hosted Runner | 자동 검사 + Docker 이미지 빌드 + 서버 배포 |
 
 ---
 
@@ -97,10 +97,11 @@ src/
 ## 개발부터 배포까지 전체 흐름
 
 ```
-개발 → 저장 → 코드 스타일 검사(Husky) → 커밋 → push → PR 생성 → CI 자동 검사 → merge → 자동 배포
+개발 → 저장 → 코드 스타일 검사(Husky) → 커밋 → push → PR 생성 → CI 자동 검사 →      merge    → 자동 배포
         ↑       ↑ 통과해야 커밋 가능                              ↑                    ↑
-   Hot Reload  ESLint + Prettier                           GitHub Actions가        Vercel이
-   로 바로확인    자동 검사/수정                                   4가지 검사 실행            자동 배포
+   Hot Reload  ESLint + Prettier                           GitHub Actions가     Docker 이미지 빌드
+   로 바로확인    자동 검사/수정                                 4가지 검사 실행         → GHCR push
+                                                                                → 서버 자동 배포
 ```
 
 ### 1단계: 브랜치 만들기
@@ -182,24 +183,30 @@ PR 생성
 ### 7단계: Merge & 자동 배포
 
 ```
-feature → develop merge
-  → Vercel 프리뷰 배포 (테스트용 URL 자동 생성)
-
-develop → main PR 생성 → merge
-  → Vercel 프로덕션 배포 (실제 서비스에 자동 반영)
+feature → main PR 생성 → merge
+  → GitHub Actions (클라우드)
+    → CI 검사 (lint, format, type-check, test)
+    → Docker 이미지 빌드
+    → GHCR(GitHub Container Registry)에 이미지 push
+  → deploy 레포에 dispatch 전송
+  → Self-Hosted Runner (서버)
+    → GHCR에서 새 이미지 pull
+    → docker compose up (컨테이너 교체)
+    → Health check
+    → 배포 완료
 ```
 
-**별도로 배포 명령어를 실행할 필요 없음 — merge하면 전부 자동으로 실행**
+**별도로 배포 명령어를 실행할 필요 없음 — main에 merge하면 전부 자동으로 실행**
 
 ### 요약
 
-| 단계  | 하는 일            | 자동화                        |
-| ----- | ------------------ | ----------------------------- |
-| 개발  | 코드 작성          | Hot Reload로 즉시 확인        |
-| 커밋  | `git commit`       | Husky가 코드 스타일 자동 검사 |
-| Push  | `git push`         | —                             |
-| PR    | GitHub에서 PR 생성 | CI가 4가지 검사 자동 실행     |
-| Merge | merge 버튼 클릭    | Vercel이 자동 배포            |
+| 단계  | 하는 일            | 자동화                                     |
+| ----- | ------------------ | ------------------------------------------ |
+| 개발  | 코드 작성          | Hot Reload로 즉시 확인                     |
+| 커밋  | `git commit`       | Husky가 코드 스타일 자동 검사              |
+| Push  | `git push`         | —                                          |
+| PR    | GitHub에서 PR 생성 | CI가 4가지 검사 자동 실행                  |
+| Merge | merge 버튼 클릭    | Docker 이미지 빌드 → GHCR push → 서버 배포 |
 
 ---
 
@@ -266,11 +273,12 @@ main (프로덕션 - 실제 서비스에 배포되는 코드)
 
 ---
 
-## Vercel 자동 배포
+## 자동 배포 (GHCR + Self-Hosted Runner)
 
-- PR을 만들면 → **프리뷰 링크** 자동 생성 (합치기 전에 미리 확인 가능)
-- `main`에 merge하면 → **실제 서비스에 자동 배포**
-- 별도 작업 필요 없음, 전부 자동
+- `main`에 merge하면 → Docker 이미지 빌드 → GHCR push → **서버에 자동 배포**
+- 배포 실패 시 이메일 알림 발송
+- 수동 배포/롤백: deploy 레포 → Actions → "Deploy to Production" → Run workflow (커밋 SHA 입력)
+- 별도로 배포 명령어를 실행할 필요 없음, 전부 자동
 
 ---
 
