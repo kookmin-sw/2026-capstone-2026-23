@@ -37,7 +37,7 @@ export function StatCard({
             ) : (
               <>
                 <p className="text-foreground mt-1 text-2xl font-bold">
-                  {value.toLocaleString()}
+                  {(value ?? 0).toLocaleString()}
                   {unit}
                 </p>
                 <p
