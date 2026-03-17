@@ -17,6 +17,7 @@ import { Route as LayoutFilesRouteImport } from './routes/_layout/files'
 import { Route as LayoutErrorsRouteImport } from './routes/_layout/errors'
 import { Route as LayoutDashboardRouteImport } from './routes/_layout/dashboard'
 import { Route as LayoutConvertRouteImport } from './routes/_layout/convert'
+import { Route as LayoutFilesIndexRouteImport } from './routes/_layout/files.index'
 import { Route as LayoutFilesFileIdRouteImport } from './routes/_layout/files.$fileId'
 
 const ApiTestRoute = ApiTestRouteImport.update({
@@ -58,6 +59,11 @@ const LayoutConvertRoute = LayoutConvertRouteImport.update({
   path: '/convert',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutFilesIndexRoute = LayoutFilesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutFilesRoute,
+} as any)
 const LayoutFilesFileIdRoute = LayoutFilesFileIdRouteImport.update({
   id: '/$fileId',
   path: '/$fileId',
@@ -73,16 +79,17 @@ export interface FileRoutesByFullPath {
   '/files': typeof LayoutFilesRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/files/$fileId': typeof LayoutFilesFileIdRoute
+  '/files/': typeof LayoutFilesIndexRoute
 }
 export interface FileRoutesByTo {
   '/api-test': typeof ApiTestRoute
   '/convert': typeof LayoutConvertRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/errors': typeof LayoutErrorsRoute
-  '/files': typeof LayoutFilesRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
   '/files/$fileId': typeof LayoutFilesFileIdRoute
+  '/files': typeof LayoutFilesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -95,6 +102,7 @@ export interface FileRoutesById {
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/files/$fileId': typeof LayoutFilesFileIdRoute
+  '/_layout/files/': typeof LayoutFilesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,16 +115,17 @@ export interface FileRouteTypes {
     | '/files'
     | '/settings'
     | '/files/$fileId'
+    | '/files/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/api-test'
     | '/convert'
     | '/dashboard'
     | '/errors'
-    | '/files'
     | '/settings'
     | '/'
     | '/files/$fileId'
+    | '/files'
   id:
     | '__root__'
     | '/_layout'
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/_layout/settings'
     | '/_layout/'
     | '/_layout/files/$fileId'
+    | '/_layout/files/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -193,6 +203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutConvertRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/files/': {
+      id: '/_layout/files/'
+      path: '/'
+      fullPath: '/files/'
+      preLoaderRoute: typeof LayoutFilesIndexRouteImport
+      parentRoute: typeof LayoutFilesRoute
+    }
     '/_layout/files/$fileId': {
       id: '/_layout/files/$fileId'
       path: '/$fileId'
@@ -205,10 +222,12 @@ declare module '@tanstack/react-router' {
 
 interface LayoutFilesRouteChildren {
   LayoutFilesFileIdRoute: typeof LayoutFilesFileIdRoute
+  LayoutFilesIndexRoute: typeof LayoutFilesIndexRoute
 }
 
 const LayoutFilesRouteChildren: LayoutFilesRouteChildren = {
   LayoutFilesFileIdRoute: LayoutFilesFileIdRoute,
+  LayoutFilesIndexRoute: LayoutFilesIndexRoute,
 }
 
 const LayoutFilesRouteWithChildren = LayoutFilesRoute._addFileChildren(

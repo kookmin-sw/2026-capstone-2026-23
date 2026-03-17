@@ -107,7 +107,7 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
             variant={showComparison ? 'default' : 'outline'}
           >
             <SplitSquareHorizontal className="mr-2 h-4 w-4" />
-            {showComparison ? '비교 모드 종료' : '원본과 비교'}
+            {showComparison ? '결과만 보기' : '원본과 함께 보기'}
           </Button>
         </div>
 
