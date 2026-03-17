@@ -6,6 +6,7 @@ interface StatCardProps {
   icon: LucideIcon
   label: string
   value: number
+  unit?: string
   subtitle?: string
   iconColor: string
   bgColor: string
@@ -16,6 +17,7 @@ export function StatCard({
   icon: Icon,
   label,
   value,
+  unit = '건',
   subtitle,
   iconColor,
   bgColor,
@@ -35,7 +37,8 @@ export function StatCard({
             ) : (
               <>
                 <p className="text-foreground mt-1 text-2xl font-bold">
-                  {value}
+                  {value.toLocaleString()}
+                  {unit}
                 </p>
                 <p
                   className={`text-muted-foreground text-sm ${subtitle ? '' : 'invisible'}`}
