@@ -170,12 +170,8 @@ export function DashboardPage() {
       <DashboardStats stats={stats} isLoading={isSummaryLoading} />
 
       <div className="grid grid-cols-2 gap-4">
-        <MockIndicator label="차트">
-          <TrendChart />
-        </MockIndicator>
-        <MockIndicator label="차트">
-          <SuccessRateChart />
-        </MockIndicator>
+        <TrendChart />
+        <SuccessRateChart />
       </div>
 
       <MockIndicator label="에러 로그">

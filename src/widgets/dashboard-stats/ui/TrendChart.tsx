@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
   LineChart,
   Line,
@@ -9,17 +10,35 @@ import {
 } from 'recharts'
 import { TrendingUp } from 'lucide-react'
 import { Card, CardContent } from '@/shared/ui/card'
+import { Skeleton } from '@/shared/ui/skeleton'
+import { useDocuments } from '@/entities/document'
 
 export function TrendChart() {
-  const data = [
-    { date: '12/03', count: 18 },
-    { date: '12/04', count: 22 },
-    { date: '12/05', count: 15 },
-    { date: '12/06', count: 28 },
-    { date: '12/07', count: 24 },
-    { date: '12/08', count: 31 },
-    { date: '12/09', count: 18 },
-  ]
+  const { data, isLoading } = useDocuments()
+
+  const chartData = useMemo(() => {
+    if (!data?.items?.length) return []
+
+    // 최근 7일 날짜 생성
+    const days: Record<string, number> = {}
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date()
+      d.setDate(d.getDate() - i)
+      const key = `${d.getMonth() + 1}/${String(d.getDate()).padStart(2, '0')}`
+      days[key] = 0
+    }
+
+    // 문서 uploadedAt 기준으로 날짜별 카운트
+    data.items.forEach((doc) => {
+      const d = new Date(doc.uploadedAt)
+      const key = `${d.getMonth() + 1}/${String(d.getDate()).padStart(2, '0')}`
+      if (key in days) {
+        days[key]++
+      }
+    })
+
+    return Object.entries(days).map(([date, count]) => ({ date, count }))
+  }, [data])
 
   return (
     <Card>
@@ -37,29 +56,42 @@ export function TrendChart() {
             </p>
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-            <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#525252" />
-            <YAxis tick={{ fontSize: 12 }} stroke="#525252" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #e0e0e0',
-                borderRadius: '0px',
-                fontSize: '12px',
-              }}
-            />
-            <Line
-              type="monotone"
-              dataKey="count"
-              stroke="#0f62fe"
-              strokeWidth={2}
-              dot={{ fill: '#0f62fe', r: 4 }}
-              activeDot={{ r: 6 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        {isLoading ? (
+          <Skeleton className="h-[250px] w-full" />
+        ) : chartData.length === 0 ? (
+          <div className="text-muted-foreground flex h-[250px] items-center justify-center text-sm">
+            아직 처리된 문서가 없습니다.
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#525252" />
+              <YAxis
+                tick={{ fontSize: 12 }}
+                stroke="#525252"
+                allowDecimals={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '0px',
+                  fontSize: '12px',
+                }}
+                formatter={(value: number) => [`${value}건`, '처리량']}
+              />
+              <Line
+                type="monotone"
+                dataKey="count"
+                stroke="#0f62fe"
+                strokeWidth={2}
+                dot={{ fill: '#0f62fe', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   )
