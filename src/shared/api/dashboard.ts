@@ -1,10 +1,6 @@
 import { api } from './client'
 
-import type {
-  DashboardFileType,
-  DashboardSummary,
-  DocumentItem,
-} from '@/shared/types'
+import type { DashboardSummary, DocumentItem } from '@/shared/types'
 
 // 대시보드 요약 (GET /dashboard/summary)
 export const getDashboardSummary = () =>
@@ -12,7 +8,9 @@ export const getDashboardSummary = () =>
 
 // 파일 타입 통계 (GET /dashboard/file-types)
 export const getDashboardFileTypes = () =>
-  api.get<{ items: DashboardFileType[] }>('/dashboard/file-types')
+  api.get<{ from: string | null; to: string | null; types: string[] }>(
+    '/dashboard/file-types',
+  )
 
 // 최근 문서 (GET /dashboard/recent-items)
 export const getDashboardRecentItems = (limit = 10) =>

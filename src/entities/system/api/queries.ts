@@ -5,11 +5,7 @@ import {
   getDashboardRecentItems,
   getDashboardSummary,
 } from '@/shared/api'
-import type {
-  DashboardFileType,
-  DashboardSummary,
-  DocumentItem,
-} from '@/shared/types'
+import type { DashboardSummary, DocumentItem } from '@/shared/types'
 
 export function useDashboardSummary() {
   return useQuery({
@@ -26,7 +22,7 @@ export function useDashboardFileTypes() {
     queryKey: ['dashboard', 'file-types'],
     queryFn: async () => {
       const { data } = await getDashboardFileTypes()
-      return data as { items: DashboardFileType[] }
+      return data as { from: string | null; to: string | null; types: string[] }
     },
   })
 }
