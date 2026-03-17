@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { ErrorTypeBadge } from '@/shared/ui/error-type-badge'
 import { ErrorDetailModal } from '@/shared/ui/error-detail-modal'
+import { MockIndicator } from '@/shared/ui/mock-indicator'
 import type { ErrorDetail } from '@/shared/types'
 
 export function ErrorLogPage() {
@@ -154,190 +155,192 @@ export function ErrorLogPage() {
   ]
 
   return (
-    <div className="space-y-3">
-      <div>
-        <h2 className="text-foreground flex items-center gap-2 text-2xl font-bold">
-          <AlertTriangle className="text-destructive h-6 w-6" />
-          전체 에러 로그
-        </h2>
-        <p className="text-muted-foreground text-sm">
-          시스템에서 발생한 모든 에러를 확인하고 관리하세요
-        </p>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-card border-border border p-3">
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
-            <input
-              type="text"
-              placeholder="파일명 검색..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value)
-                setCurrentPage(1)
-              }}
-              className="border-border bg-card focus:ring-primary w-full border py-2 pr-4 pl-10 focus:ring-2 focus:outline-none"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Filter className="text-muted-foreground h-4 w-4" />
-            <select
-              value={filterType}
-              onChange={(e) => {
-                setFilterType(e.target.value)
-                setCurrentPage(1)
-              }}
-              className="border-border bg-card focus:ring-primary border px-3 py-2 focus:ring-2 focus:outline-none"
-            >
-              {errorTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type === 'all' ? '전체 유형' : type}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button className="border-border hover:bg-muted flex items-center gap-2 border px-4 py-2 transition-colors">
-            <Calendar className="h-4 w-4" />
-            <span className="text-sm">기간 선택</span>
-          </button>
+    <MockIndicator label="에러 로그">
+      <div className="space-y-3">
+        <div>
+          <h2 className="text-foreground flex items-center gap-2 text-2xl font-bold">
+            <AlertTriangle className="text-destructive h-6 w-6" />
+            전체 에러 로그
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            시스템에서 발생한 모든 에러를 확인하고 관리하세요
+          </p>
         </div>
-        <div className="text-muted-foreground mt-3 flex items-center justify-between text-sm">
-          <span>총 {filteredErrors.length}개의 에러</span>
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="text-primary hover:text-primary/80"
-            >
-              검색 초기화
+
+        {/* Filters */}
+        <div className="bg-card border-border border p-3">
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1">
+              <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+              <input
+                type="text"
+                placeholder="파일명 검색..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setCurrentPage(1)
+                }}
+                className="border-border bg-card focus:ring-primary w-full border py-2 pr-4 pl-10 focus:ring-2 focus:outline-none"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Filter className="text-muted-foreground h-4 w-4" />
+              <select
+                value={filterType}
+                onChange={(e) => {
+                  setFilterType(e.target.value)
+                  setCurrentPage(1)
+                }}
+                className="border-border bg-card focus:ring-primary border px-3 py-2 focus:ring-2 focus:outline-none"
+              >
+                {errorTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type === 'all' ? '전체 유형' : type}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button className="border-border hover:bg-muted flex items-center gap-2 border px-4 py-2 transition-colors">
+              <Calendar className="h-4 w-4" />
+              <span className="text-sm">기간 선택</span>
             </button>
-          )}
+          </div>
+          <div className="text-muted-foreground mt-3 flex items-center justify-between text-sm">
+            <span>총 {filteredErrors.length}개의 에러</span>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="text-primary hover:text-primary/80"
+              >
+                검색 초기화
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Error Table */}
-      <div className="bg-card border-border overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="w-full whitespace-nowrap">
-            <thead className="bg-muted/50 border-border border-b">
-              <tr>
-                <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
-                  ID
-                </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
-                  유형
-                </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
-                  에러 메시지
-                </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
-                  파일명
-                </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
-                  페이지
-                </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
-                  모델
-                </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
-                  발생 시각
-                </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
-                  액션
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-border divide-y">
-              {paginatedErrors.map((error) => (
-                <tr
-                  key={error.id}
-                  className="hover:bg-muted/30 transition-colors"
-                >
-                  <td className="px-4 py-3">
-                    <span className="text-muted-foreground font-mono text-sm">
-                      #{error.id}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <ErrorTypeBadge type={error.type} />
-                  </td>
-                  <td className="px-4 py-3">
-                    <p className="text-foreground max-w-md truncate text-sm">
-                      {error.message}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-foreground font-mono text-sm">
-                      {error.fileName}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-muted-foreground text-sm">
-                      {error.pageNumber ? `Page ${error.pageNumber}` : '-'}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="bg-muted text-muted-foreground px-2 py-1 font-mono text-xs whitespace-nowrap">
-                      {error.model || '-'}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-muted-foreground text-sm">
-                      {error.timestamp}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => setSelectedError(error)}
-                      className="text-primary hover:text-primary/80 text-sm font-medium"
-                    >
-                      상세보기
-                    </button>
-                  </td>
+        {/* Error Table */}
+        <div className="bg-card border-border overflow-hidden border">
+          <div className="overflow-x-auto">
+            <table className="w-full whitespace-nowrap">
+              <thead className="bg-muted/50 border-border border-b">
+                <tr>
+                  <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
+                    ID
+                  </th>
+                  <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
+                    유형
+                  </th>
+                  <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
+                    에러 메시지
+                  </th>
+                  <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
+                    파일명
+                  </th>
+                  <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
+                    페이지
+                  </th>
+                  <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
+                    모델
+                  </th>
+                  <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
+                    발생 시각
+                  </th>
+                  <th className="text-muted-foreground px-4 py-3 text-left text-xs font-semibold uppercase">
+                    액션
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-border divide-y">
+                {paginatedErrors.map((error) => (
+                  <tr
+                    key={error.id}
+                    className="hover:bg-muted/30 transition-colors"
+                  >
+                    <td className="px-4 py-3">
+                      <span className="text-muted-foreground font-mono text-sm">
+                        #{error.id}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <ErrorTypeBadge type={error.type} />
+                    </td>
+                    <td className="px-4 py-3">
+                      <p className="text-foreground max-w-md truncate text-sm">
+                        {error.message}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="text-foreground font-mono text-sm">
+                        {error.fileName}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="text-muted-foreground text-sm">
+                        {error.pageNumber ? `Page ${error.pageNumber}` : '-'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="bg-muted text-muted-foreground px-2 py-1 font-mono text-xs whitespace-nowrap">
+                        {error.model || '-'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="text-muted-foreground text-sm">
+                        {error.timestamp}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => setSelectedError(error)}
+                        className="text-primary hover:text-primary/80 text-sm font-medium"
+                      >
+                        상세보기
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="border-border bg-muted/30 flex items-center justify-between border-t px-4 py-3">
+            <div className="text-muted-foreground text-sm">
+              {startIndex + 1}-
+              {Math.min(startIndex + itemsPerPage, filteredErrors.length)} /{' '}
+              {filteredErrors.length}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="border-border hover:bg-card border px-3 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <span className="text-foreground text-sm font-medium">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                }
+                disabled={currentPage === totalPages}
+                className="border-border hover:bg-card border px-3 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Pagination */}
-        <div className="border-border bg-muted/30 flex items-center justify-between border-t px-4 py-3">
-          <div className="text-muted-foreground text-sm">
-            {startIndex + 1}-
-            {Math.min(startIndex + itemsPerPage, filteredErrors.length)} /{' '}
-            {filteredErrors.length}
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-              className="border-border hover:bg-card border px-3 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <span className="text-foreground text-sm font-medium">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-              }
-              disabled={currentPage === totalPages}
-              className="border-border hover:bg-card border px-3 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
+        {selectedError && (
+          <ErrorDetailModal
+            error={selectedError}
+            onClose={() => setSelectedError(null)}
+          />
+        )}
       </div>
-
-      {selectedError && (
-        <ErrorDetailModal
-          error={selectedError}
-          onClose={() => setSelectedError(null)}
-        />
-      )}
-    </div>
+    </MockIndicator>
   )
 }

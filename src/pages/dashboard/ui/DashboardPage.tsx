@@ -9,6 +9,7 @@ import { RecentJobs } from '@/widgets/recent-jobs'
 import { SystemMonitor } from '@/widgets/system-monitor'
 import { ErrorLogWidget } from '@/widgets/error-log-widget'
 import { useDashboardSummary } from '@/entities/system'
+import { MockIndicator } from '@/shared/ui/mock-indicator'
 import type { DateFilter } from '@/shared/types'
 
 export function DashboardPage() {
@@ -169,12 +170,20 @@ export function DashboardPage() {
       <DashboardStats stats={stats} isLoading={isSummaryLoading} />
 
       <div className="grid grid-cols-2 gap-4">
-        <TrendChart />
-        <SuccessRateChart />
+        <MockIndicator label="차트">
+          <TrendChart />
+        </MockIndicator>
+        <MockIndicator label="차트">
+          <SuccessRateChart />
+        </MockIndicator>
       </div>
 
-      <ErrorLogWidget onViewAll={() => navigate({ to: '/errors' })} />
-      <SystemMonitor />
+      <MockIndicator label="에러 로그">
+        <ErrorLogWidget onViewAll={() => navigate({ to: '/errors' })} />
+      </MockIndicator>
+      <MockIndicator label="시스템">
+        <SystemMonitor />
+      </MockIndicator>
     </div>
   )
 }
