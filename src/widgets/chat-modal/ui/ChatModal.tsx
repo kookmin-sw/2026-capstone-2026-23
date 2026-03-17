@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Send, Bot, User, X, MessageCircle, Minimize2 } from 'lucide-react'
+import { useCreateRagSession, useSendRagMessage } from '@/entities/rag'
 import type { ChatMessage } from '@/shared/types'
 
 interface ChatModalProps {
@@ -13,8 +14,12 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
+  const [sessionId, setSessionId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const prevFileRef = useRef<string | null>(null)
+
+  const createSession = useCreateRagSession()
+  const sendMessage = useSendRagMessage()
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -23,21 +28,44 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
   useEffect(() => {
     if (isOpen && selectedFile && prevFileRef.current !== selectedFile) {
       prevFileRef.current = selectedFile
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- initializing chat on file change
-      setMessages([
+
+      // 새 파일 선택 시 RAG 세션 생성
+      const fileName = selectedFile.split('/').pop() ?? selectedFile
+      createSession.mutate(
+        { title: `Chat: ${fileName}` },
         {
-          id: '1',
-          type: 'assistant',
-          content: `문서가 RAG 시스템에 로드되었습니다. (42개 청크)\n\n"${selectedFile.split('/').pop()}" 파일에 대해 궁금한 점을 물어보세요!`,
-          timestamp: new Date(),
+          onSuccess: (session) => {
+            setSessionId(session.sessionId)
+            setMessages([
+              {
+                id: '1',
+                type: 'assistant',
+                content: `문서가 RAG 시스템에 로드되었습니다.\n\n"${fileName}" 파일에 대해 궁금한 점을 물어보세요!`,
+                timestamp: new Date(),
+              },
+            ])
+          },
+          onError: () => {
+            setMessages([
+              {
+                id: '1',
+                type: 'assistant',
+                content: `RAG 세션 생성에 실패했습니다. 잠시 후 다시 시도해주세요.`,
+                timestamp: new Date(),
+              },
+            ])
+          },
         },
-      ])
+      )
+
       setIsMinimized(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only trigger on file/open change, not on createSession ref
   }, [isOpen, selectedFile])
 
   const handleSend = () => {
-    if (!input.trim() || !selectedFile || isLoading) return
+    if (!input.trim() || !selectedFile || isLoading || !sessionId) return
+
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: 'user',
@@ -48,18 +76,36 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
     const query = input
     setInput('')
     setIsLoading(true)
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          type: 'assistant',
-          content: `질문: "${query}"\n\n답변: 문서에 따르면, 해당 내용은 3페이지의 표 2에 나와 있습니다.`,
-          timestamp: new Date(),
+
+    sendMessage.mutate(
+      { sessionId, content: query },
+      {
+        onSuccess: (answer) => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: (Date.now() + 1).toString(),
+              type: 'assistant',
+              content: answer.answer,
+              timestamp: new Date(),
+            },
+          ])
+          setIsLoading(false)
         },
-      ])
-      setIsLoading(false)
-    }, 1500)
+        onError: () => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: (Date.now() + 1).toString(),
+              type: 'assistant',
+              content: '응답을 받는 데 실패했습니다. 다시 시도해주세요.',
+              timestamp: new Date(),
+            },
+          ])
+          setIsLoading(false)
+        },
+      },
+    )
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -194,7 +240,7 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
           />
           <button
             onClick={handleSend}
-            disabled={!input.trim() || isLoading}
+            disabled={!input.trim() || isLoading || !sessionId}
             className="disabled:bg-muted disabled:text-muted-foreground self-end bg-[#198038] px-3 text-white transition-colors hover:bg-[#0e6027] disabled:cursor-not-allowed"
           >
             <Send className="h-4 w-4" />

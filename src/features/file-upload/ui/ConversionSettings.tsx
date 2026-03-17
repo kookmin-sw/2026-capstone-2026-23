@@ -1,19 +1,19 @@
-import type { VlmModel } from '@/shared/types'
+import { useModels } from '@/entities/model'
 
 interface ConversionSettingsProps {
-  vlmModel: VlmModel
-  onVlmModelChange: (model: VlmModel) => void
+  modelId: string
+  onModelIdChange: (modelId: string) => void
   parallelCount: number
   onParallelCountChange: (count: number) => void
   isPreferredModel: boolean
   onPreferredModelChange: (isPreferred: boolean) => void
-  overwriteMode: 'overwrite' | 'new'
-  onOverwriteModeChange: (mode: 'overwrite' | 'new') => void
+  overwriteMode: 'OVERWRITE' | 'KEEP_BOTH'
+  onOverwriteModeChange: (mode: 'OVERWRITE' | 'KEEP_BOTH') => void
 }
 
 export function ConversionSettings({
-  vlmModel,
-  onVlmModelChange,
+  modelId,
+  onModelIdChange,
   parallelCount,
   onParallelCountChange,
   isPreferredModel,
@@ -21,6 +21,9 @@ export function ConversionSettings({
   overwriteMode,
   onOverwriteModeChange,
 }: ConversionSettingsProps) {
+  const { data: modelsData } = useModels()
+  const models = modelsData?.models ?? []
+
   return (
     <div className="space-y-4">
       <div>
@@ -29,12 +32,21 @@ export function ConversionSettings({
         </label>
         <select
           className="border-border bg-card text-foreground w-full border px-3 py-2"
-          value={vlmModel}
-          onChange={(e) => onVlmModelChange(e.target.value as VlmModel)}
+          value={modelId}
+          onChange={(e) => onModelIdChange(e.target.value)}
         >
-          <option value="gpt-5-mini">gpt-5-mini</option>
-          <option value="gpt-5.2">gpt-5.2</option>
-          <option value="deepseek-ocr-2">deepseek-ocr-2</option>
+          {models.length > 0 ? (
+            models.map((model) => (
+              <option key={model.modelId} value={model.modelId}>
+                {model.displayName} ({model.code})
+              </option>
+            ))
+          ) : (
+            <>
+              <option value="m1">GPT-5 Mini (gpt-5-mini)</option>
+              <option value="m2">DeepSeek OCR 2 (deepseek-ocr-2)</option>
+            </>
+          )}
         </select>
         <p className="text-muted-foreground mt-1 text-xs">
           표/이미지 분석에 사용할 VLM 모델을 선택하세요 (deepseek-ocr-2: 폐쇄망
@@ -77,9 +89,9 @@ export function ConversionSettings({
             <input
               type="radio"
               name="overwriteMode"
-              value="overwrite"
-              checked={overwriteMode === 'overwrite'}
-              onChange={() => onOverwriteModeChange('overwrite')}
+              value="OVERWRITE"
+              checked={overwriteMode === 'OVERWRITE'}
+              onChange={() => onOverwriteModeChange('OVERWRITE')}
               className="accent-primary mr-2 h-4 w-4"
             />
             <span className="text-foreground text-sm">강제 덮어쓰기</span>
@@ -88,9 +100,9 @@ export function ConversionSettings({
             <input
               type="radio"
               name="overwriteMode"
-              value="new"
-              checked={overwriteMode === 'new'}
-              onChange={() => onOverwriteModeChange('new')}
+              value="KEEP_BOTH"
+              checked={overwriteMode === 'KEEP_BOTH'}
+              onChange={() => onOverwriteModeChange('KEEP_BOTH')}
               className="accent-primary mr-2 h-4 w-4"
             />
             <span className="text-foreground text-sm">

@@ -1,9 +1,9 @@
 import { X, CheckCircle, XCircle, Clock, Loader2, Eye } from 'lucide-react'
 import { FileTypeIcon } from '@/shared/ui/file-type-icon'
-import type { UploadedFile } from '../model/store'
+import type { UploadFileItem } from '../model/store'
 
 interface UploadedFilesListProps {
-  files: UploadedFile[]
+  files: UploadFileItem[]
   onRemoveFile: (id: string) => void
   onFileSelect: (id: string) => void
   selectedFileId?: string
@@ -23,7 +23,7 @@ export function UploadedFilesList({
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
   }
 
-  const getStatusDisplay = (file: UploadedFile) => {
+  const getStatusDisplay = (file: UploadFileItem) => {
     switch (file.status) {
       case 'pending':
         return (

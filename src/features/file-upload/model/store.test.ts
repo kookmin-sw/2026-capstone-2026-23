@@ -4,13 +4,14 @@ import { useUploadStore } from './store'
 function resetStore() {
   useUploadStore.setState({
     files: [],
-    vlmModel: 'gpt-5.2',
+    modelId: 'm1',
     parallelCount: 1,
     isConverting: false,
     batchStatus: '',
     selectedResultPath: '',
     isPreferredModel: false,
-    overwriteMode: 'new',
+    overwriteMode: 'OVERWRITE',
+    jobId: null,
   })
 }
 
@@ -113,9 +114,9 @@ describe('useUploadStore', () => {
   })
 
   describe('설정 변경', () => {
-    it('VLM 모델을 변경할 수 있다', () => {
-      useUploadStore.getState().setVlmModel('deepseek-ocr-2')
-      expect(useUploadStore.getState().vlmModel).toBe('deepseek-ocr-2')
+    it('모델 ID를 변경할 수 있다', () => {
+      useUploadStore.getState().setModelId('m2')
+      expect(useUploadStore.getState().modelId).toBe('m2')
     })
 
     it('병렬 처리 수를 변경할 수 있다', () => {
@@ -124,8 +125,8 @@ describe('useUploadStore', () => {
     })
 
     it('덮어쓰기 모드를 변경할 수 있다', () => {
-      useUploadStore.getState().setOverwriteMode('overwrite')
-      expect(useUploadStore.getState().overwriteMode).toBe('overwrite')
+      useUploadStore.getState().setOverwriteMode('KEEP_BOTH')
+      expect(useUploadStore.getState().overwriteMode).toBe('KEEP_BOTH')
     })
   })
 
@@ -146,14 +147,14 @@ describe('useUploadStore', () => {
       expect(state.selectedResultPath).toBe('')
     })
 
-    it('VLM 모델과 병렬 처리 수는 reset으로 초기화되지 않는다', () => {
-      useUploadStore.getState().setVlmModel('deepseek-ocr-2')
+    it('모델 ID와 병렬 처리 수는 reset으로 초기화되지 않는다', () => {
+      useUploadStore.getState().setModelId('m2')
       useUploadStore.getState().setParallelCount(4)
 
       useUploadStore.getState().reset()
 
       const state = useUploadStore.getState()
-      expect(state.vlmModel).toBe('deepseek-ocr-2')
+      expect(state.modelId).toBe('m2')
       expect(state.parallelCount).toBe(4)
     })
   })

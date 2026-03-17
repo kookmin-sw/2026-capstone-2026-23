@@ -8,10 +8,8 @@ import {
 import { RecentJobs } from '@/widgets/recent-jobs'
 import { SystemMonitor } from '@/widgets/system-monitor'
 import { ErrorLogWidget } from '@/widgets/error-log-widget'
-import type {
-  DateFilter,
-  DashboardStats as DashboardStatsType,
-} from '@/shared/types'
+import { useDashboardSummary } from '@/entities/system'
+import type { DateFilter } from '@/shared/types'
 
 export function DashboardPage() {
   const navigate = useNavigate()
@@ -26,6 +24,15 @@ export function DashboardPage() {
   const [customEndDate, setCustomEndDate] = useState('')
   const datePickerRef = useRef<HTMLDivElement>(null)
 
+  const { data: summary } = useDashboardSummary()
+
+  const stats = summary ?? {
+    totalJobs: 0,
+    completedJobs: 0,
+    processingJobs: 0,
+    failedJobs: 0,
+  }
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -38,14 +45,6 @@ export function DashboardPage() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
-
-  // Mock statistics
-  const stats: DashboardStatsType = {
-    total: 156,
-    completed: 142,
-    inProgress: 3,
-    failed: 11,
-  }
 
   const formatDateFilterLabel = () => {
     if (dateFilter.type === 'month' && dateFilter.month)

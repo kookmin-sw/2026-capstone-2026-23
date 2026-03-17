@@ -1,1 +1,5 @@
-export { useSystemStats, useDashboardStats } from './api/queries'
+export {
+  useDashboardSummary,
+  useDashboardFileTypes,
+  useDashboardRecentItems,
+} from './api/queries'
