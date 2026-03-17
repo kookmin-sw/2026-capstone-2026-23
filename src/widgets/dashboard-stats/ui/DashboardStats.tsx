@@ -23,8 +23,9 @@ export function DashboardStats({ stats, isLoading }: DashboardStatsProps) {
         icon={FileText}
         label="전체 작업"
         value={stats.totalJobs}
-        iconColor="text-primary"
-        bgColor="bg-[#edf5ff]"
+        iconColor="text-[#6c5ce7]"
+        bgColor="bg-[#6c5ce7]/10"
+        accentColor="#6c5ce7"
         isLoading={isLoading}
       />
       <StatCard
@@ -32,16 +33,18 @@ export function DashboardStats({ stats, isLoading }: DashboardStatsProps) {
         label="완료"
         value={stats.completedJobs}
         subtitle={`${completionRate}%`}
-        iconColor="text-[#198038]"
-        bgColor="bg-[#defbe6]"
+        iconColor="text-[#00b894]"
+        bgColor="bg-[#00b894]/10"
+        accentColor="#00b894"
         isLoading={isLoading}
       />
       <StatCard
         icon={Clock}
         label="진행 중"
         value={stats.processingJobs}
-        iconColor="text-[#684e00]"
-        bgColor="bg-[#fddc69]/30"
+        iconColor="text-[#fdcb6e]"
+        bgColor="bg-[#f9a825]/10"
+        accentColor="#fdcb6e"
         isLoading={isLoading}
       />
       <StatCard
@@ -49,8 +52,9 @@ export function DashboardStats({ stats, isLoading }: DashboardStatsProps) {
         label="실패"
         value={stats.failedJobs}
         subtitle={`${failureRate}%`}
-        iconColor="text-destructive"
-        bgColor="bg-[#fff1f1]"
+        iconColor="text-[#e17055]"
+        bgColor="bg-[#e17055]/10"
+        accentColor="#e17055"
         isLoading={isLoading}
       />
     </div>

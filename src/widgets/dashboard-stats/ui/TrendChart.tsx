@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -42,54 +42,79 @@ export function TrendChart() {
 
   return (
     <Card>
-      <CardContent className="p-4">
-        <div className="mb-2 flex items-center justify-between">
+      <CardContent className="p-5">
+        <div className="mb-4 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <TrendingUp className="text-primary h-4 w-4" />
-              <h3 className="text-foreground text-lg font-semibold">
-                일별 처리량
-              </h3>
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#6c5ce7]/10">
+                <TrendingUp className="h-3.5 w-3.5 text-[#6c5ce7]" />
+              </div>
+              <h3 className="text-foreground typo-h3">일별 처리량</h3>
             </div>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground mt-1 ml-9 text-xs">
               최근 7일간 처리된 파일 수
             </p>
           </div>
         </div>
         {isLoading ? (
-          <Skeleton className="h-[250px] w-full" />
+          <Skeleton className="h-[250px] w-full rounded-lg" />
         ) : chartData.length === 0 ? (
           <div className="text-muted-foreground flex h-[250px] items-center justify-center text-sm">
             아직 처리된 문서가 없습니다.
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#525252" />
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#6c5ce7" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#6c5ce7" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--border)"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
+                stroke="var(--border)"
+                axisLine={false}
+                tickLine={false}
+              />
               <YAxis
-                tick={{ fontSize: 12 }}
-                stroke="#525252"
+                tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
+                stroke="var(--border)"
                 allowDecimals={false}
+                axisLine={false}
+                tickLine={false}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '0px',
+                  backgroundColor: 'var(--card)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '10px',
                   fontSize: '12px',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
                 }}
                 formatter={(value: number) => [`${value}건`, '처리량']}
               />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="count"
-                stroke="#0f62fe"
-                strokeWidth={2}
-                dot={{ fill: '#0f62fe', r: 4 }}
-                activeDot={{ r: 6 }}
+                stroke="#6c5ce7"
+                strokeWidth={2.5}
+                fill="url(#trendGradient)"
+                dot={{ fill: '#6c5ce7', r: 4, strokeWidth: 2, stroke: '#fff' }}
+                activeDot={{
+                  r: 6,
+                  strokeWidth: 2,
+                  stroke: '#fff',
+                  fill: '#6c5ce7',
+                }}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         )}
       </CardContent>

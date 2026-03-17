@@ -93,13 +93,13 @@ export function DashboardPage() {
           <div className="relative" ref={datePickerRef}>
             <button
               onClick={() => setShowDatePicker(!showDatePicker)}
-              className="text-primary hover:text-primary/80 decoration-primary/40 hover:decoration-primary text-2xl font-bold underline decoration-2 underline-offset-4 transition-colors"
+              className="text-primary hover:text-primary/80 hover:bg-primary/5 rounded-lg px-1 text-2xl font-bold transition-all duration-200"
             >
               {formatDateFilterLabel()}
             </button>
 
             {showDatePicker && (
-              <div className="bg-card border-border absolute top-full left-0 z-10 mt-2 w-96 border p-4 shadow-lg">
+              <div className="bg-card border-border absolute top-full left-0 z-10 mt-2 w-96 rounded-xl border p-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
                 <div className="mb-4">
                   <h3 className="text-foreground mb-2 text-sm font-semibold">
                     월 선택
@@ -109,11 +109,11 @@ export function DashboardPage() {
                       <button
                         key={month.value}
                         onClick={() => handleMonthSelect(month.value)}
-                        className={`px-3 py-2 text-sm font-medium transition-colors ${
+                        className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 ${
                           dateFilter.type === 'month' &&
                           dateFilter.month === month.value
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-foreground hover:bg-muted/80'
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'bg-muted/60 text-foreground hover:bg-muted'
                         }`}
                       >
                         {month.label}
@@ -134,7 +134,7 @@ export function DashboardPage() {
                         type="date"
                         value={customStartDate}
                         onChange={(e) => setCustomStartDate(e.target.value)}
-                        className="border-border bg-card focus:ring-primary w-full border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+                        className="border-border bg-card focus:ring-primary w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                       />
                     </div>
                     <div>
@@ -145,12 +145,12 @@ export function DashboardPage() {
                         type="date"
                         value={customEndDate}
                         onChange={(e) => setCustomEndDate(e.target.value)}
-                        className="border-border bg-card focus:ring-primary w-full border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+                        className="border-border bg-card focus:ring-primary w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                       />
                     </div>
                     <button
                       onClick={handleCustomDateApply}
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2 w-full px-4 py-2 text-sm font-medium transition-colors"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2 w-full rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all duration-150"
                     >
                       적용
                     </button>

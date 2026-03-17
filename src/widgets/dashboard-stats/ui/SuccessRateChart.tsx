@@ -16,9 +16,9 @@ export function SuccessRateChart() {
 
   const chartData = summary
     ? [
-        { name: '성공', value: summary.completedJobs, color: '#24a148' },
-        { name: '실패', value: summary.failedJobs, color: '#da1e28' },
-        { name: '진행 중', value: summary.processingJobs, color: '#f1c21b' },
+        { name: '성공', value: summary.completedJobs, color: '#00b894' },
+        { name: '실패', value: summary.failedJobs, color: '#e17055' },
+        { name: '진행 중', value: summary.processingJobs, color: '#fdcb6e' },
       ].filter((d) => d.value > 0)
     : []
 
@@ -29,14 +29,16 @@ export function SuccessRateChart() {
 
   return (
     <Card>
-      <CardContent className="p-4">
-        <div className="mb-2 flex items-center gap-2">
-          <Activity className="text-primary h-4 w-4" />
-          <h3 className="text-foreground text-lg font-semibold">성공률 분석</h3>
+      <CardContent className="p-5">
+        <div className="mb-4 flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#00b894]/10">
+            <Activity className="h-3.5 w-3.5 text-[#00b894]" />
+          </div>
+          <h3 className="text-foreground typo-h3">성공률 분석</h3>
         </div>
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <Skeleton className="h-[250px] w-full" />
+            <Skeleton className="h-[250px] w-full rounded-lg" />
           </div>
         ) : chartData.length === 0 ? (
           <div className="text-muted-foreground flex h-[250px] items-center justify-center text-sm">
@@ -49,10 +51,11 @@ export function SuccessRateChart() {
                 data={chartData}
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius={90}
-                paddingAngle={5}
+                innerRadius={65}
+                outerRadius={95}
+                paddingAngle={4}
                 dataKey="value"
+                cornerRadius={6}
               >
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -60,22 +63,30 @@ export function SuccessRateChart() {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '0px',
+                  backgroundColor: 'var(--card)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '10px',
                   fontSize: '12px',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
                 }}
               />
-              <Legend verticalAlign="bottom" height={36} iconType="circle" />
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                iconType="circle"
+                formatter={(value) => (
+                  <span style={{ color: 'var(--foreground)', fontSize: 12 }}>
+                    {value}
+                  </span>
+                )}
+              />
             </PieChart>
           </ResponsiveContainer>
         )}
         <div className="border-border mt-4 border-t pt-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">성공률</span>
-            <span className="text-foreground font-semibold">
-              {successRate}%
-            </span>
+            <span className="font-semibold text-[#00b894]">{successRate}%</span>
           </div>
         </div>
       </CardContent>
