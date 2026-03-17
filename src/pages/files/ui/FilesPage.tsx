@@ -6,6 +6,7 @@ export function FilesPage() {
   const navigate = useNavigate()
 
   const handleFileSelect = (fileId: string) => {
+    console.log('handleFileSelect', fileId)
     navigate({ to: '/files/$fileId', params: { fileId } })
   }
 
