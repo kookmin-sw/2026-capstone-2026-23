@@ -4,9 +4,10 @@ import type { DashboardSummary } from '@/shared/types'
 
 interface DashboardStatsProps {
   stats: DashboardSummary
+  isLoading?: boolean
 }
 
-export function DashboardStats({ stats }: DashboardStatsProps) {
+export function DashboardStats({ stats, isLoading }: DashboardStatsProps) {
   const completionRate =
     stats.totalJobs > 0
       ? ((stats.completedJobs / stats.totalJobs) * 100).toFixed(1)
@@ -24,6 +25,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         value={stats.totalJobs}
         iconColor="text-primary"
         bgColor="bg-[#edf5ff]"
+        isLoading={isLoading}
       />
       <StatCard
         icon={CheckCircle}
@@ -32,6 +34,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         subtitle={`${completionRate}%`}
         iconColor="text-[#198038]"
         bgColor="bg-[#defbe6]"
+        isLoading={isLoading}
       />
       <StatCard
         icon={Clock}
@@ -39,6 +42,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         value={stats.processingJobs}
         iconColor="text-[#684e00]"
         bgColor="bg-[#fddc69]/30"
+        isLoading={isLoading}
       />
       <StatCard
         icon={XCircle}
@@ -47,6 +51,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         subtitle={`${failureRate}%`}
         iconColor="text-destructive"
         bgColor="bg-[#fff1f1]"
+        isLoading={isLoading}
       />
     </div>
   )

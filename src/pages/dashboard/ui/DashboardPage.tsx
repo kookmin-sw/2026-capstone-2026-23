@@ -24,7 +24,7 @@ export function DashboardPage() {
   const [customEndDate, setCustomEndDate] = useState('')
   const datePickerRef = useRef<HTMLDivElement>(null)
 
-  const { data: summary } = useDashboardSummary()
+  const { data: summary, isLoading: isSummaryLoading } = useDashboardSummary()
 
   const stats = summary ?? {
     totalJobs: 0,
@@ -166,7 +166,7 @@ export function DashboardPage() {
       </div>
 
       <RecentJobs />
-      <DashboardStats stats={stats} />
+      <DashboardStats stats={stats} isLoading={isSummaryLoading} />
 
       <div className="grid grid-cols-2 gap-4">
         <TrendChart />
