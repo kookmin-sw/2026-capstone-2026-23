@@ -2,12 +2,12 @@ import { api } from './client'
 
 import type { DocumentItem, DocumentResult, UploadedFile } from '@/shared/types'
 
-// 파일 업로드 (POST /upload)
+// 파일 업로드 (POST /files/upload)
 export const uploadFiles = (files: File[]) => {
   const formData = new FormData()
   files.forEach((file) => formData.append('files', file))
   return api.post<{ count: number; items: UploadedFile[] }>(
-    '/upload',
+    '/files/upload',
     formData,
     {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -15,9 +15,9 @@ export const uploadFiles = (files: File[]) => {
   )
 }
 
-// 파일 다운로드 (GET /download/{fileId})
+// 파일 다운로드 (GET /files/download/{fileId})
 export const downloadFile = (fileId: string) =>
-  api.get<Blob>(`/download/${fileId}`, { responseType: 'blob' })
+  api.get<Blob>(`/files/download/${fileId}`, { responseType: 'blob' })
 
 // 문서 목록 (GET /documents)
 export const getDocuments = (limit = 50) =>
