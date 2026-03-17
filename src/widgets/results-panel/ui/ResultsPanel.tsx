@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import DOMPurify from 'dompurify'
-import { FileText, Table, Image, Code } from 'lucide-react'
+import { FileText, Table, Image, Code, Loader2 } from 'lucide-react'
 import { Card, CardContent } from '@/shared/ui/card'
+import type { DocumentResult } from '@/shared/types'
 
 interface ParsedContent {
   metadata: { originalPath?: string; pageCount?: number }
@@ -13,19 +14,21 @@ interface ParsedContent {
 
 interface ResultsPanelProps {
   selectedFile: string
-  convertedContent?: string
+  documentResult?: DocumentResult
+  isLoading?: boolean
 }
 
 export function ResultsPanel({
   selectedFile,
-  convertedContent,
+  documentResult,
+  isLoading,
 }: ResultsPanelProps) {
   const content = useMemo<ParsedContent | null>(() => {
-    if (selectedFile && convertedContent) {
-      return parseConvertedContent(convertedContent)
+    if (documentResult?.txt?.preview) {
+      return parseConvertedContent(documentResult.txt.preview)
     }
     return null
-  }, [selectedFile, convertedContent])
+  }, [documentResult])
 
   if (!selectedFile) {
     return (
@@ -42,13 +45,44 @@ export function ResultsPanel({
     )
   }
 
+  if (isLoading) {
+    return (
+      <Card className="h-full">
+        <CardContent className="flex h-full items-center justify-center p-8 text-center">
+          <div>
+            <Loader2 className="text-primary mx-auto mb-3 h-8 w-8 animate-spin" />
+            <p className="text-muted-foreground">변환 결과를 불러오는 중...</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (documentResult?.error) {
+    return (
+      <Card className="h-full">
+        <CardContent className="flex h-full items-center justify-center p-8 text-center">
+          <div>
+            <FileText className="text-destructive mx-auto mb-3 h-12 w-12" />
+            <p className="text-destructive font-medium">변환 실패</p>
+            <p className="text-muted-foreground mt-1 text-sm">
+              {documentResult.error.message}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   if (!content) {
     return (
       <Card className="h-full">
         <CardContent className="flex h-full items-center justify-center p-8 text-center">
           <div>
-            <div className="border-primary mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
-            <p className="text-muted-foreground">변환 결과를 불러오는 중...</p>
+            <FileText className="text-muted-foreground mx-auto mb-3 h-12 w-12" />
+            <p className="text-muted-foreground">
+              변환이 완료되면 결과가 여기에 표시됩니다.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -58,14 +92,27 @@ export function ResultsPanel({
   return (
     <Card className="h-full overflow-y-auto">
       <CardContent className="p-6">
-        <h2 className="text-foreground mb-4 text-lg font-semibold">
-          변환 결과 미리보기
-        </h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-foreground text-lg font-semibold">
+            변환 결과 미리보기
+          </h2>
+          {documentResult && (
+            <span className="bg-muted text-muted-foreground px-2 py-1 font-mono text-xs">
+              {documentResult.modelCode}
+            </span>
+          )}
+        </div>
 
         {/* Metadata */}
         <div className="bg-muted/50 mb-6 p-4 font-mono text-xs">
-          <p>원본 파일 경로: {content.metadata.originalPath}</p>
-          <p>페이지 수: {content.metadata.pageCount}</p>
+          <p>문서 ID: {documentResult?.documentId}</p>
+          <p>파일명: {documentResult?.fileName}</p>
+          {content.metadata.originalPath && (
+            <p>원본 파일 경로: {content.metadata.originalPath}</p>
+          )}
+          {content.metadata.pageCount && (
+            <p>페이지 수: {content.metadata.pageCount}</p>
+          )}
         </div>
 
         {/* HTML Tables */}

@@ -71,9 +71,21 @@ export function ConversionPanel() {
         )
         files.forEach((f) => {
           if (f.status === 'converting') {
-            updateFile(f.id, { status: 'completed', progress: 100 })
+            const resultPath = f.documentId ?? f.id
+            updateFile(f.id, {
+              status: 'completed',
+              progress: 100,
+              resultPath,
+            })
           }
         })
+        // 첫 번째 완료 파일 자동 선택
+        const firstCompleted = files.find(
+          (f) => f.status === 'converting' && f.documentId,
+        )
+        if (firstCompleted?.documentId) {
+          setSelectedResultPath(firstCompleted.documentId)
+        }
       } else if (status === 'CANCELED') {
         setBatchStatus('변환이 취소되었습니다.')
       } else {

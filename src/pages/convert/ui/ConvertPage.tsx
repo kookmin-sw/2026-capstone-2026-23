@@ -4,12 +4,15 @@ import { ResultsPanel } from '@/widgets/results-panel'
 import { ChatModal } from '@/widgets/chat-modal'
 import { useUploadStore } from '@/features/file-upload'
 import { useUIStore } from '@/app/model/ui-store'
+import { useDocumentResult } from '@/entities/document'
 
 export function ConvertPage() {
   const { selectedResultPath, files } = useUploadStore()
   const { isChatOpen, setIsChatOpen } = useUIStore()
 
   const selectedFile = files.find((f) => f.resultPath === selectedResultPath)
+  const { data: documentResult, isLoading: isResultLoading } =
+    useDocumentResult(selectedFile?.documentId)
 
   return (
     <>
@@ -20,7 +23,8 @@ export function ConvertPage() {
         <div className="col-span-3">
           <ResultsPanel
             selectedFile={selectedResultPath}
-            convertedContent={selectedFile?.convertedContent}
+            documentResult={documentResult}
+            isLoading={isResultLoading && !!selectedFile?.documentId}
           />
         </div>
       </div>
