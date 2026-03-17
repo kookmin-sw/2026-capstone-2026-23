@@ -13,6 +13,7 @@ import {
   Upload,
 } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
+import { Skeleton } from '@/shared/ui/skeleton'
 import { useDocumentResult } from '@/entities/document'
 import type { DocumentStatus } from '@/shared/types'
 
@@ -67,8 +68,23 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+      <div className="bg-card min-h-full">
+        <div className="border-border border-b px-8 py-4">
+          <Skeleton className="h-5 w-48" />
+        </div>
+        <div className="mx-auto max-w-5xl px-8 py-12">
+          <Skeleton className="mb-4 h-7 w-24" />
+          <Skeleton className="mb-6 h-10 w-80" />
+          <div className="mb-8 flex gap-6">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-4 w-36" />
+          </div>
+          <Skeleton className="h-9 w-44" />
+          <div className="border-border mt-8 border-t pt-8">
+            <Skeleton className="h-[400px] w-full" />
+          </div>
+        </div>
       </div>
     )
   }

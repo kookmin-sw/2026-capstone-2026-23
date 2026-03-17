@@ -5,9 +5,9 @@ import {
   Download,
   RefreshCw,
   Trash2,
-  Loader2,
 } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
+import { Skeleton } from '@/shared/ui/skeleton'
 import { StatusBadge } from '@/shared/ui/status-badge'
 import { useDocuments, useDownloadFile } from '@/entities/document'
 import type { DocumentItem } from '@/shared/types'
@@ -102,8 +102,30 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+      <div className="space-y-3">
+        <div className="bg-card border-border border p-3">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-9 w-9" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+        <div className="bg-card border-border border">
+          <div className="space-y-0">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="border-border flex items-center gap-4 border-b px-4 py-3"
+              >
+                <Skeleton className="h-4 w-4" />
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-5 w-16" />
+                <Skeleton className="h-4 w-36" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-8 w-8" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     )
   }

@@ -1,4 +1,5 @@
 import { useModels } from '@/entities/model'
+import { Skeleton } from '@/shared/ui/skeleton'
 
 interface ConversionSettingsProps {
   modelId: string
@@ -21,7 +22,7 @@ export function ConversionSettings({
   overwriteMode,
   onOverwriteModeChange,
 }: ConversionSettingsProps) {
-  const { data: modelsData } = useModels()
+  const { data: modelsData, isLoading: isModelsLoading } = useModels()
   const models = modelsData?.models ?? []
 
   return (
@@ -30,24 +31,28 @@ export function ConversionSettings({
         <label className="text-foreground mb-2 block text-sm font-medium">
           VLM 모델 선택
         </label>
-        <select
-          className="border-border bg-card text-foreground w-full border px-3 py-2"
-          value={modelId}
-          onChange={(e) => onModelIdChange(e.target.value)}
-        >
-          {models.length > 0 ? (
-            models.map((model) => (
-              <option key={model.modelId} value={model.modelId}>
-                {model.displayName} ({model.code})
-              </option>
-            ))
-          ) : (
-            <>
-              <option value="m1">GPT-5 Mini (gpt-5-mini)</option>
-              <option value="m2">DeepSeek OCR 2 (deepseek-ocr-2)</option>
-            </>
-          )}
-        </select>
+        {isModelsLoading ? (
+          <Skeleton className="h-10 w-full" />
+        ) : (
+          <select
+            className="border-border bg-card text-foreground w-full border px-3 py-2"
+            value={modelId}
+            onChange={(e) => onModelIdChange(e.target.value)}
+          >
+            {models.length > 0 ? (
+              models.map((model) => (
+                <option key={model.modelId} value={model.modelId}>
+                  {model.displayName} ({model.code})
+                </option>
+              ))
+            ) : (
+              <>
+                <option value="m1">GPT-5 Mini (gpt-5-mini)</option>
+                <option value="m2">DeepSeek OCR 2 (deepseek-ocr-2)</option>
+              </>
+            )}
+          </select>
+        )}
         <p className="text-muted-foreground mt-1 text-xs">
           표/이미지 분석에 사용할 VLM 모델을 선택하세요 (deepseek-ocr-2: 폐쇄망
           환경용)

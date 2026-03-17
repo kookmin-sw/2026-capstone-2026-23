@@ -1,8 +1,24 @@
 import { Card, CardContent } from '@/shared/ui/card'
 import { StatusBadge } from '@/shared/ui/status-badge'
 import { FileTypeBadge } from '@/shared/ui/file-type-icon'
+import { Skeleton } from '@/shared/ui/skeleton'
 import { useDashboardRecentItems } from '@/entities/system'
-import { Loader2 } from 'lucide-react'
+
+function RecentJobsSkeleton() {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-4 px-4 py-2">
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-5 w-12" />
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-5 w-14" />
+          <Skeleton className="h-4 w-32" />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export function RecentJobs() {
   const { data, isLoading } = useDashboardRecentItems(5)
@@ -22,9 +38,7 @@ export function RecentJobs() {
           </div>
         </div>
         {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
-          </div>
+          <RecentJobsSkeleton />
         ) : items.length === 0 ? (
           <div className="text-muted-foreground py-8 text-center text-sm">
             아직 처리된 문서가 없습니다.
