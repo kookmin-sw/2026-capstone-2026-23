@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { useModels } from '@/entities/model'
 import { Skeleton } from '@/shared/ui/skeleton'
 
@@ -24,98 +26,117 @@ export function ConversionSettings({
 }: ConversionSettingsProps) {
   const { data: modelsData, isLoading: isModelsLoading } = useModels()
   const models = modelsData?.models ?? []
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="text-foreground mb-2 block text-sm font-medium">
-          VLM 모델 선택
-        </label>
-        {isModelsLoading ? (
-          <Skeleton className="h-10 w-full" />
-        ) : (
-          <select
-            className="border-border bg-card text-foreground focus:border-primary w-full rounded-lg border px-3 py-2.5 text-sm transition-colors focus:outline-none"
-            value={modelId}
-            onChange={(e) => onModelIdChange(e.target.value)}
-          >
-            {models.length > 0 ? (
-              models.map((model) => (
-                <option key={model.modelId} value={model.modelId}>
-                  {model.displayName} ({model.code})
-                </option>
-              ))
-            ) : (
-              <>
-                <option value="m1">GPT-5 Mini (gpt-5-mini)</option>
-                <option value="m2">DeepSeek OCR 2 (deepseek-ocr-2)</option>
-              </>
-            )}
-          </select>
-        )}
-        <p className="text-muted-foreground mt-1 text-xs">
-          표/이미지 분석에 사용할 VLM 모델을 선택하세요 (deepseek-ocr-2: 폐쇄망
-          환경용)
-        </p>
-        <label className="mt-2 flex items-center">
-          <input
-            type="checkbox"
-            checked={isPreferredModel}
-            onChange={(e) => onPreferredModelChange(e.target.checked)}
-            className="mr-2"
-          />
-          <span className="text-foreground text-sm">선호 모델로 설정</span>
-        </label>
-      </div>
-
-      <div>
-        <label className="text-foreground mb-2 block text-sm font-medium">
-          병렬 처리 수
-        </label>
-        <input
-          type="number"
-          min="1"
-          max="16"
-          className="border-border bg-card text-foreground focus:border-primary w-full rounded-lg border px-3 py-2.5 text-sm transition-colors focus:outline-none"
-          value={parallelCount}
-          onChange={(e) => onParallelCountChange(parseInt(e.target.value))}
+    <div>
+      {/* Toggle */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="text-muted-foreground hover:text-foreground flex w-full items-center gap-1.5 py-1.5 text-sm font-medium transition-colors"
+      >
+        <ChevronDown
+          className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         />
-        <p className="text-muted-foreground mt-1 text-xs">
-          1=순차(파일 중간 재개 가능), 2 이상=동시 처리
-        </p>
-      </div>
+        변환 설정
+      </button>
 
-      <div>
-        <label className="text-foreground mb-2 block text-sm font-medium">
-          중복 파일 처리
-        </label>
-        <div className="space-y-2">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="overwriteMode"
-              value="OVERWRITE"
-              checked={overwriteMode === 'OVERWRITE'}
-              onChange={() => onOverwriteModeChange('OVERWRITE')}
-              className="mr-2"
-            />
-            <span className="text-foreground text-sm">강제 덮어쓰기</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="overwriteMode"
-              value="KEEP_BOTH"
-              checked={overwriteMode === 'KEEP_BOTH'}
-              onChange={() => onOverwriteModeChange('KEEP_BOTH')}
-              className="mr-2"
-            />
-            <span className="text-foreground text-sm">
-              새로운 파일로 생성 (타임스탬프 추가)
-            </span>
-          </label>
+      {/* Collapsible body */}
+      {isOpen && (
+        <div className="border-border mt-1.5 rounded-lg border">
+          {/* VLM Model */}
+          <div className="px-3 py-2.5">
+            <label className="text-muted-foreground mb-1 block text-sm font-medium">
+              VLM 모델
+            </label>
+            {isModelsLoading ? (
+              <Skeleton className="h-8 w-full" />
+            ) : (
+              <select
+                className="border-border bg-card text-foreground focus:border-primary w-full rounded-md border px-2.5 py-2 text-sm transition-colors focus:outline-none"
+                value={modelId}
+                onChange={(e) => onModelIdChange(e.target.value)}
+              >
+                {models.length > 0 ? (
+                  models.map((model) => (
+                    <option key={model.modelId} value={model.modelId}>
+                      {model.displayName} ({model.code})
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="m1">GPT-5 Mini (gpt-5-mini)</option>
+                    <option value="m2">DeepSeek OCR 2 (deepseek-ocr-2)</option>
+                  </>
+                )}
+              </select>
+            )}
+            <label className="mt-1.5 flex items-center gap-1.5">
+              <input
+                type="checkbox"
+                checked={isPreferredModel}
+                onChange={(e) => onPreferredModelChange(e.target.checked)}
+              />
+              <span className="text-muted-foreground text-sm">
+                선호 모델로 설정
+              </span>
+            </label>
+          </div>
+
+          <div className="border-border border-t" />
+
+          {/* Parallel + Duplicate */}
+          <div className="divide-border grid grid-cols-2 divide-x">
+            <div className="px-3 py-2.5">
+              <label className="text-muted-foreground mb-1 block text-sm font-medium">
+                병렬 처리
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="16"
+                className="border-border bg-card text-foreground focus:border-primary w-full rounded-md border px-2.5 py-2 text-sm transition-colors focus:outline-none"
+                value={parallelCount}
+                onChange={(e) =>
+                  onParallelCountChange(parseInt(e.target.value))
+                }
+              />
+              <p className="text-muted-foreground mt-0.5 text-sm">
+                1=순차, 2+=동시
+              </p>
+            </div>
+
+            <div className="px-3 py-2.5">
+              <label className="text-muted-foreground mb-1 block text-sm font-medium">
+                중복 처리
+              </label>
+              <div className="space-y-1">
+                <label className="flex items-center gap-1.5">
+                  <input
+                    type="radio"
+                    name="overwriteMode"
+                    value="OVERWRITE"
+                    checked={overwriteMode === 'OVERWRITE'}
+                    onChange={() => onOverwriteModeChange('OVERWRITE')}
+                  />
+                  <span className="text-foreground text-sm">덮어쓰기</span>
+                </label>
+                <label className="flex items-center gap-1.5">
+                  <input
+                    type="radio"
+                    name="overwriteMode"
+                    value="KEEP_BOTH"
+                    checked={overwriteMode === 'KEEP_BOTH'}
+                    onChange={() => onOverwriteModeChange('KEEP_BOTH')}
+                  />
+                  <span className="text-foreground text-sm">새 파일 생성</span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

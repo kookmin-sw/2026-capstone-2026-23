@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react'
-import { Upload, Folder } from 'lucide-react'
-import { Button } from '@/shared/ui/button'
+import { Upload, FolderOpen } from 'lucide-react'
 
 interface FileUploaderProps {
   onFilesAdded: (files: File[]) => void
@@ -64,62 +63,67 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
   }
 
   return (
-    <div>
-      <label className="text-foreground mb-2 block text-sm font-medium">
-        문서 파일
-      </label>
-
+    <div
+      className={`rounded-2xl border-2 border-dashed px-6 py-8 text-center transition-all duration-200 ${
+        isDragging
+          ? 'border-primary bg-primary/5 scale-[1.01]'
+          : 'border-border'
+      }`}
+      onDrop={handleDrop}
+      onDragOver={(e) => {
+        e.preventDefault()
+        setIsDragging(true)
+      }}
+      onDragLeave={(e) => {
+        e.preventDefault()
+        setIsDragging(false)
+      }}
+    >
       <div
-        className={`cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-all ${
+        className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200 ${
           isDragging
-            ? 'border-primary bg-accent scale-[1.02]'
-            : 'border-border hover:border-primary/60 hover:bg-accent/50'
+            ? 'bg-primary/15 text-primary scale-110'
+            : 'bg-muted/80 text-muted-foreground'
         }`}
-        onDrop={handleDrop}
-        onDragOver={(e) => {
-          e.preventDefault()
-          setIsDragging(true)
-        }}
-        onDragLeave={(e) => {
-          e.preventDefault()
-          setIsDragging(false)
-        }}
-        onClick={() => fileInputRef.current?.click()}
       >
-        <div
-          className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl transition-colors ${isDragging ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'}`}
-        >
-          <Upload className="h-6 w-6" />
-        </div>
-        <p className="text-foreground mb-1 text-sm font-medium">
-          {isDragging
-            ? '파일을 여기에 놓으세요'
-            : '클릭하거나 파일을 드래그하여 업로드'}
-        </p>
-        <p className="text-muted-foreground text-xs">
-          HWP, HWPX, PDF, PNG, JPG, BMP, TIFF
-        </p>
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept=".hwp,.hwpx,.pdf,.png,.jpg,.jpeg,.bmp,.tiff"
-          className="hidden"
-          onChange={handleFileSelect}
-        />
+        <Upload className="h-5 w-5" strokeWidth={2} />
       </div>
 
-      <Button
-        variant="outline"
-        className="mt-3 w-full"
-        onClick={(e) => {
-          e.stopPropagation()
-          folderInputRef.current?.click()
-        }}
-      >
-        <Folder className="mr-2 h-4 w-4" />
-        폴더 전체 업로드
-      </Button>
+      <p className="text-foreground text-sm font-medium">
+        {isDragging ? '여기에 놓으세요' : '파일을 드래그하여 업로드'}
+      </p>
+      <p className="text-muted-foreground mt-1 mb-4 text-xs">
+        HWP, HWPX, PDF, PNG, JPG, BMP, TIFF
+      </p>
+
+      {/* Two action buttons side by side */}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="border-border hover:border-primary/40 hover:text-primary text-foreground flex flex-1 items-center justify-center gap-2 rounded-lg border bg-white px-3 py-2.5 text-sm font-medium transition-colors dark:bg-transparent"
+        >
+          <Upload className="h-4 w-4" />
+          파일 선택
+        </button>
+        <button
+          type="button"
+          onClick={() => folderInputRef.current?.click()}
+          className="border-border hover:border-primary/40 hover:text-primary text-foreground flex flex-1 items-center justify-center gap-2 rounded-lg border bg-white px-3 py-2.5 text-sm font-medium transition-colors dark:bg-transparent"
+        >
+          <FolderOpen className="h-4 w-4" />
+          폴더 선택
+        </button>
+      </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept=".hwp,.hwpx,.pdf,.png,.jpg,.jpeg,.bmp,.tiff"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
       <input
         ref={folderInputRef}
         type="file"

@@ -28,11 +28,15 @@ describe('ResultsPanel', () => {
         selectedFile="test"
         documentResult={{
           documentId: 'd1',
+          status: 'FAILED',
           fileName: 'test.pdf',
           modelCode: 'gpt-5-mini',
-          error: { message: '서버 오류' },
-          txt: null,
-          json: null,
+          error: { code: 'INTERNAL_ERROR', message: '서버 오류' },
+          txt: { path: '', preview: '' },
+          htmlPreview: null,
+          markdown: null,
+          imageDescriptions: [],
+          meta: {},
         }}
       />,
     )
@@ -46,11 +50,18 @@ describe('ResultsPanel', () => {
         selectedFile="test"
         documentResult={{
           documentId: 'd1',
+          status: 'COMPLETED',
           fileName: 'test.pdf',
           modelCode: 'gpt-5-mini',
           error: null,
-          txt: { preview: '테스트 본문 내용입니다.' },
-          json: null,
+          txt: {
+            path: '/output/test.txt',
+            preview: '테스트 본문 내용입니다.',
+          },
+          htmlPreview: null,
+          markdown: null,
+          imageDescriptions: [],
+          meta: {},
         }}
       />,
     )

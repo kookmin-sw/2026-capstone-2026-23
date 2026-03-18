@@ -24,55 +24,46 @@ const defaultProps = {
 }
 
 describe('ConversionSettings', () => {
-  it('VLM 모델 선택 라벨이 렌더링된다', () => {
+  it('변환 설정 토글이 렌더링된다', () => {
     render(<ConversionSettings {...defaultProps} />, {
       wrapper: createWrapper(),
     })
-    expect(screen.getByText('VLM 모델 선택')).toBeInTheDocument()
+    expect(screen.getByText('변환 설정')).toBeInTheDocument()
   })
 
-  it('병렬 처리 수 입력이 렌더링된다', () => {
+  it('기본적으로 접혀있다', () => {
     render(<ConversionSettings {...defaultProps} />, {
       wrapper: createWrapper(),
     })
-    expect(screen.getByText('병렬 처리 수')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('1')).toBeInTheDocument()
+    expect(screen.queryByText('VLM 모델')).not.toBeInTheDocument()
   })
 
-  it('중복 파일 처리 라디오 버튼이 렌더링된다', () => {
+  it('클릭하면 설정이 펼쳐진다', () => {
     render(<ConversionSettings {...defaultProps} />, {
       wrapper: createWrapper(),
     })
-    expect(screen.getByText('강제 덮어쓰기')).toBeInTheDocument()
-    expect(
-      screen.getByText('새로운 파일로 생성 (타임스탬프 추가)'),
-    ).toBeInTheDocument()
+    fireEvent.click(screen.getByText('변환 설정'))
+    expect(screen.getByText('VLM 모델')).toBeInTheDocument()
+    expect(screen.getByText('병렬 처리')).toBeInTheDocument()
+    expect(screen.getByText('덮어쓰기')).toBeInTheDocument()
   })
 
   it('OVERWRITE가 기본 선택된다', () => {
     render(<ConversionSettings {...defaultProps} />, {
       wrapper: createWrapper(),
     })
-    const overwriteRadio = screen.getByDisplayValue('OVERWRITE')
-    expect(overwriteRadio).toBeChecked()
+    fireEvent.click(screen.getByText('변환 설정'))
+    expect(screen.getByDisplayValue('OVERWRITE')).toBeChecked()
   })
 
-  it('라디오 버튼에 accent-primary 클래스가 없다', () => {
+  it('다시 클릭하면 접힌다', () => {
     render(<ConversionSettings {...defaultProps} />, {
       wrapper: createWrapper(),
     })
-    const radios = screen.getAllByRole('radio')
-    radios.forEach((radio) => {
-      expect(radio.className).not.toContain('accent-primary')
-    })
-  })
-
-  it('체크박스에 accent-primary 클래스가 없다', () => {
-    render(<ConversionSettings {...defaultProps} />, {
-      wrapper: createWrapper(),
-    })
-    const checkbox = screen.getByRole('checkbox')
-    expect(checkbox.className).not.toContain('accent-primary')
+    fireEvent.click(screen.getByText('변환 설정'))
+    expect(screen.getByText('VLM 모델')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('변환 설정'))
+    expect(screen.queryByText('VLM 모델')).not.toBeInTheDocument()
   })
 
   it('병렬 처리 수 변경 시 콜백이 호출된다', () => {
@@ -84,15 +75,8 @@ describe('ConversionSettings', () => {
       />,
       { wrapper: createWrapper() },
     )
+    fireEvent.click(screen.getByText('변환 설정'))
     fireEvent.change(screen.getByDisplayValue('1'), { target: { value: '4' } })
     expect(onParallelCountChange).toHaveBeenCalledWith(4)
-  })
-
-  it('select와 input에 rounded-lg 클래스가 적용되어 있다', () => {
-    render(<ConversionSettings {...defaultProps} />, {
-      wrapper: createWrapper(),
-    })
-    const numberInput = screen.getByDisplayValue('1')
-    expect(numberInput.className).toContain('rounded-lg')
   })
 })

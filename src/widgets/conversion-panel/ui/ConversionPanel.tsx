@@ -163,7 +163,6 @@ export function ConversionPanel() {
   }
 
   const handleResume = () => {
-    // 재개는 새 변환 요청으로 처리
     handleConvert()
   }
 
@@ -204,56 +203,64 @@ export function ConversionPanel() {
           : 'text-primary'
 
     return (
-      <div>
-        <label className="text-foreground mb-2 block text-sm font-medium">
-          배치 상태
-        </label>
-        <div className={`rounded-lg border px-4 py-3 ${bgColor}`}>
-          <div className="flex items-start gap-3">
-            <Icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${iconColor}`} />
-            <p className={`flex-1 text-sm whitespace-pre-line ${textColor}`}>
-              {batchStatus}
-            </p>
-          </div>
+      <div className={`rounded-lg border px-3 py-2.5 ${bgColor}`}>
+        <div className="flex items-center gap-2">
+          <Icon className={`h-4 w-4 flex-shrink-0 ${iconColor}`} />
+          <p className={`flex-1 text-xs whitespace-pre-line ${textColor}`}>
+            {batchStatus}
+          </p>
         </div>
       </div>
     )
   }
 
+  const hasFiles = files.length > 0
+
   return (
-    <div className="space-y-4">
-      <FileUploader onFilesAdded={addFiles} />
+    <div className="flex h-full flex-col">
+      {/* Top area — scrollable file content */}
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        {hasFiles ? (
+          <UploadedFilesList
+            files={files}
+            onRemoveFile={removeFile}
+            onFileSelect={handleFileSelect}
+            onFilesAdded={addFiles}
+            selectedFileId={selectedFile?.id}
+            overallProgress={overallProgress}
+          />
+        ) : (
+          <FileUploader onFilesAdded={addFiles} />
+        )}
+      </div>
 
-      {files.length > 0 && (
-        <UploadedFilesList
-          files={files}
-          onRemoveFile={removeFile}
-          onFileSelect={handleFileSelect}
-          selectedFileId={selectedFile?.id}
-          overallProgress={overallProgress}
-        />
-      )}
+      {/* Bottom — unified settings + action block */}
+      <div className="border-border mt-4 shrink-0 border-t pt-4">
+        {renderBatchStatus()}
 
-      <ConversionSettings
-        modelId={modelId}
-        onModelIdChange={setModelId}
-        parallelCount={parallelCount}
-        onParallelCountChange={setParallelCount}
-        isPreferredModel={isPreferredModel}
-        onPreferredModelChange={setIsPreferredModel}
-        overwriteMode={overwriteMode}
-        onOverwriteModeChange={setOverwriteMode}
-      />
+        <div className="border-border mt-3 rounded-xl border p-4">
+          <ConversionSettings
+            modelId={modelId}
+            onModelIdChange={setModelId}
+            parallelCount={parallelCount}
+            onParallelCountChange={setParallelCount}
+            isPreferredModel={isPreferredModel}
+            onPreferredModelChange={setIsPreferredModel}
+            overwriteMode={overwriteMode}
+            onOverwriteModeChange={setOverwriteMode}
+          />
 
-      <ActionButtons
-        onConvert={handleConvert}
-        onStop={handleStop}
-        onResume={handleResume}
-        isConverting={isConverting}
-        hasFiles={files.length > 0}
-      />
-
-      {renderBatchStatus()}
+          <div className="mt-3">
+            <ActionButtons
+              onConvert={handleConvert}
+              onStop={handleStop}
+              onResume={handleResume}
+              isConverting={isConverting}
+              hasFiles={hasFiles}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

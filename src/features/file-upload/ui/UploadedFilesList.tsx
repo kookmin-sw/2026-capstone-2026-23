@@ -1,4 +1,13 @@
-import { X, CheckCircle, XCircle, Clock, Loader2, Eye } from 'lucide-react'
+import { useRef } from 'react'
+import {
+  X,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Loader2,
+  Eye,
+  Plus,
+} from 'lucide-react'
 import { FileTypeIcon } from '@/shared/ui/file-type-icon'
 import type { UploadFileItem } from '../model/store'
 
@@ -6,6 +15,7 @@ interface UploadedFilesListProps {
   files: UploadFileItem[]
   onRemoveFile: (id: string) => void
   onFileSelect: (id: string) => void
+  onFilesAdded: (files: File[]) => void
   selectedFileId?: string
   overallProgress: number
 }
@@ -14,9 +24,12 @@ export function UploadedFilesList({
   files,
   onRemoveFile,
   onFileSelect,
+  onFilesAdded,
   selectedFileId,
   overallProgress,
 }: UploadedFilesListProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return bytes + ' B'
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
@@ -27,35 +40,33 @@ export function UploadedFilesList({
     switch (file.status) {
       case 'pending':
         return (
-          <div className="text-muted-foreground flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            <span className="text-xs">대기 중</span>
-          </div>
+          <span className="text-muted-foreground flex items-center gap-1 text-xs">
+            <Clock className="h-3 w-3" />
+            대기
+          </span>
         )
       case 'converting':
         return (
-          <div className="text-primary flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-xs font-medium">
-              {file.currentPage && file.totalPages
-                ? `Page ${file.currentPage}/${file.totalPages}`
-                : '변환 중...'}
-            </span>
-          </div>
+          <span className="text-primary flex items-center gap-1 text-xs font-medium">
+            <Loader2 className="h-3 w-3 animate-spin" />
+            {file.currentPage && file.totalPages
+              ? `${file.currentPage}/${file.totalPages}p`
+              : `${file.progress ?? 0}%`}
+          </span>
         )
       case 'completed':
         return (
-          <div className="flex items-center gap-2 text-[#198038]">
-            <CheckCircle className="h-4 w-4" />
-            <span className="text-xs font-medium">완료</span>
-          </div>
+          <span className="flex items-center gap-1 text-xs font-medium text-[#198038]">
+            <CheckCircle className="h-3 w-3" />
+            완료
+          </span>
         )
       case 'failed':
         return (
-          <div className="text-destructive flex items-center gap-2">
-            <XCircle className="h-4 w-4" />
-            <span className="text-xs font-medium">실패</span>
-          </div>
+          <span className="text-destructive flex items-center gap-1 text-xs font-medium">
+            <XCircle className="h-3 w-3" />
+            실패
+          </span>
         )
     }
   }
@@ -65,53 +76,71 @@ export function UploadedFilesList({
   const convertingCount = files.filter((f) => f.status === 'converting').length
 
   return (
-    <div className="bg-card border-border rounded-xl border p-4">
+    <div className="flex h-full flex-col">
+      {/* Header with counts + add button */}
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-foreground text-sm font-semibold">
-          업로드된 파일 ({files.length}개)
-        </h3>
-        <div className="flex items-center gap-3 text-xs">
-          {convertingCount > 0 && (
-            <span className="text-primary font-medium">
-              변환 중: {convertingCount}
-            </span>
-          )}
-          {completedCount > 0 && (
-            <span className="font-medium text-[#198038]">
-              완료: {completedCount}
-            </span>
-          )}
-          {failedCount > 0 && (
-            <span className="text-destructive font-medium">
-              실패: {failedCount}
-            </span>
-          )}
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-foreground text-sm font-semibold">
+            {files.length}개 파일
+          </h3>
+          <div className="flex items-center gap-2 text-xs">
+            {convertingCount > 0 && (
+              <span className="text-primary font-medium">
+                {convertingCount} 변환 중
+              </span>
+            )}
+            {completedCount > 0 && (
+              <span className="font-medium text-[#198038]">
+                {completedCount} 완료
+              </span>
+            )}
+            {failedCount > 0 && (
+              <span className="text-destructive font-medium">
+                {failedCount} 실패
+              </span>
+            )}
+          </div>
         </div>
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="text-muted-foreground hover:text-primary hover:bg-primary/5 flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          추가
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept=".hwp,.hwpx,.pdf,.png,.jpg,.jpeg,.bmp,.tiff"
+          className="hidden"
+          onChange={(e) => {
+            if (e.target.files) onFilesAdded(Array.from(e.target.files))
+            e.target.value = ''
+          }}
+        />
       </div>
 
+      {/* Overall progress */}
       {convertingCount > 0 && (
-        <div className="bg-accent border-primary/20 mb-4 rounded-lg border p-3">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-foreground text-sm font-medium">
-              전체 진행률
-            </span>
-            <span className="text-foreground text-sm font-bold">
+        <div className="mb-3">
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-muted-foreground text-xs">전체 진행률</span>
+            <span className="text-foreground text-xs font-semibold tabular-nums">
               {overallProgress}%
             </span>
           </div>
-          <div className="bg-border h-2.5 w-full overflow-hidden rounded-full">
+          <div className="bg-border h-1.5 w-full overflow-hidden rounded-full">
             <div
-              className="bg-primary h-2.5 rounded-full transition-all duration-300"
+              className="bg-primary h-full rounded-full transition-all duration-300"
               style={{ width: `${overallProgress}%` }}
             />
           </div>
-          <p className="text-muted-foreground mt-2 text-xs">
-            {completedCount}/{files.length} 파일 완료
-          </p>
         </div>
       )}
 
-      <div className="max-h-[400px] space-y-2 overflow-y-auto">
+      {/* File list */}
+      <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto">
         {files.map((uploadedFile) => (
           <div
             key={uploadedFile.id}
@@ -119,83 +148,71 @@ export function UploadedFilesList({
               uploadedFile.status === 'completed' &&
               onFileSelect(uploadedFile.id)
             }
-            className={`rounded-lg border p-3 transition-all ${
+            className={`rounded-lg border px-3 py-2.5 transition-all ${
               uploadedFile.status === 'completed'
                 ? selectedFileId === uploadedFile.id
-                  ? 'cursor-pointer border-[#24a148] bg-[#defbe6] ring-2 ring-[#24a148]'
-                  : 'cursor-pointer border-[#24a148]/30 bg-[#defbe6]/50 hover:bg-[#defbe6]'
+                  ? 'cursor-pointer border-[#24a148] bg-[#defbe6]'
+                  : 'cursor-pointer border-[#24a148]/20 bg-[#defbe6]/30 hover:bg-[#defbe6]/60'
                 : uploadedFile.status === 'failed'
-                  ? 'border-[#da1e28]/30 bg-[#fff1f1]'
+                  ? 'border-[#da1e28]/20 bg-[#fff1f1]/60'
                   : uploadedFile.status === 'converting'
-                    ? 'bg-accent border-primary/30'
-                    : 'bg-muted/50 border-border'
+                    ? 'border-primary/20 bg-accent/50'
+                    : 'border-border bg-card'
             }`}
           >
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 flex-shrink-0">
+            <div className="flex items-center gap-2.5">
+              <div className="flex-shrink-0">
                 <FileTypeIcon fileName={uploadedFile.file.name} />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="mb-1 flex items-center justify-between">
-                  <p className="text-foreground truncate pr-2 text-sm font-medium">
-                    {uploadedFile.file.name}
-                  </p>
-                  {uploadedFile.status === 'pending' && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onRemoveFile(uploadedFile.id)
-                      }}
-                      className="text-muted-foreground hover:text-destructive flex-shrink-0"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-muted-foreground text-xs">
-                    {formatFileSize(uploadedFile.file.size)}
-                  </span>
-                  {getStatusDisplay(uploadedFile)}
-                </div>
-                {uploadedFile.status === 'converting' && (
-                  <div className="mt-2">
-                    <div className="bg-border h-1.5 w-full overflow-hidden rounded-full">
-                      <div
-                        className="bg-primary h-1.5 rounded-full transition-all duration-150"
-                        style={{ width: `${uploadedFile.progress}%` }}
-                      />
-                    </div>
-                    <p className="text-muted-foreground mt-1 text-xs">
-                      {uploadedFile.progress}% 완료
-                    </p>
-                  </div>
+                <p className="text-foreground truncate text-sm leading-tight">
+                  {uploadedFile.file.name}
+                </p>
+                <p className="text-muted-foreground mt-0.5 text-xs">
+                  {formatFileSize(uploadedFile.file.size)}
+                </p>
+              </div>
+              <div className="flex flex-shrink-0 items-center gap-2">
+                {getStatusDisplay(uploadedFile)}
+                {uploadedFile.status === 'pending' && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onRemoveFile(uploadedFile.id)
+                    }}
+                    className="text-muted-foreground/50 hover:text-destructive transition-colors"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
                 )}
-                {uploadedFile.status === 'failed' && uploadedFile.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    오류: {uploadedFile.error}
-                  </p>
-                )}
-                {uploadedFile.status === 'completed' &&
-                  uploadedFile.resultPath && (
-                    <div className="mt-1 flex items-center gap-1">
-                      <CheckCircle className="h-3 w-3 text-[#198038]" />
-                      <p className="font-mono text-xs text-[#198038]">
-                        {uploadedFile.resultPath.split('/').pop()}
-                      </p>
-                    </div>
-                  )}
-                {uploadedFile.status === 'completed' &&
-                  selectedFileId !== uploadedFile.id && (
-                    <div className="mt-1 flex items-center gap-1">
-                      <Eye className="h-3 w-3 text-[#198038]" />
-                      <p className="text-xs font-medium text-[#198038]">
-                        클릭하여 결과 보기
-                      </p>
-                    </div>
-                  )}
               </div>
             </div>
+
+            {/* Converting progress bar */}
+            {uploadedFile.status === 'converting' && (
+              <div className="bg-primary/10 mt-2 h-1 w-full overflow-hidden rounded-full">
+                <div
+                  className="bg-primary h-full rounded-full transition-all duration-150"
+                  style={{ width: `${uploadedFile.progress}%` }}
+                />
+              </div>
+            )}
+
+            {/* Error message */}
+            {uploadedFile.status === 'failed' && uploadedFile.error && (
+              <p className="text-destructive mt-1.5 text-xs">
+                {uploadedFile.error}
+              </p>
+            )}
+
+            {/* Completed — click hint */}
+            {uploadedFile.status === 'completed' &&
+              selectedFileId !== uploadedFile.id && (
+                <div className="mt-1.5 flex items-center gap-1 text-xs text-[#198038]/70">
+                  <Eye className="h-3 w-3" />
+                  결과 보기
+                </div>
+              )}
           </div>
         ))}
       </div>
