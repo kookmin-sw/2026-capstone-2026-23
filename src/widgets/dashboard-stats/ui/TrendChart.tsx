@@ -46,8 +46,8 @@ export function TrendChart() {
         <div className="mb-4 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#6c5ce7]/10">
-                <TrendingUp className="h-3.5 w-3.5 text-[#6c5ce7]" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#ff7121]/10">
+                <TrendingUp className="h-3.5 w-3.5 text-[#ff7121]" />
               </div>
               <h3 className="text-foreground typo-h3">일별 처리량</h3>
             </div>
@@ -67,8 +67,8 @@ export function TrendChart() {
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6c5ce7" stopOpacity={0.2} />
-                  <stop offset="100%" stopColor="#6c5ce7" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#ff7121" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#ff7121" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
@@ -103,15 +103,15 @@ export function TrendChart() {
               <Area
                 type="monotone"
                 dataKey="count"
-                stroke="#6c5ce7"
+                stroke="#ff7121"
                 strokeWidth={2.5}
                 fill="url(#trendGradient)"
-                dot={{ fill: '#6c5ce7', r: 4, strokeWidth: 2, stroke: '#fff' }}
+                dot={{ fill: '#ff7121', r: 4, strokeWidth: 2, stroke: '#fff' }}
                 activeDot={{
                   r: 6,
                   strokeWidth: 2,
                   stroke: '#fff',
-                  fill: '#6c5ce7',
+                  fill: '#ff7121',
                 }}
               />
             </AreaChart>

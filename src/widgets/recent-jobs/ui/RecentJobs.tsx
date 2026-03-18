@@ -31,8 +31,8 @@ export function RecentJobs() {
         <div className="mb-4 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#6c5ce7]/10">
-                <Clock className="h-3.5 w-3.5 text-[#6c5ce7]" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#ff7121]/10">
+                <Clock className="h-3.5 w-3.5 text-[#ff7121]" />
               </div>
               <h3 className="text-foreground typo-h3">최근 작업 내역</h3>
             </div>
