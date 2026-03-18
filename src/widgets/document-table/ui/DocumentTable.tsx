@@ -193,7 +193,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                     type="checkbox"
                     checked={selectAll}
                     onChange={toggleSelectAll}
-                    className="accent-primary h-4 w-4"
+                    className="h-4 w-4"
                   />
                 </th>
                 <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
@@ -231,7 +231,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                         type="checkbox"
                         checked={doc.selected}
                         onChange={() => toggleDocSelection(doc.documentId)}
-                        className="accent-primary h-4 w-4"
+                        className="h-4 w-4"
                       />
                     </td>
                     <td className="px-4 py-3">

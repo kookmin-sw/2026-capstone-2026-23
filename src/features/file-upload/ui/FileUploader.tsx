@@ -70,10 +70,10 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
       </label>
 
       <div
-        className={`cursor-pointer border-2 border-dashed p-8 text-center transition-all ${
+        className={`cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-all ${
           isDragging
             ? 'border-primary bg-accent scale-[1.02]'
-            : 'border-border hover:border-primary hover:bg-muted/50'
+            : 'border-border hover:border-primary/60 hover:bg-accent/50'
         }`}
         onDrop={handleDrop}
         onDragOver={(e) => {
@@ -86,9 +86,11 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
         }}
         onClick={() => fileInputRef.current?.click()}
       >
-        <Upload
-          className={`mx-auto mb-3 h-12 w-12 transition-colors ${isDragging ? 'text-primary' : 'text-muted-foreground'}`}
-        />
+        <div
+          className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl transition-colors ${isDragging ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'}`}
+        >
+          <Upload className="h-6 w-6" />
+        </div>
         <p className="text-foreground mb-1 text-sm font-medium">
           {isDragging
             ? '파일을 여기에 놓으세요'

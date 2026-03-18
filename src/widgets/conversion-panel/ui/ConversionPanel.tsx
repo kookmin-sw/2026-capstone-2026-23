@@ -208,7 +208,7 @@ export function ConversionPanel() {
         <label className="text-foreground mb-2 block text-sm font-medium">
           배치 상태
         </label>
-        <div className={`border px-4 py-3 ${bgColor}`}>
+        <div className={`rounded-lg border px-4 py-3 ${bgColor}`}>
           <div className="flex items-start gap-3">
             <Icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${iconColor}`} />
             <p className={`flex-1 text-sm whitespace-pre-line ${textColor}`}>

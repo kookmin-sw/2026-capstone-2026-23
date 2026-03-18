@@ -65,7 +65,7 @@ export function UploadedFilesList({
   const convertingCount = files.filter((f) => f.status === 'converting').length
 
   return (
-    <div className="bg-card border-border border p-4">
+    <div className="bg-card border-border rounded-xl border p-4">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-foreground text-sm font-semibold">
           업로드된 파일 ({files.length}개)
@@ -90,7 +90,7 @@ export function UploadedFilesList({
       </div>
 
       {convertingCount > 0 && (
-        <div className="bg-accent border-primary/20 mb-4 border p-3">
+        <div className="bg-accent border-primary/20 mb-4 rounded-lg border p-3">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-foreground text-sm font-medium">
               전체 진행률
@@ -99,9 +99,9 @@ export function UploadedFilesList({
               {overallProgress}%
             </span>
           </div>
-          <div className="bg-border h-2.5 w-full">
+          <div className="bg-border h-2.5 w-full overflow-hidden rounded-full">
             <div
-              className="bg-primary h-2.5 transition-all duration-300"
+              className="bg-primary h-2.5 rounded-full transition-all duration-300"
               style={{ width: `${overallProgress}%` }}
             />
           </div>
@@ -119,7 +119,7 @@ export function UploadedFilesList({
               uploadedFile.status === 'completed' &&
               onFileSelect(uploadedFile.id)
             }
-            className={`border p-3 transition-all ${
+            className={`rounded-lg border p-3 transition-all ${
               uploadedFile.status === 'completed'
                 ? selectedFileId === uploadedFile.id
                   ? 'cursor-pointer border-[#24a148] bg-[#defbe6] ring-2 ring-[#24a148]'
@@ -160,9 +160,9 @@ export function UploadedFilesList({
                 </div>
                 {uploadedFile.status === 'converting' && (
                   <div className="mt-2">
-                    <div className="bg-border h-1.5 w-full">
+                    <div className="bg-border h-1.5 w-full overflow-hidden rounded-full">
                       <div
-                        className="bg-primary h-1.5 transition-all duration-150"
+                        className="bg-primary h-1.5 rounded-full transition-all duration-150"
                         style={{ width: `${uploadedFile.progress}%` }}
                       />
                     </div>

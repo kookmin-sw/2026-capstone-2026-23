@@ -35,7 +35,7 @@ export function ConversionSettings({
           <Skeleton className="h-10 w-full" />
         ) : (
           <select
-            className="border-border bg-card text-foreground w-full border px-3 py-2"
+            className="border-border bg-card text-foreground focus:border-primary w-full rounded-lg border px-3 py-2.5 text-sm transition-colors focus:outline-none"
             value={modelId}
             onChange={(e) => onModelIdChange(e.target.value)}
           >
@@ -62,7 +62,7 @@ export function ConversionSettings({
             type="checkbox"
             checked={isPreferredModel}
             onChange={(e) => onPreferredModelChange(e.target.checked)}
-            className="accent-primary mr-2 h-4 w-4"
+            className="mr-2"
           />
           <span className="text-foreground text-sm">선호 모델로 설정</span>
         </label>
@@ -76,7 +76,7 @@ export function ConversionSettings({
           type="number"
           min="1"
           max="16"
-          className="border-border bg-card text-foreground w-full border px-3 py-2"
+          className="border-border bg-card text-foreground focus:border-primary w-full rounded-lg border px-3 py-2.5 text-sm transition-colors focus:outline-none"
           value={parallelCount}
           onChange={(e) => onParallelCountChange(parseInt(e.target.value))}
         />
@@ -97,7 +97,7 @@ export function ConversionSettings({
               value="OVERWRITE"
               checked={overwriteMode === 'OVERWRITE'}
               onChange={() => onOverwriteModeChange('OVERWRITE')}
-              className="accent-primary mr-2 h-4 w-4"
+              className="mr-2"
             />
             <span className="text-foreground text-sm">강제 덮어쓰기</span>
           </label>
@@ -108,7 +108,7 @@ export function ConversionSettings({
               value="KEEP_BOTH"
               checked={overwriteMode === 'KEEP_BOTH'}
               onChange={() => onOverwriteModeChange('KEEP_BOTH')}
-              className="accent-primary mr-2 h-4 w-4"
+              className="mr-2"
             />
             <span className="text-foreground text-sm">
               새로운 파일로 생성 (타임스탬프 추가)
