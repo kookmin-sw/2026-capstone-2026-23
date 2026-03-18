@@ -218,7 +218,7 @@ export function SettingsPage() {
                               e.target.value as 'overwrite' | 'create-new',
                             )
                           }
-                          className="accent-primary mt-1 h-4 w-4"
+                          className="mt-1 h-4 w-4"
                         />
                         <div>
                           <div className="text-foreground text-sm font-medium">

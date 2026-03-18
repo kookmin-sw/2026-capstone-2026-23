@@ -44,7 +44,7 @@ export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
   const errorStats = [
     { type: 'VLM 타임아웃', count: 5, color: '#e17055' },
     { type: '메모리 부족', count: 3, color: '#fdcb6e' },
-    { type: '변환 실패', count: 2, color: '#6c5ce7' },
+    { type: '변환 실패', count: 2, color: '#ff7121' },
     { type: '파일 형식 오류', count: 1, color: '#0984e3' },
   ]
 

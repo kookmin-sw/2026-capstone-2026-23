@@ -99,20 +99,20 @@
   --popover: #ffffff;
   --popover-foreground: #1a1a2e;
 
-  /* Primary — Luminir Purple-Blue blend */
-  --primary: #6c5ce7;
+  /* Primary — Luminir Orange */
+  --primary: #ff7121;
   --primary-foreground: #ffffff;
 
   /* Secondary */
-  --secondary: #f0eef9;
+  --secondary: #fff4ed;
   --secondary-foreground: #1a1a2e;
 
   /* Muted */
-  --muted: #f0eef9;
+  --muted: #fff4ed;
   --muted-foreground: #6b7280;
 
   /* Accent */
-  --accent: #f0eef9;
+  --accent: #fff4ed;
   --accent-foreground: #1a1a2e;
 
   /* Destructive */
@@ -121,10 +121,10 @@
   /* Border / Input / Ring */
   --border: #e5e5ef;
   --input: #e5e5ef;
-  --ring: #6c5ce7;
+  --ring: #ff7121;
 
   /* Chart palette — Luminir brand-aligned */
-  --chart-1: #6c5ce7; /* Purple */
+  --chart-1: #ff7121; /* Orange */
   --chart-2: #00b894; /* Teal green */
   --chart-3: #fdcb6e; /* Warm yellow */
   --chart-4: #e17055; /* Coral */
@@ -151,25 +151,25 @@
   --popover: #1a1a2e;
   --popover-foreground: #e8e8f0;
 
-  --primary: #a29bfe;
+  --primary: #ff8c4c;
   --primary-foreground: #0f0f1a;
 
-  --secondary: #252540;
+  --secondary: #2a2015;
   --secondary-foreground: #e8e8f0;
 
-  --muted: #252540;
+  --muted: #2a2015;
   --muted-foreground: #9ca3af;
 
-  --accent: #252540;
+  --accent: #2a2015;
   --accent-foreground: #e8e8f0;
 
   --destructive: #f87171;
 
   --border: #2d2d4a;
   --input: #2d2d4a;
-  --ring: #a29bfe;
+  --ring: #ff8c4c;
 
-  --chart-1: #a29bfe; /* Soft purple */
+  --chart-1: #ff8c4c; /* Soft orange */
   --chart-2: #55efc4; /* Mint */
   --chart-3: #ffeaa7; /* Soft yellow */
   --chart-4: #fab1a0; /* Peach */
@@ -177,12 +177,12 @@
 
   --sidebar: #1a1a2e;
   --sidebar-foreground: #e8e8f0;
-  --sidebar-primary: #a29bfe;
+  --sidebar-primary: #ff8c4c;
   --sidebar-primary-foreground: #0f0f1a;
   --sidebar-accent: #252540;
   --sidebar-accent-foreground: #e8e8f0;
   --sidebar-border: #2d2d4a;
-  --sidebar-ring: #a29bfe;
+  --sidebar-ring: #ff8c4c;
 }
 
 @layer base {
@@ -291,6 +291,54 @@
     font-size: 0.8125rem; /* 13px */
     font-weight: 400;
     line-height: 1.5;
+  }
+}
+
+/* ───── Custom form controls (radio / checkbox) ───── */
+@layer base {
+  input[type='radio'],
+  input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+      border-color 0.15s,
+      background-color 0.15s;
+  }
+
+  input[type='radio'] {
+    border-radius: 50%;
+  }
+
+  input[type='checkbox'] {
+    border-radius: 4px;
+  }
+
+  input[type='radio']:checked {
+    border-color: var(--primary);
+    border-width: 5px;
+  }
+
+  input[type='checkbox']:checked {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+  }
+
+  input[type='radio']:hover,
+  input[type='checkbox']:hover {
+    border-color: var(--primary);
+  }
+
+  input[type='radio']:focus-visible,
+  input[type='checkbox']:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 

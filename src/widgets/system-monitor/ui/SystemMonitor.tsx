@@ -20,7 +20,7 @@ export function SystemMonitor() {
           {/* CPU */}
           <div className="bg-muted/30 rounded-xl p-4">
             <div className="mb-2 flex items-center gap-2">
-              <Cpu className="h-4 w-4 text-[#6c5ce7]" />
+              <Cpu className="h-4 w-4 text-[#ff7121]" />
               <span className="text-muted-foreground text-sm font-medium">
                 CPU 사용률
               </span>
@@ -29,7 +29,7 @@ export function SystemMonitor() {
             <div className="bg-muted/50 mt-3 flex h-2 overflow-hidden rounded-full">
               <div
                 style={{ width: `${systemData.cpu}%` }}
-                className="rounded-full bg-[#6c5ce7] transition-all duration-300"
+                className="rounded-full bg-[#ff7121] transition-all duration-300"
               />
             </div>
           </div>

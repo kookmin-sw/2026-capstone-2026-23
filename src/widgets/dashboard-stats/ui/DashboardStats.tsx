@@ -23,9 +23,9 @@ export function DashboardStats({ stats, isLoading }: DashboardStatsProps) {
         icon={FileText}
         label="전체 작업"
         value={stats.totalJobs}
-        iconColor="text-[#6c5ce7]"
-        bgColor="bg-[#6c5ce7]/10"
-        accentColor="#6c5ce7"
+        iconColor="text-[#ff7121]"
+        bgColor="bg-[#ff7121]/10"
+        accentColor="#ff7121"
         isLoading={isLoading}
       />
       <StatCard

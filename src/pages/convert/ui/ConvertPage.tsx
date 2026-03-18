@@ -16,11 +16,11 @@ export function ConvertPage() {
 
   return (
     <>
-      <div className="grid grid-cols-5 gap-6">
-        <div className="col-span-2">
+      <div className="flex h-full gap-6">
+        <div className="w-2/5 shrink-0 overflow-y-auto">
           <ConversionPanel />
         </div>
-        <div className="col-span-3">
+        <div className="flex flex-1 flex-col overflow-hidden">
           <ResultsPanel
             selectedFile={selectedResultPath}
             documentResult={documentResult}
@@ -32,7 +32,7 @@ export function ConvertPage() {
       {selectedResultPath && !isChatOpen && (
         <button
           onClick={() => setIsChatOpen(true)}
-          className="fixed right-6 bottom-6 z-40 flex items-center gap-2 bg-[#198038] px-5 py-3 text-white shadow-2xl transition-all hover:scale-110 hover:bg-[#0e6027]"
+          className="bg-primary hover:bg-primary/85 fixed right-6 bottom-6 z-40 flex items-center gap-2 rounded-full px-5 py-3 text-white shadow-2xl transition-all hover:scale-105"
         >
           <MessageCircle className="h-5 w-5" />
           <span className="font-medium">AI 질의응답</span>
