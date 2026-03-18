@@ -1,15 +1,195 @@
-export type FileStatus =
-  | 'completed'
-  | 'converting'
-  | 'failed'
-  | 'queued'
-  | 'pending'
+// ── 공통 응답 래퍼 ──
 
-export type ErrorType =
-  | 'VLM 타임아웃'
-  | '메모리 부족'
-  | '변환 실패'
-  | '파일 형식 오류'
+export interface ApiError {
+  code: string
+  message: string
+  details?: Record<string, unknown>
+}
+
+export interface ApiResponse<T> {
+  success: boolean
+  data: T
+  error?: ApiError
+}
+
+// ── 문서 상태 ──
+
+export type DocumentStatus =
+  | 'UPLOADED'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'CANCELLED'
+
+// ── Job 상태 ──
+
+export type JobStatus =
+  | 'QUEUED'
+  | 'PROCESSING'
+  | 'CANCELLING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'CANCELED'
+
+// ── 모델 ──
+
+export interface VlmModel {
+  modelId: string
+  code: string
+  displayName: string
+  provider: string
+  isActive: boolean
+}
+
+// ── 파일 업로드 ──
+
+export interface UploadedFile {
+  fileId: string
+  originalFilename: string
+  fileType: string
+  sizeBytes: number
+  uploadedAt: string
+  downloadUrl: string
+  processable: boolean
+}
+
+// ── 문서 ──
+
+export interface DocumentItem {
+  documentId: string
+  title: string
+  originalFilename: string
+  fileType: string
+  uploadedAt: string
+  latestStatus: DocumentStatus
+  jobId: string | null
+  processingTimeMs: number | null
+  modelCode: string | null
+  outputPath: string
+  error: ApiError | null
+}
+
+// ── 변환 결과 ──
+
+export interface ArtifactTxt {
+  artifactId: string
+  path: string
+  preview: string
+}
+
+export interface DocumentResultMeta {
+  totalPages: number | null
+  processedPages: number | null
+  processingTimeMs: number
+  completedAt: string
+}
+
+export interface ConvertResultItem {
+  documentId: string
+  fileName: string
+  originalFilePath: string
+  txt: ArtifactTxt
+  htmlPreview: string | null
+  markdown: unknown | null
+  imageDescriptions: unknown[]
+  meta: DocumentResultMeta
+  status: DocumentStatus
+  error: ApiError | null
+}
+
+export interface ConvertResult {
+  jobId: string
+  status: JobStatus
+  modelId: string
+  duplicatePolicy: 'OVERWRITE' | 'KEEP_BOTH'
+  parallelism: number
+  items: ConvertResultItem[]
+}
+
+// ── Job ──
+
+export interface JobStatusData {
+  jobId: string
+  status: JobStatus
+  cancelRequested: boolean
+  cancelledAt: string | null
+  totalDocuments: number
+  completedDocuments: number
+  failedDocuments: number
+  processingDocuments: number
+  pendingDocuments: number
+  completedDocumentIds: string[]
+  updatedAt: string
+}
+
+// ── 문서 결과 ──
+
+export interface DocumentResult {
+  documentId: string
+  status: DocumentStatus
+  fileName: string
+  modelCode: string
+  txt: {
+    path: string
+    preview: string
+  }
+  htmlPreview: string | null
+  markdown: unknown | null
+  imageDescriptions: unknown[]
+  meta: Record<string, unknown>
+  error: ApiError | null
+}
+
+// ── 대시보드 ──
+
+export interface DashboardSummary {
+  totalJobs: number
+  completedJobs: number
+  processingJobs: number
+  failedJobs: number
+}
+
+export interface DashboardFileType {
+  type: string
+  count: number
+}
+
+// ── RAG ──
+
+export interface RagSession {
+  sessionId: string
+  title: string
+  documentIds: string[]
+}
+
+export interface RagMessage {
+  messageId: string
+  role: 'user' | 'assistant'
+  content: string
+  citations: unknown[]
+  createdAt: string
+}
+
+export interface RagAnswer {
+  sessionId: string
+  answer: string
+  citations: unknown[]
+}
+
+// ── 시스템 ──
+
+export interface SystemStats {
+  cpu: number
+  memory: {
+    total: number
+    used: number
+    percent: number
+  }
+  activeWorkers: number
+  queueDepth: number
+}
+
+// ── 에러 로그 ──
 
 export interface ErrorDetail {
   id: string
@@ -23,49 +203,7 @@ export interface ErrorDetail {
   model?: string
 }
 
-export interface DocumentItem {
-  id: string
-  name: string
-  date: string
-  convertedBy: string
-  summary?: string
-  hasOriginal: boolean
-  hasTmp: boolean
-  hasOutput: boolean
-}
-
-export interface ConversionJob {
-  id: string
-  fileName: string
-  status: FileStatus
-  progress: number
-  currentPage?: number
-  totalPages?: number
-  resultPath?: string
-  error?: string
-  convertedContent?: string
-}
-
-export type VlmModel = 'gpt-5-mini' | 'gpt-5.2' | 'deepseek-ocr-2'
-
-export interface SystemStats {
-  cpu: number
-  memory: number
-  activeWorkers: number
-  queueSize: number
-}
-
-export interface StorageInfo {
-  usedGB: number
-  limitGB: number
-}
-
-export interface DashboardStats {
-  total: number
-  completed: number
-  inProgress: number
-  failed: number
-}
+// ── 날짜 필터 ──
 
 export type DateFilterType = 'month' | 'custom'
 
@@ -76,6 +214,8 @@ export interface DateFilter {
   startDate?: string
   endDate?: string
 }
+
+// ── 채팅 (UI용) ──
 
 export interface ChatMessage {
   id: string

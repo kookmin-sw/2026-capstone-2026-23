@@ -1,1 +1,6 @@
-export { useDocuments, useDownloadFile, useDeleteFile } from './api/queries'
+export {
+  useDocuments,
+  useDocumentResult,
+  useUploadFiles,
+  useDownloadFile,
+} from './api/queries'

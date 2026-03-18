@@ -23,6 +23,12 @@ export default defineConfig({
     watch: {
       ignored: ['**/routeTree.gen.ts'],
     },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
   },
   test: {
     globals: true,

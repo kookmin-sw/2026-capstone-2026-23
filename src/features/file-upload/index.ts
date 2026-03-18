@@ -1,5 +1,5 @@
 export { useUploadStore } from './model/store'
-export type { UploadedFile } from './model/store'
+export type { UploadFileItem } from './model/store'
 export { FileUploader } from './ui/FileUploader'
 export { ConversionSettings } from './ui/ConversionSettings'
 export { ActionButtons } from './ui/ActionButtons'

@@ -1,7 +1,6 @@
 import { create } from 'zustand'
-import type { VlmModel } from '@/shared/types'
 
-export interface UploadedFile {
+export interface UploadFileItem {
   file: File
   id: string
   status: 'pending' | 'converting' | 'completed' | 'failed'
@@ -11,39 +10,43 @@ export interface UploadedFile {
   resultPath?: string
   error?: string
   convertedContent?: string
+  documentId?: string
 }
 
 interface UploadState {
-  files: UploadedFile[]
-  vlmModel: VlmModel
+  files: UploadFileItem[]
+  modelId: string
   parallelCount: number
   isConverting: boolean
   batchStatus: string
   selectedResultPath: string
   isPreferredModel: boolean
-  overwriteMode: 'overwrite' | 'new'
+  overwriteMode: 'OVERWRITE' | 'KEEP_BOTH'
+  jobId: string | null
   addFiles: (files: File[]) => void
   removeFile: (id: string) => void
-  updateFile: (id: string, updates: Partial<UploadedFile>) => void
-  setVlmModel: (model: VlmModel) => void
+  updateFile: (id: string, updates: Partial<UploadFileItem>) => void
+  setModelId: (modelId: string) => void
   setParallelCount: (count: number) => void
   setIsConverting: (converting: boolean) => void
   setBatchStatus: (status: string) => void
   setSelectedResultPath: (path: string) => void
   setIsPreferredModel: (preferred: boolean) => void
-  setOverwriteMode: (mode: 'overwrite' | 'new') => void
+  setOverwriteMode: (mode: 'OVERWRITE' | 'KEEP_BOTH') => void
+  setJobId: (jobId: string | null) => void
   reset: () => void
 }
 
 export const useUploadStore = create<UploadState>((set) => ({
   files: [],
-  vlmModel: 'gpt-5.2',
+  modelId: 'm1',
   parallelCount: 1,
   isConverting: false,
   batchStatus: '',
   selectedResultPath: '',
   isPreferredModel: false,
-  overwriteMode: 'new',
+  overwriteMode: 'OVERWRITE',
+  jobId: null,
   addFiles: (newFiles) =>
     set((state) => ({
       files: [
@@ -62,18 +65,20 @@ export const useUploadStore = create<UploadState>((set) => ({
     set((state) => ({
       files: state.files.map((f) => (f.id === id ? { ...f, ...updates } : f)),
     })),
-  setVlmModel: (vlmModel) => set({ vlmModel }),
+  setModelId: (modelId) => set({ modelId }),
   setParallelCount: (parallelCount) => set({ parallelCount }),
   setIsConverting: (isConverting) => set({ isConverting }),
   setBatchStatus: (batchStatus) => set({ batchStatus }),
   setSelectedResultPath: (selectedResultPath) => set({ selectedResultPath }),
   setIsPreferredModel: (isPreferredModel) => set({ isPreferredModel }),
   setOverwriteMode: (overwriteMode) => set({ overwriteMode }),
+  setJobId: (jobId) => set({ jobId }),
   reset: () =>
     set({
       files: [],
       isConverting: false,
       batchStatus: '',
       selectedResultPath: '',
+      jobId: null,
     }),
 }))

@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import DOMPurify from 'dompurify'
-import { FileText, Table, Image, Code } from 'lucide-react'
+import { FileText, Table, Image, Code, Loader2 } from 'lucide-react'
 import { Card, CardContent } from '@/shared/ui/card'
+import type { DocumentResult } from '@/shared/types'
 
 interface ParsedContent {
   metadata: { originalPath?: string; pageCount?: number }
@@ -13,28 +14,66 @@ interface ParsedContent {
 
 interface ResultsPanelProps {
   selectedFile: string
-  convertedContent?: string
+  documentResult?: DocumentResult
+  isLoading?: boolean
 }
 
 export function ResultsPanel({
   selectedFile,
-  convertedContent,
+  documentResult,
+  isLoading,
 }: ResultsPanelProps) {
   const content = useMemo<ParsedContent | null>(() => {
-    if (selectedFile && convertedContent) {
-      return parseConvertedContent(convertedContent)
+    if (documentResult?.txt?.preview) {
+      return parseConvertedContent(documentResult.txt.preview)
     }
     return null
-  }, [selectedFile, convertedContent])
+  }, [documentResult])
 
   if (!selectedFile) {
     return (
-      <Card className="h-full">
+      <Card className="flex-1">
         <CardContent className="flex h-full items-center justify-center p-8 text-center">
           <div>
-            <FileText className="text-muted-foreground mx-auto mb-3 h-12 w-12" />
-            <p className="text-muted-foreground">
-              변환된 파일을 선택하면 내용이 여기에 표시됩니다.
+            <div className="bg-accent mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
+              <FileText className="text-primary/60 h-8 w-8" />
+            </div>
+            <p className="text-foreground mb-1 text-sm font-medium">
+              변환 결과 미리보기
+            </p>
+            <p className="text-muted-foreground text-sm">
+              좌측에서 파일을 업로드하고 변환하면
+              <br />
+              결과가 여기에 표시됩니다.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <Card className="flex-1">
+        <CardContent className="flex h-full items-center justify-center p-8 text-center">
+          <div>
+            <Loader2 className="text-primary mx-auto mb-3 h-8 w-8 animate-spin" />
+            <p className="text-muted-foreground">변환 결과를 불러오는 중...</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (documentResult?.error) {
+    return (
+      <Card className="flex-1">
+        <CardContent className="flex h-full items-center justify-center p-8 text-center">
+          <div>
+            <FileText className="text-destructive mx-auto mb-3 h-12 w-12" />
+            <p className="text-destructive font-medium">변환 실패</p>
+            <p className="text-muted-foreground mt-1 text-sm">
+              {documentResult.error.message}
             </p>
           </div>
         </CardContent>
@@ -44,11 +83,13 @@ export function ResultsPanel({
 
   if (!content) {
     return (
-      <Card className="h-full">
+      <Card className="flex-1">
         <CardContent className="flex h-full items-center justify-center p-8 text-center">
           <div>
-            <div className="border-primary mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
-            <p className="text-muted-foreground">변환 결과를 불러오는 중...</p>
+            <FileText className="text-muted-foreground mx-auto mb-3 h-12 w-12" />
+            <p className="text-muted-foreground">
+              변환이 완료되면 결과가 여기에 표시됩니다.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -56,16 +97,29 @@ export function ResultsPanel({
   }
 
   return (
-    <Card className="h-full overflow-y-auto">
+    <Card className="flex-1 overflow-y-auto">
       <CardContent className="p-6">
-        <h2 className="text-foreground mb-4 text-lg font-semibold">
-          변환 결과 미리보기
-        </h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-foreground text-lg font-semibold">
+            변환 결과 미리보기
+          </h2>
+          {documentResult && (
+            <span className="bg-muted text-muted-foreground rounded-md px-2 py-1 font-mono text-xs">
+              {documentResult.modelCode}
+            </span>
+          )}
+        </div>
 
         {/* Metadata */}
-        <div className="bg-muted/50 mb-6 p-4 font-mono text-xs">
-          <p>원본 파일 경로: {content.metadata.originalPath}</p>
-          <p>페이지 수: {content.metadata.pageCount}</p>
+        <div className="bg-muted/50 mb-6 rounded-lg p-4 font-mono text-xs">
+          <p>문서 ID: {documentResult?.documentId}</p>
+          <p>파일명: {documentResult?.fileName}</p>
+          {content.metadata.originalPath && (
+            <p>원본 파일 경로: {content.metadata.originalPath}</p>
+          )}
+          {content.metadata.pageCount && (
+            <p>페이지 수: {content.metadata.pageCount}</p>
+          )}
         </div>
 
         {/* HTML Tables */}
@@ -97,7 +151,7 @@ export function ResultsPanel({
             {content.markdownTables.map((table, idx) => (
               <div
                 key={idx}
-                className="bg-muted/50 border-primary mb-4 border-l-4 p-4"
+                className="bg-muted/50 border-primary mb-4 rounded-r-lg border-l-4 p-4"
               >
                 <h4 className="text-primary mb-2 font-semibold">
                   # {table.title}
@@ -141,7 +195,7 @@ export function ResultsPanel({
             {content.imageDescriptions.map((img) => (
               <div
                 key={img.id}
-                className="bg-muted/50 border-primary mb-4 border-l-4 p-4"
+                className="bg-muted/50 border-primary mb-4 rounded-r-lg border-l-4 p-4"
               >
                 <p className="text-foreground text-sm whitespace-pre-line">
                   {img.description}
@@ -154,7 +208,7 @@ export function ResultsPanel({
         {/* Plain Text */}
         <div>
           <h3 className="text-foreground mb-3 font-semibold">원본 텍스트</h3>
-          <pre className="bg-muted/50 overflow-x-auto p-4 font-mono text-xs whitespace-pre-wrap">
+          <pre className="bg-muted/50 overflow-x-auto rounded-lg p-4 font-mono text-xs whitespace-pre-wrap">
             {content.plainText}
           </pre>
         </div>
