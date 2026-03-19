@@ -141,22 +141,24 @@ export function AppSidebar() {
         </div>
 
         {/* Settings */}
-        <div className="border-sidebar-border border-t p-4 group-data-[collapsible=icon]:p-2">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={currentPath === '/settings'}
-                tooltip="설정"
-              >
-                <Link to="/settings">
-                  <Settings className="h-5 w-5" />
-                  <span>설정</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </div>
+        <SidebarGroup className="border-sidebar-border border-t">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={currentPath === '/settings'}
+                  tooltip="설정"
+                >
+                  <Link to="/settings">
+                    <Settings className="h-5 w-5" />
+                    <span>설정</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarFooter>
     </Sidebar>
   )

@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import { Clock } from 'lucide-react'
 import { Card, CardContent } from '@/shared/ui/card'
 import { StatusBadge } from '@/shared/ui/status-badge'
@@ -22,6 +23,7 @@ function RecentJobsSkeleton() {
 }
 
 export function RecentJobs() {
+  const navigate = useNavigate()
   const { data, isLoading } = useDashboardRecentItems(5)
   const items = data?.items ?? []
 
@@ -73,7 +75,13 @@ export function RecentJobs() {
                 {items.map((item) => (
                   <tr
                     key={item.documentId}
-                    className="hover:bg-muted/40 transition-colors duration-150"
+                    onClick={() =>
+                      navigate({
+                        to: '/files/$fileId',
+                        params: { fileId: item.documentId },
+                      })
+                    }
+                    className="hover:bg-muted/40 cursor-pointer transition-colors duration-150"
                   >
                     <td className="px-4 py-3">
                       <span className="text-foreground font-mono text-sm font-medium">
