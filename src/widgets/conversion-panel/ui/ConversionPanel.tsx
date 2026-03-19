@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Info, CheckCircle, AlertTriangle } from 'lucide-react'
+import { Info, CheckCircle, AlertTriangle, FlaskConical } from 'lucide-react'
 import {
   FileUploader,
   ConversionSettings,
@@ -24,6 +24,7 @@ export function ConversionPanel() {
     isPreferredModel,
     overwriteMode,
     jobId,
+    isMockMode,
     addFiles,
     removeFile,
     updateFile,
@@ -35,6 +36,7 @@ export function ConversionPanel() {
     setIsPreferredModel,
     setOverwriteMode,
     setJobId,
+    setIsMockMode,
   } = useUploadStore()
 
   const convertMutation = useConvertDocuments()
@@ -259,6 +261,19 @@ export function ConversionPanel() {
               hasFiles={hasFiles}
             />
           </div>
+
+          {/* Mock toggle */}
+          <button
+            onClick={() => setIsMockMode(!isMockMode)}
+            className={`mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+              isMockMode
+                ? 'border-primary/30 bg-primary/10 text-primary'
+                : 'border-border text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <FlaskConical className="h-3.5 w-3.5" />
+            목업 미리보기 {isMockMode ? 'ON' : 'OFF'}
+          </button>
         </div>
       </div>
     </div>

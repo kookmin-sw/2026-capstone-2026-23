@@ -50,12 +50,19 @@ function CollapsibleSection({
 
   return (
     <>
-      <div className="mb-6">
+      <div className="group/section mb-6">
         <div className="mb-3 flex items-center gap-2">
           {icon}
           <h3 className="text-foreground font-semibold">{title}</h3>
         </div>
         <div className="relative">
+          {/* Hover expand button */}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-background/80 border-border text-muted-foreground hover:text-primary hover:border-primary/50 absolute top-2 right-2 z-10 rounded-lg border p-1.5 opacity-0 backdrop-blur-sm transition-all group-hover/section:opacity-100"
+          >
+            <Maximize2 className="h-4 w-4" />
+          </button>
           <div
             ref={contentRef}
             className="overflow-hidden"
@@ -64,16 +71,7 @@ function CollapsibleSection({
             {children}
           </div>
           {isOverflow && (
-            <div className="relative">
-              <div className="from-background pointer-absolute absolute -top-16 right-0 left-0 h-16 bg-gradient-to-t" />
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="text-primary hover:text-primary/80 mt-2 flex items-center gap-1.5 text-sm font-medium transition-colors"
-              >
-                <Maximize2 className="h-4 w-4" />
-                더보기
-              </button>
-            </div>
+            <div className="from-background pointer-events-none absolute right-0 bottom-0 left-0 h-16 bg-gradient-to-t" />
           )}
         </div>
       </div>

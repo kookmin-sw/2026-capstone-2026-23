@@ -5,14 +5,22 @@ import { ChatModal } from '@/widgets/chat-modal'
 import { useUploadStore } from '@/features/file-upload'
 import { useUIStore } from '@/app/model/ui-store'
 import { useDocumentResult } from '@/entities/document'
+import { MOCK_DOCUMENT_RESULT } from '@/shared/lib/mock-document-result'
 
 export function ConvertPage() {
-  const { selectedResultPath, files } = useUploadStore()
+  const { selectedResultPath, files, isMockMode } = useUploadStore()
   const { isChatOpen, setIsChatOpen } = useUIStore()
 
   const selectedFile = files.find((f) => f.resultPath === selectedResultPath)
   const { data: documentResult, isLoading: isResultLoading } =
     useDocumentResult(selectedFile?.documentId)
+
+  const useMock = isMockMode && !selectedResultPath
+  const displayFile = useMock ? 'mock' : selectedResultPath
+  const displayResult = useMock ? MOCK_DOCUMENT_RESULT : documentResult
+  const displayLoading = useMock
+    ? false
+    : isResultLoading && !!selectedFile?.documentId
 
   return (
     <>
@@ -22,9 +30,9 @@ export function ConvertPage() {
         </div>
         <div className="flex flex-1 flex-col overflow-hidden">
           <ResultsPanel
-            selectedFile={selectedResultPath}
-            documentResult={documentResult}
-            isLoading={isResultLoading && !!selectedFile?.documentId}
+            selectedFile={displayFile}
+            documentResult={displayResult}
+            isLoading={displayLoading}
           />
         </div>
       </div>
