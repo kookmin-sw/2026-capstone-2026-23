@@ -1,28 +1,38 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { api } from '@/shared/api'
-import type { DashboardStats, DateFilter, SystemStats } from '@/shared/types'
+import {
+  getDashboardFileTypes,
+  getDashboardRecentItems,
+  getDashboardSummary,
+} from '@/shared/api'
+import type { DashboardSummary, DocumentItem } from '@/shared/types'
 
-export function useSystemStats() {
-  return useQuery<SystemStats>({
-    queryKey: ['system', 'stats'],
+export function useDashboardSummary() {
+  return useQuery({
+    queryKey: ['dashboard', 'summary'],
     queryFn: async () => {
-      const { data } = await api.get<SystemStats>('/system/stats')
-      return data
+      const { data } = await getDashboardSummary()
+      return data as DashboardSummary
     },
-    refetchInterval: 30000,
-    refetchIntervalInBackground: false,
   })
 }
 
-export function useDashboardStats(filter: DateFilter) {
-  return useQuery<DashboardStats>({
-    queryKey: ['dashboard', 'stats', filter],
+export function useDashboardFileTypes() {
+  return useQuery({
+    queryKey: ['dashboard', 'file-types'],
     queryFn: async () => {
-      const { data } = await api.get<DashboardStats>('/dashboard/stats', {
-        params: filter,
-      })
-      return data
+      const { data } = await getDashboardFileTypes()
+      return data as { from: string | null; to: string | null; types: string[] }
+    },
+  })
+}
+
+export function useDashboardRecentItems(limit = 10) {
+  return useQuery({
+    queryKey: ['dashboard', 'recent-items', limit],
+    queryFn: async () => {
+      const { data } = await getDashboardRecentItems(limit)
+      return data as { items: DocumentItem[]; nextCursor: string | null }
     },
   })
 }

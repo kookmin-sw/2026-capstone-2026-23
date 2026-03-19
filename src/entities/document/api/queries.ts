@@ -1,55 +1,53 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { api } from '@/shared/api'
-import type { DocumentItem } from '@/shared/types'
+import {
+  downloadFile,
+  getDocumentResult,
+  getDocuments,
+  uploadFiles,
+} from '@/shared/api'
+import type { DocumentItem, DocumentResult, UploadedFile } from '@/shared/types'
 
 export function useDocuments() {
-  return useQuery<DocumentItem[]>({
+  return useQuery({
     queryKey: ['documents'],
     queryFn: async () => {
-      const { data } = await api.get<DocumentItem[]>('/documents')
-      return data
+      const { data } = await getDocuments()
+      return data as { items: DocumentItem[]; nextCursor: string | null }
+    },
+  })
+}
+
+export function useDocumentResult(documentId: string | undefined) {
+  return useQuery({
+    queryKey: ['documents', documentId, 'result'],
+    queryFn: async () => {
+      const { data } = await getDocumentResult(documentId!)
+      return data as DocumentResult
+    },
+    enabled: !!documentId,
+  })
+}
+
+export function useUploadFiles() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (files: File[]) => {
+      const { data } = await uploadFiles(files)
+      return data as { count: number; items: UploadedFile[] }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['documents'] })
     },
   })
 }
 
 export function useDownloadFile() {
   return useMutation({
-    mutationFn: async ({
-      id,
-      type,
-    }: {
-      id: string
-      type: 'original' | 'tmp' | 'output'
-    }) => {
-      const { data } = await api.post<Blob>(
-        `/documents/${id}/download`,
-        { type },
-        { responseType: 'blob' },
-      )
+    mutationFn: async (fileId: string) => {
+      const { data } = await downloadFile(fileId)
       return data
-    },
-  })
-}
-
-export function useDeleteFile() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async ({
-      id,
-      type,
-    }: {
-      id: string
-      type: 'original' | 'tmp' | 'output'
-    }) => {
-      const { data } = await api.delete(`/documents/${id}`, {
-        data: { type },
-      })
-      return data
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['documents'] })
     },
   })
 }

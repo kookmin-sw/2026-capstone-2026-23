@@ -87,48 +87,48 @@
 
 /* ───── Carbon Light Theme (IBM Carbon Gray 10 base) ───── */
 :root {
-  --radius: 0px; /* Carbon uses sharp corners */
+  --radius: 10px; /* Soft rounded corners */
 
   /* Core */
-  --background: #f4f4f4; /* Gray 10 */
-  --foreground: #161616; /* Gray 100 */
+  --background: #f7f7fb; /* Warm gray with hint of purple */
+  --foreground: #1a1a2e; /* Deep navy-black */
 
   /* Card / Popover */
-  --card: #ffffff; /* White */
-  --card-foreground: #161616; /* Gray 100 */
+  --card: #ffffff;
+  --card-foreground: #1a1a2e;
   --popover: #ffffff;
-  --popover-foreground: #161616;
+  --popover-foreground: #1a1a2e;
 
-  /* Primary — Carbon Blue 60 */
-  --primary: #0f62fe;
+  /* Primary — Luminir Orange */
+  --primary: #ff7121;
   --primary-foreground: #ffffff;
 
-  /* Secondary — Carbon Gray 20 */
-  --secondary: #e0e0e0;
-  --secondary-foreground: #161616;
+  /* Secondary */
+  --secondary: #fff4ed;
+  --secondary-foreground: #1a1a2e;
 
-  /* Muted — Carbon Gray 10/20 */
-  --muted: #e0e0e0;
-  --muted-foreground: #525252; /* Gray 70 */
+  /* Muted */
+  --muted: #fff4ed;
+  --muted-foreground: #6b7280;
 
-  /* Accent — Carbon Blue 10 */
-  --accent: #edf5ff;
-  --accent-foreground: #161616;
+  /* Accent */
+  --accent: #fff4ed;
+  --accent-foreground: #1a1a2e;
 
-  /* Destructive — Carbon Red 60 */
-  --destructive: #da1e28;
+  /* Destructive */
+  --destructive: #ef4444;
 
   /* Border / Input / Ring */
-  --border: #e0e0e0; /* Gray 20 */
-  --input: #e0e0e0;
-  --ring: #0f62fe; /* Blue 60 for focus ring */
+  --border: #e5e5ef;
+  --input: #e5e5ef;
+  --ring: #ff7121;
 
-  /* Chart palette (Carbon Data Vis) */
-  --chart-1: #0f62fe; /* Blue 60 */
-  --chart-2: #24a148; /* Green 50 */
-  --chart-3: #f1c21b; /* Yellow 30 */
-  --chart-4: #8a3ffc; /* Purple 60 */
-  --chart-5: #ff832b; /* Orange 40 */
+  /* Chart palette — Luminir brand-aligned */
+  --chart-1: #ff7121; /* Orange */
+  --chart-2: #00b894; /* Teal green */
+  --chart-3: #fdcb6e; /* Warm yellow */
+  --chart-4: #e17055; /* Coral */
+  --chart-5: #0984e3; /* Sky blue */
 
   /* Sidebar — White base */
   --sidebar: #ffffff;
@@ -143,46 +143,46 @@
 
 /* ───── Carbon Dark Theme (IBM Carbon Gray 100 base) ───── */
 .dark {
-  --background: #161616; /* Gray 100 */
-  --foreground: #f4f4f4; /* Gray 10 */
+  --background: #0f0f1a; /* Deep navy */
+  --foreground: #e8e8f0;
 
-  --card: #262626; /* Gray 90 */
-  --card-foreground: #f4f4f4;
-  --popover: #262626;
-  --popover-foreground: #f4f4f4;
+  --card: #1a1a2e;
+  --card-foreground: #e8e8f0;
+  --popover: #1a1a2e;
+  --popover-foreground: #e8e8f0;
 
-  --primary: #78a9ff; /* Blue 40 */
-  --primary-foreground: #161616;
+  --primary: #ff8c4c;
+  --primary-foreground: #0f0f1a;
 
-  --secondary: #393939; /* Gray 80 */
-  --secondary-foreground: #f4f4f4;
+  --secondary: #2a2015;
+  --secondary-foreground: #e8e8f0;
 
-  --muted: #393939;
-  --muted-foreground: #a8a8a8; /* Gray 40 */
+  --muted: #2a2015;
+  --muted-foreground: #9ca3af;
 
-  --accent: #393939;
-  --accent-foreground: #f4f4f4;
+  --accent: #2a2015;
+  --accent-foreground: #e8e8f0;
 
-  --destructive: #fa4d56; /* Red 50 */
+  --destructive: #f87171;
 
-  --border: #393939; /* Gray 80 */
-  --input: #393939;
-  --ring: #78a9ff; /* Blue 40 */
+  --border: #2d2d4a;
+  --input: #2d2d4a;
+  --ring: #ff8c4c;
 
-  --chart-1: #78a9ff; /* Blue 40 */
-  --chart-2: #42be65; /* Green 40 */
-  --chart-3: #f1c21b; /* Yellow 30 */
-  --chart-4: #a56eff; /* Purple 40 */
-  --chart-5: #ff832b; /* Orange 40 */
+  --chart-1: #ff8c4c; /* Soft orange */
+  --chart-2: #55efc4; /* Mint */
+  --chart-3: #ffeaa7; /* Soft yellow */
+  --chart-4: #fab1a0; /* Peach */
+  --chart-5: #74b9ff; /* Light blue */
 
-  --sidebar: #262626;
-  --sidebar-foreground: #f4f4f4;
-  --sidebar-primary: #78a9ff;
-  --sidebar-primary-foreground: #161616;
-  --sidebar-accent: #393939;
-  --sidebar-accent-foreground: #f4f4f4;
-  --sidebar-border: #525252; /* Gray 70 */
-  --sidebar-ring: #78a9ff;
+  --sidebar: #1a1a2e;
+  --sidebar-foreground: #e8e8f0;
+  --sidebar-primary: #ff8c4c;
+  --sidebar-primary-foreground: #0f0f1a;
+  --sidebar-accent: #252540;
+  --sidebar-accent-foreground: #e8e8f0;
+  --sidebar-border: #2d2d4a;
+  --sidebar-ring: #ff8c4c;
 }
 
 @layer base {
@@ -291,6 +291,54 @@
     font-size: 0.8125rem; /* 13px */
     font-weight: 400;
     line-height: 1.5;
+  }
+}
+
+/* ───── Custom form controls (radio / checkbox) ───── */
+@layer base {
+  input[type='radio'],
+  input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+      border-color 0.15s,
+      background-color 0.15s;
+  }
+
+  input[type='radio'] {
+    border-radius: 50%;
+  }
+
+  input[type='checkbox'] {
+    border-radius: 4px;
+  }
+
+  input[type='radio']:checked {
+    border-color: var(--primary);
+    border-width: 5px;
+  }
+
+  input[type='checkbox']:checked {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+  }
+
+  input[type='radio']:hover,
+  input[type='checkbox']:hover {
+    border-color: var(--primary);
+  }
+
+  input[type='radio']:focus-visible,
+  input[type='checkbox']:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 

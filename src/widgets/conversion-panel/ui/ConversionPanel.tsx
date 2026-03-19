@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Info, CheckCircle, AlertTriangle } from 'lucide-react'
 import {
   FileUploader,
@@ -6,28 +7,100 @@ import {
   UploadedFilesList,
   useUploadStore,
 } from '@/features/file-upload'
+import {
+  useConvertDocuments,
+  useJobStatus,
+  useCancelJob,
+} from '@/entities/parser'
 
 export function ConversionPanel() {
   const {
     files,
-    vlmModel,
+    modelId,
     parallelCount,
     isConverting,
     batchStatus,
     selectedResultPath,
     isPreferredModel,
     overwriteMode,
+    jobId,
     addFiles,
     removeFile,
     updateFile,
-    setVlmModel,
+    setModelId,
     setParallelCount,
     setIsConverting,
     setBatchStatus,
     setSelectedResultPath,
     setIsPreferredModel,
     setOverwriteMode,
+    setJobId,
   } = useUploadStore()
+
+  const convertMutation = useConvertDocuments()
+  const cancelMutation = useCancelJob()
+  const { data: jobData } = useJobStatus(jobId ?? undefined, isConverting)
+
+  // Job 상태 폴링으로 파일 상태 업데이트
+  useEffect(() => {
+    if (!jobData) return
+
+    const { status, completedDocuments, totalDocuments, failedDocuments } =
+      jobData
+    const progress =
+      totalDocuments > 0
+        ? Math.floor(
+            ((completedDocuments + failedDocuments) / totalDocuments) * 100,
+          )
+        : 0
+
+    setBatchStatus(
+      `처리 중: ${completedDocuments}/${totalDocuments} 완료${failedDocuments > 0 ? `, ${failedDocuments}건 실패` : ''}`,
+    )
+
+    // 터미널 상태 도달 시
+    if (
+      status === 'COMPLETED' ||
+      status === 'FAILED' ||
+      status === 'CANCELED'
+    ) {
+      setIsConverting(false)
+      if (status === 'COMPLETED') {
+        setBatchStatus(
+          `변환 완료: ${completedDocuments}/${totalDocuments}건 성공`,
+        )
+        files.forEach((f) => {
+          if (f.status === 'converting') {
+            const resultPath = f.documentId ?? f.id
+            updateFile(f.id, {
+              status: 'completed',
+              progress: 100,
+              resultPath,
+            })
+          }
+        })
+        // 첫 번째 완료 파일 자동 선택
+        const firstCompleted = files.find(
+          (f) => f.status === 'converting' && f.documentId,
+        )
+        if (firstCompleted?.documentId) {
+          setSelectedResultPath(firstCompleted.documentId)
+        }
+      } else if (status === 'CANCELED') {
+        setBatchStatus('변환이 취소되었습니다.')
+      } else {
+        setBatchStatus(`변환 실패: ${failedDocuments}건 실패`)
+      }
+    } else {
+      // 진행 중 — 각 파일의 progress 업데이트
+      files.forEach((f) => {
+        if (f.status === 'pending' || f.status === 'converting') {
+          updateFile(f.id, { status: 'converting', progress })
+        }
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to jobData changes, store setters are stable
+  }, [jobData])
 
   const completedCount = files.filter((f) => f.status === 'completed').length
   const totalCount = files.length
@@ -43,62 +116,54 @@ export function ConversionPanel() {
     }
   }
 
-  const handleConvert = () => {
+  const handleConvert = async () => {
+    if (files.length === 0) return
+
     setIsConverting(true)
     setBatchStatus(`${files.length}개 파일 변환을 시작합니다...`)
 
-    files.forEach((uploadedFile, index) => {
-      const delay = index * 2000
-      setTimeout(() => {
-        const totalPages = Math.floor(Math.random() * 50) + 10
-        updateFile(uploadedFile.id, {
-          status: 'converting',
-          progress: 0,
-          totalPages,
-        })
-
-        const pageInterval = 200
-        let currentPage = 0
-        const interval = setInterval(() => {
-          currentPage++
-          const progress = Math.floor((currentPage / totalPages) * 100)
-          updateFile(uploadedFile.id, { progress, currentPage, totalPages })
-
-          if (currentPage >= totalPages) {
-            clearInterval(interval)
-            const success = Math.random() > 0.1
-            setTimeout(() => {
-              const resultPath = `data/outputs/${uploadedFile.file.name.replace(/\.[^/.]+$/, '')}.txt`
-              updateFile(uploadedFile.id, {
-                status: success ? 'completed' : 'failed',
-                progress: 100,
-                resultPath: success ? resultPath : undefined,
-                error: success ? undefined : 'VLM 응답 시간 초과',
-              })
-              if (success && index === 0) {
-                setTimeout(() => setSelectedResultPath(resultPath), 500)
-              }
-              if (index === files.length - 1) {
-                setTimeout(() => {
-                  setIsConverting(false)
-                  setBatchStatus(`변환 완료`)
-                }, 500)
-              }
-            }, 300)
-          }
-        }, pageInterval)
-      }, delay)
+    files.forEach((f) => {
+      updateFile(f.id, { status: 'converting', progress: 0 })
     })
+
+    try {
+      const result = await convertMutation.mutateAsync({
+        files: files.map((f) => f.file),
+        modelId,
+        parallelism: parallelCount,
+        duplicatePolicy: overwriteMode,
+      })
+
+      setJobId(result.jobId)
+
+      // 변환 결과의 documentId를 파일에 매핑
+      result.items.forEach((item, index) => {
+        if (files[index]) {
+          updateFile(files[index].id, { documentId: item.documentId })
+        }
+      })
+    } catch (error) {
+      setIsConverting(false)
+      const message = error instanceof Error ? error.message : '변환 요청 실패'
+      setBatchStatus(`오류: ${message}`)
+      files.forEach((f) => {
+        updateFile(f.id, { status: 'failed', error: message })
+      })
+    }
   }
 
-  const handleStop = () => {
-    setBatchStatus('중지 요청이 반영되었습니다.')
-    setIsConverting(false)
+  const handleStop = async () => {
+    if (!jobId) return
+    try {
+      await cancelMutation.mutateAsync(jobId)
+      setBatchStatus('중지 요청이 반영되었습니다.')
+    } catch {
+      setBatchStatus('중지 요청 실패')
+    }
   }
 
   const handleResume = () => {
-    setIsConverting(true)
-    setBatchStatus('변환을 재개합니다...')
+    handleConvert()
   }
 
   // BatchStatus inline
@@ -106,9 +171,9 @@ export function ConversionPanel() {
     if (!batchStatus) return null
     const isSuccess =
       batchStatus.includes('완료') && !batchStatus.includes('실패')
-    const isWarning = batchStatus.includes('중지')
-    const isError =
-      batchStatus.includes('실패') && !batchStatus.includes('성공')
+    const isWarning =
+      batchStatus.includes('중지') || batchStatus.includes('취소')
+    const isError = batchStatus.includes('실패') || batchStatus.includes('오류')
 
     const bgColor = isSuccess
       ? 'bg-[#defbe6] border-[#24a148]'
@@ -138,56 +203,64 @@ export function ConversionPanel() {
           : 'text-primary'
 
     return (
-      <div>
-        <label className="text-foreground mb-2 block text-sm font-medium">
-          배치 상태
-        </label>
-        <div className={`border px-4 py-3 ${bgColor}`}>
-          <div className="flex items-start gap-3">
-            <Icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${iconColor}`} />
-            <p className={`flex-1 text-sm whitespace-pre-line ${textColor}`}>
-              {batchStatus}
-            </p>
-          </div>
+      <div className={`rounded-lg border px-3 py-2.5 ${bgColor}`}>
+        <div className="flex items-center gap-2">
+          <Icon className={`h-4 w-4 flex-shrink-0 ${iconColor}`} />
+          <p className={`flex-1 text-xs whitespace-pre-line ${textColor}`}>
+            {batchStatus}
+          </p>
         </div>
       </div>
     )
   }
 
+  const hasFiles = files.length > 0
+
   return (
-    <div className="space-y-4">
-      <FileUploader onFilesAdded={addFiles} />
+    <div className="flex h-full flex-col">
+      {/* Top area — scrollable file content */}
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        {hasFiles ? (
+          <UploadedFilesList
+            files={files}
+            onRemoveFile={removeFile}
+            onFileSelect={handleFileSelect}
+            onFilesAdded={addFiles}
+            selectedFileId={selectedFile?.id}
+            overallProgress={overallProgress}
+          />
+        ) : (
+          <FileUploader onFilesAdded={addFiles} />
+        )}
+      </div>
 
-      {files.length > 0 && (
-        <UploadedFilesList
-          files={files}
-          onRemoveFile={removeFile}
-          onFileSelect={handleFileSelect}
-          selectedFileId={selectedFile?.id}
-          overallProgress={overallProgress}
-        />
-      )}
+      {/* Bottom — unified settings + action block */}
+      <div className="border-border mt-4 shrink-0 border-t pt-4">
+        {renderBatchStatus()}
 
-      <ConversionSettings
-        vlmModel={vlmModel}
-        onVlmModelChange={setVlmModel}
-        parallelCount={parallelCount}
-        onParallelCountChange={setParallelCount}
-        isPreferredModel={isPreferredModel}
-        onPreferredModelChange={setIsPreferredModel}
-        overwriteMode={overwriteMode}
-        onOverwriteModeChange={setOverwriteMode}
-      />
+        <div className="border-border mt-3 rounded-xl border p-4">
+          <ConversionSettings
+            modelId={modelId}
+            onModelIdChange={setModelId}
+            parallelCount={parallelCount}
+            onParallelCountChange={setParallelCount}
+            isPreferredModel={isPreferredModel}
+            onPreferredModelChange={setIsPreferredModel}
+            overwriteMode={overwriteMode}
+            onOverwriteModeChange={setOverwriteMode}
+          />
 
-      <ActionButtons
-        onConvert={handleConvert}
-        onStop={handleStop}
-        onResume={handleResume}
-        isConverting={isConverting}
-        hasFiles={files.length > 0}
-      />
-
-      {renderBatchStatus()}
+          <div className="mt-3">
+            <ActionButtons
+              onConvert={handleConvert}
+              onStop={handleStop}
+              onResume={handleResume}
+              isConverting={isConverting}
+              hasFiles={hasFiles}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

@@ -1,5 +1,4 @@
 import { Play, Square, RotateCw } from 'lucide-react'
-import { Button } from '@/shared/ui/button'
 
 interface ActionButtonsProps {
   onConvert: () => void
@@ -17,50 +16,46 @@ export function ActionButtons({
   hasFiles,
 }: ActionButtonsProps) {
   return (
-    <div className="space-y-3">
-      <Button
+    <div>
+      {/* Main convert button */}
+      <button
         onClick={onConvert}
         disabled={!hasFiles || isConverting}
-        className="w-full"
-        size="lg"
+        className="bg-primary hover:bg-primary/90 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white transition-colors disabled:opacity-40"
       >
         {isConverting ? (
           <>
-            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
             변환 중...
           </>
         ) : (
           <>
-            <Play className="mr-2 h-4 w-4" />
+            <Play className="h-3.5 w-3.5" fill="currentColor" />
             변환 실행
           </>
         )}
-      </Button>
+      </button>
 
-      <div className="grid grid-cols-2 gap-2">
-        <Button
-          variant="destructive"
-          size="sm"
+      {/* Stop / Resume — subtle text links */}
+      <div className="mt-1.5 flex items-center justify-center gap-3">
+        <button
           onClick={onStop}
           disabled={!isConverting}
+          className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors disabled:pointer-events-none disabled:opacity-30"
         >
-          <Square className="mr-1 h-3 w-3" />
+          <Square className="h-3 w-3" />
           중지
-        </Button>
-        <Button
-          variant="secondary"
-          size="sm"
+        </button>
+        <span className="text-border text-xs">|</span>
+        <button
           onClick={onResume}
           disabled={isConverting}
+          className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs transition-colors disabled:pointer-events-none disabled:opacity-30"
         >
-          <RotateCw className="mr-1 h-3 w-3" />
+          <RotateCw className="h-3 w-3" />
           이어서
-        </Button>
+        </button>
       </div>
-
-      <p className="text-muted-foreground text-center text-xs">
-        중지: 현재 진행중인 작업을 유지하고 새 작업 시작 가능
-      </p>
     </div>
   )
 }

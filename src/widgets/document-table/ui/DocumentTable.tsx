@@ -7,6 +7,9 @@ import {
   Trash2,
 } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
+import { Skeleton } from '@/shared/ui/skeleton'
+import { StatusBadge } from '@/shared/ui/status-badge'
+import { useDocuments, useDownloadFile } from '@/entities/document'
 import type { DocumentItem } from '@/shared/types'
 
 interface DocumentWithSelection extends DocumentItem {
@@ -17,67 +20,10 @@ interface DocumentTableProps {
   onFileSelect: (fileId: string) => void
 }
 
-const initialDocuments: DocumentWithSelection[] = [
-  {
-    id: '1',
-    name: '건축구조설계서.hwp',
-    date: '2026-02-10 14:32',
-    convertedBy: '김철수',
-    summary: '건축 구조 설계 관련 문서',
-    hasOriginal: true,
-    hasTmp: true,
-    hasOutput: true,
-    selected: false,
-  },
-  {
-    id: '2',
-    name: '프로젝트보고서.pdf',
-    date: '2026-02-09 11:20',
-    convertedBy: '이영희',
-    summary: '2025년 4분기 프로젝트 최종 보고서',
-    hasOriginal: true,
-    hasTmp: false,
-    hasOutput: true,
-    selected: false,
-  },
-  {
-    id: '3',
-    name: '회의록_2026_02.hwp',
-    date: '2026-02-08 16:45',
-    convertedBy: '박민수',
-    summary: '2월 정기 회의 내용 정리',
-    hasOriginal: true,
-    hasTmp: true,
-    hasOutput: false,
-    selected: false,
-  },
-  {
-    id: '4',
-    name: '기술문서_v2.pdf',
-    date: '2026-02-07 09:15',
-    convertedBy: '김철수',
-    summary: 'API 기술 문서 버전 2',
-    hasOriginal: true,
-    hasTmp: true,
-    hasOutput: true,
-    selected: false,
-  },
-  {
-    id: '5',
-    name: '설계도면.png',
-    date: '2026-02-06 13:50',
-    convertedBy: '최지연',
-    summary: '건축 설계 평면도',
-    hasOriginal: true,
-    hasTmp: false,
-    hasOutput: true,
-    selected: false,
-  },
-]
-
 export function DocumentTable({ onFileSelect }: DocumentTableProps) {
-  const [documents, setDocuments] =
-    useState<DocumentWithSelection[]>(initialDocuments)
+  const { data, isLoading, refetch } = useDocuments()
+  const downloadMutation = useDownloadFile()
+  const [documents, setDocuments] = useState<DocumentWithSelection[]>([])
   const [selectAll, setSelectAll] = useState(false)
   const [showDeleteDropdown, setShowDeleteDropdown] = useState(false)
   const [activeRowDropdown, setActiveRowDropdown] = useState<string | null>(
@@ -87,9 +33,13 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   const itemsPerPage = 10
   const deleteDropdownRef = useRef<HTMLDivElement>(null)
 
-  const loadDocuments = () => {
-    setDocuments(initialDocuments.map((d) => ({ ...d, selected: false })))
-  }
+  // API 데이터가 변경되면 로컬 상태 업데이트
+  useEffect(() => {
+    if (data?.items) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing API data to local selection state
+      setDocuments(data.items.map((d) => ({ ...d, selected: false })))
+    }
+  }, [data])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -113,7 +63,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   const toggleDocSelection = (id: string) => {
     setDocuments((docs) =>
       docs.map((doc) =>
-        doc.id === id ? { ...doc, selected: !doc.selected } : doc,
+        doc.documentId === id ? { ...doc, selected: !doc.selected } : doc,
       ),
     )
   }
@@ -126,45 +76,20 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
     )
   }
 
-  const downloadSelected = (type: 'original' | 'tmp' | 'output') => {
-    const selectedDocs = documents.filter((doc) => doc.selected)
-    if (selectedDocs.length === 0) return
-    alert(`${selectedDocs.length}개의 ${type} 파일을 다운로드합니다.`)
-  }
-
-  const downloadSingle = (
-    docId: string,
-    type: 'original' | 'tmp' | 'output',
-  ) => {
-    const doc = documents.find((d) => d.id === docId)
-    if (!doc) return
-    alert(`"${doc.name}"의 ${type} 파일을 다운로드합니다.`)
-  }
-
-  const deleteSelected = (type: 'original' | 'tmp' | 'output') => {
-    const selectedDocs = documents.filter((doc) => doc.selected)
-    if (selectedDocs.length === 0) return
-    setShowDeleteDropdown(false)
-    setDocuments((docs) =>
-      docs.map((doc) => {
-        if (!doc.selected) return doc
-        if (type === 'original') return { ...doc, hasOriginal: false }
-        if (type === 'tmp') return { ...doc, hasTmp: false }
-        return { ...doc, hasOutput: false }
-      }),
-    )
-  }
-
-  const deleteSingle = (docId: string, type: 'original' | 'tmp' | 'output') => {
-    setActiveRowDropdown(null)
-    setDocuments((docs) =>
-      docs.map((d) => {
-        if (d.id !== docId) return d
-        if (type === 'original') return { ...d, hasOriginal: false }
-        if (type === 'tmp') return { ...d, hasTmp: false }
-        return { ...d, hasOutput: false }
-      }),
-    )
+  const handleDownload = async (documentId: string) => {
+    try {
+      const blob = await downloadMutation.mutateAsync(documentId)
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download =
+        documents.find((d) => d.documentId === documentId)?.originalFilename ??
+        'download'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      // 에러는 mutation에서 처리
+    }
   }
 
   const selectedCount = documents.filter((doc) => doc.selected).length
@@ -175,12 +100,42 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
     startIndex + itemsPerPage,
   )
 
+  if (isLoading) {
+    return (
+      <div className="space-y-3">
+        <div className="bg-card border-border border p-3">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-9 w-9" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+        <div className="bg-card border-border border">
+          <div className="space-y-0">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="border-border flex items-center gap-4 border-b px-4 py-3"
+              >
+                <Skeleton className="h-4 w-4" />
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-5 w-16" />
+                <Skeleton className="h-4 w-36" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-8 w-8" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-3">
       {/* Top Control Bar */}
       <div className="bg-card border-border border p-3">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={loadDocuments}>
+          <Button variant="outline" size="icon" onClick={() => refetch()}>
             <RefreshCw className="h-4 w-4" />
           </Button>
           <div className="text-muted-foreground text-sm">
@@ -190,27 +145,14 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
           </div>
           <div className="flex-1" />
           <div className="flex items-center gap-2">
-            {/* <Button
-              size="sm"
-              onClick={() => downloadSelected('original')}
-              disabled={selectedCount === 0}
-            >
-              <Download className="mr-1 h-4 w-4" />
-              원본
-            </Button>
-            <Button
-              size="sm"
-              className="bg-[#ff832b] text-white hover:bg-[#ba4e00]"
-              onClick={() => downloadSelected('tmp')}
-              disabled={selectedCount === 0}
-            >
-              <Download className="mr-1 h-4 w-4" />
-              tmp
-            </Button> */}
             <Button
               size="sm"
               className="bg-[#198038] text-white hover:bg-[#0e6027]"
-              onClick={() => downloadSelected('output')}
+              onClick={() => {
+                documents
+                  .filter((d) => d.selected)
+                  .forEach((d) => handleDownload(d.documentId))
+              }}
               disabled={selectedCount === 0}
             >
               <Download className="mr-1 h-4 w-4" />
@@ -228,22 +170,10 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
               {showDeleteDropdown && selectedCount > 0 && (
                 <div className="bg-card border-border absolute right-0 z-10 mt-1 w-40 border shadow-lg">
                   <button
-                    onClick={() => deleteSelected('original')}
+                    onClick={() => setShowDeleteDropdown(false)}
                     className="hover:bg-accent text-foreground w-full px-4 py-2 text-left text-sm transition-colors"
                   >
-                    원본 삭제
-                  </button>
-                  <button
-                    onClick={() => deleteSelected('tmp')}
-                    className="hover:bg-accent text-foreground border-border w-full border-t px-4 py-2 text-left text-sm transition-colors"
-                  >
-                    tmp 삭제
-                  </button>
-                  <button
-                    onClick={() => deleteSelected('output')}
-                    className="hover:bg-accent text-foreground border-border w-full border-t px-4 py-2 text-left text-sm transition-colors"
-                  >
-                    output 삭제
+                    선택 항목 삭제
                   </button>
                 </div>
               )}
@@ -263,26 +193,23 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                     type="checkbox"
                     checked={selectAll}
                     onChange={toggleSelectAll}
-                    className="accent-primary h-4 w-4"
+                    className="h-4 w-4"
                   />
                 </th>
                 <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
                   문서명
                 </th>
-                <th className="text-foreground w-110 px-4 py-3 text-left text-sm font-semibold">
-                  세부사항
+                <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
+                  상태
                 </th>
-                {/* <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
-                  원본
+                <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
+                  업로드 일시
                 </th>
-                <th className="text-foreground w-24 px-4 py-3 text-center text-sm font-semibold">
-                  tmp
-                </th> */}
-                <th className="text-foreground w-48 px-4 py-3 text-center text-sm font-semibold">
-                  output
+                <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
+                  모델
                 </th>
                 <th className="text-foreground w-48 px-4 py-3 text-center text-sm font-semibold">
-                  삭제
+                  다운로드
                 </th>
               </tr>
             </thead>
@@ -290,7 +217,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
               {documents.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={6}
                     className="text-muted-foreground px-4 py-8 text-center"
                   >
                     문서가 없습니다.
@@ -298,99 +225,47 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                 </tr>
               ) : (
                 paginatedDocuments.map((doc) => (
-                  <tr key={doc.id} className="hover:bg-muted/30">
+                  <tr key={doc.documentId} className="hover:bg-muted/30">
                     <td className="px-4 py-3">
                       <input
                         type="checkbox"
                         checked={doc.selected}
-                        onChange={() => toggleDocSelection(doc.id)}
-                        className="accent-primary h-4 w-4"
+                        onChange={() => toggleDocSelection(doc.documentId)}
+                        className="h-4 w-4"
                       />
                     </td>
                     <td className="px-4 py-3">
                       <button
-                        onClick={() => onFileSelect(doc.id)}
+                        onClick={() => onFileSelect(doc.documentId)}
                         className="text-primary hover:text-primary/80 text-left text-sm font-medium transition-colors hover:underline"
                       >
-                        {doc.name}
+                        {doc.originalFilename}
                       </button>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="space-y-0.5 text-sm">
-                        <div className="text-muted-foreground">
-                          <span className="font-medium">날짜:</span> {doc.date}
-                        </div>
-                        <div className="text-muted-foreground">
-                          <span className="font-medium">변환자:</span>{' '}
-                          {doc.convertedBy}
-                        </div>
+                      <div className="text-muted-foreground text-xs">
+                        {doc.fileType}
                       </div>
                     </td>
-                    {/* <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => downloadSingle(doc.id, 'original')}
-                        disabled={!doc.hasOriginal}
-                        className="hover:bg-accent inline-flex h-10 w-10 items-center justify-center transition-colors disabled:cursor-not-allowed disabled:opacity-30"
-                      >
-                        <Download className="text-primary h-6 w-6" />
-                      </button>
+                    <td className="px-4 py-3">
+                      <StatusBadge status={doc.latestStatus} />
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="text-muted-foreground text-sm">
+                        {new Date(doc.uploadedAt).toLocaleString('ko-KR')}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="bg-muted text-muted-foreground px-2 py-1 font-mono text-xs whitespace-nowrap">
+                        {doc.modelCode || '-'}
+                      </span>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <button
-                        onClick={() => downloadSingle(doc.id, 'tmp')}
-                        disabled={!doc.hasTmp}
-                        className="hover:bg-accent inline-flex h-10 w-10 items-center justify-center transition-colors disabled:cursor-not-allowed disabled:opacity-30"
-                      >
-                        <Download className="h-6 w-6 text-[#ff832b]" />
-                      </button>
-                    </td> */}
-                    <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => downloadSingle(doc.id, 'output')}
-                        disabled={!doc.hasOutput}
+                        onClick={() => handleDownload(doc.documentId)}
+                        disabled={doc.latestStatus !== 'COMPLETED'}
                         className="hover:bg-accent inline-flex h-10 w-10 items-center justify-center transition-colors disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         <Download className="h-6 w-6 text-[#198038]" />
                       </button>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <div className="relative" id={`dropdown-${doc.id}`}>
-                        <button
-                          onClick={() =>
-                            setActiveRowDropdown(
-                              activeRowDropdown === doc.id ? null : doc.id,
-                            )
-                          }
-                          className="inline-flex h-10 w-10 items-center justify-center transition-colors hover:bg-[#fff1f1]"
-                        >
-                          <Trash2 className="text-destructive h-6 w-6" />
-                        </button>
-                        {activeRowDropdown === doc.id && (
-                          <div className="bg-card border-border absolute right-0 z-10 mt-1 w-40 border shadow-lg">
-                            <button
-                              onClick={() => deleteSingle(doc.id, 'original')}
-                              disabled={!doc.hasOriginal}
-                              className="hover:bg-accent text-foreground w-full px-4 py-2 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                              원본 삭제
-                            </button>
-                            <button
-                              onClick={() => deleteSingle(doc.id, 'tmp')}
-                              disabled={!doc.hasTmp}
-                              className="hover:bg-accent text-foreground border-border w-full border-t px-4 py-2 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                              tmp 삭제
-                            </button>
-                            <button
-                              onClick={() => deleteSingle(doc.id, 'output')}
-                              disabled={!doc.hasOutput}
-                              className="hover:bg-accent text-foreground border-border w-full border-t px-4 py-2 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                              output 삭제
-                            </button>
-                          </div>
-                        )}
-                      </div>
                     </td>
                   </tr>
                 ))
@@ -402,9 +277,9 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
         {/* Pagination */}
         <div className="border-border bg-muted/30 flex items-center justify-between border-t px-4 py-3">
           <div className="text-muted-foreground text-sm">
-            {startIndex + 1}-
-            {Math.min(startIndex + itemsPerPage, documents.length)} /{' '}
-            {documents.length}
+            {documents.length > 0
+              ? `${startIndex + 1}-${Math.min(startIndex + itemsPerPage, documents.length)} / ${documents.length}`
+              : '0개'}
           </div>
           <div className="flex items-center gap-2">
             <button
