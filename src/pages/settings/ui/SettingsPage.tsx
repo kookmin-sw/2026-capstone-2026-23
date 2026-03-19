@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import { MockIndicator } from '@/shared/ui/mock-indicator'
+import { UnconnectedBadge } from '@/shared/ui/unconnected-badge'
 import { Card, CardContent } from '@/shared/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 
@@ -57,12 +58,25 @@ export function SettingsPage() {
         </div>
 
         <Tabs defaultValue="personal">
-          <TabsList>
-            <TabsTrigger value="personal">개인 설정</TabsTrigger>
-            <TabsTrigger value="admin" className="flex items-center gap-2">
+          <TabsList
+            variant="line"
+            className="border-border w-full gap-0 border-b"
+          >
+            <TabsTrigger
+              value="personal"
+              className="data-[state=active]:text-primary after:bg-primary flex items-center gap-2 rounded-none px-5 py-3 text-sm font-semibold"
+            >
+              <User className="h-4 w-4" />
+              개인 설정
+            </TabsTrigger>
+            <TabsTrigger
+              value="admin"
+              className="data-[state=active]:text-primary after:bg-primary flex items-center gap-2 rounded-none px-5 py-3 text-sm font-semibold"
+            >
+              <Shield className="h-4 w-4" />
               관리자 설정
-              <span className="bg-[#e8daff] px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-[#6929c4]">
-                Admin
+              <span className="rounded bg-[#e8daff] px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-[#6929c4]">
+                ADMIN
               </span>
             </TabsTrigger>
           </TabsList>
@@ -88,10 +102,12 @@ export function SettingsPage() {
                       onChange={(e) => setFullName(e.target.value)}
                       className="border-border bg-card focus:ring-primary flex-1 border px-3 py-2 focus:ring-2 focus:outline-none"
                     />
-                    <Button>
-                      <Save className="mr-2 h-4 w-4" />
-                      저장
-                    </Button>
+                    <UnconnectedBadge>
+                      <Button>
+                        <Save className="mr-2 h-4 w-4" />
+                        저장
+                      </Button>
+                    </UnconnectedBadge>
                   </div>
                 </div>
                 <div>
@@ -105,10 +121,12 @@ export function SettingsPage() {
                       onChange={(e) => setUserId(e.target.value)}
                       className="border-border bg-card focus:ring-primary flex-1 border px-3 py-2 focus:ring-2 focus:outline-none"
                     />
-                    <Button>
-                      <Save className="mr-2 h-4 w-4" />
-                      변경
-                    </Button>
+                    <UnconnectedBadge>
+                      <Button>
+                        <Save className="mr-2 h-4 w-4" />
+                        변경
+                      </Button>
+                    </UnconnectedBadge>
                   </div>
                 </div>
                 <div className="border-border border-t pt-3">
@@ -169,10 +187,12 @@ export function SettingsPage() {
                         </div>
                       </div>
                     ))}
-                    <Button>
-                      <Lock className="mr-2 h-4 w-4" />
-                      비밀번호 변경
-                    </Button>
+                    <UnconnectedBadge>
+                      <Button>
+                        <Lock className="mr-2 h-4 w-4" />
+                        비밀번호 변경
+                      </Button>
+                    </UnconnectedBadge>
                   </div>
                 </div>
               </CardContent>
@@ -233,10 +253,12 @@ export function SettingsPage() {
                   </div>
                 </div>
                 <div className="border-border border-t pt-3">
-                  <Button>
-                    <Save className="mr-2 h-4 w-4" />
-                    설정 저장
-                  </Button>
+                  <UnconnectedBadge>
+                    <Button>
+                      <Save className="mr-2 h-4 w-4" />
+                      설정 저장
+                    </Button>
+                  </UnconnectedBadge>
                 </div>
               </CardContent>
             </Card>
@@ -274,10 +296,12 @@ export function SettingsPage() {
                   </div>
                 </div>
                 <div className="border-border border-t pt-3">
-                  <Button>
-                    <Save className="mr-2 h-4 w-4" />
-                    설정 저장
-                  </Button>
+                  <UnconnectedBadge>
+                    <Button>
+                      <Save className="mr-2 h-4 w-4" />
+                      설정 저장
+                    </Button>
+                  </UnconnectedBadge>
                 </div>
               </CardContent>
             </Card>
@@ -303,10 +327,12 @@ export function SettingsPage() {
                       onChange={(e) => setAppTitle(e.target.value)}
                       className="border-border bg-card focus:ring-primary flex-1 border px-3 py-2 focus:ring-2 focus:outline-none"
                     />
-                    <Button>
-                      <Save className="mr-2 h-4 w-4" />
-                      저장
-                    </Button>
+                    <UnconnectedBadge>
+                      <Button>
+                        <Save className="mr-2 h-4 w-4" />
+                        저장
+                      </Button>
+                    </UnconnectedBadge>
                   </div>
                   <p className="text-muted-foreground mt-1 text-xs">
                     앱의 표시 이름을 변경합니다.
@@ -324,10 +350,12 @@ export function SettingsPage() {
                       placeholder="초대할 사용자의 이메일 주소"
                       className="border-border bg-card focus:ring-primary flex-1 border px-3 py-2 focus:ring-2 focus:outline-none"
                     />
-                    <Button className="bg-[#198038] hover:bg-[#0e6027]">
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      초대
-                    </Button>
+                    <UnconnectedBadge>
+                      <Button className="bg-[#198038] hover:bg-[#0e6027]">
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        초대
+                      </Button>
+                    </UnconnectedBadge>
                   </div>
                 </div>
               </CardContent>
@@ -397,10 +425,12 @@ export function SettingsPage() {
                         className="border-border bg-card focus:ring-primary w-full border py-2 pr-3 pl-10 focus:ring-2 focus:outline-none"
                       />
                     </div>
-                    <Button>
-                      <Save className="mr-2 h-4 w-4" />
-                      저장
-                    </Button>
+                    <UnconnectedBadge>
+                      <Button>
+                        <Save className="mr-2 h-4 w-4" />
+                        저장
+                      </Button>
+                    </UnconnectedBadge>
                   </div>
                 </div>
               </CardContent>
