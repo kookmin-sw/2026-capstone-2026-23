@@ -7,9 +7,15 @@ interface ChatModalProps {
   isOpen: boolean
   onClose: () => void
   selectedFile: string
+  variant?: 'modal' | 'embedded'
 }
 
-export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
+export function ChatModal({
+  isOpen,
+  onClose,
+  selectedFile,
+  variant = 'modal',
+}: ChatModalProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -115,11 +121,13 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
     }
   }
 
+  const isEmbedded = variant === 'embedded'
+
   if (!isOpen) return null
 
   if (isMinimized) {
     return (
-      <div className="fixed right-6 bottom-6 z-50">
+      <div className="fixed right-6 bottom-3 z-50">
         <button
           onClick={() => setIsMinimized(false)}
           className="bg-primary hover:bg-primary/85 rounded-full p-4 text-white shadow-2xl transition-all hover:scale-110"
@@ -131,7 +139,7 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
   }
 
   return (
-    <div className="bg-card border-border fixed right-6 bottom-6 z-50 flex h-[600px] w-[420px] flex-col overflow-hidden rounded-2xl border shadow-2xl">
+    <div className="bg-card border-border fixed right-6 bottom-3 z-50 flex h-[600px] w-[420px] flex-col overflow-hidden rounded-2xl border shadow-2xl">
       {/* Header */}
       <div className="border-border bg-accent flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
@@ -154,12 +162,14 @@ export function ChatModal({ isOpen, onClose, selectedFile }: ChatModalProps) {
           >
             <Minimize2 className="h-4 w-4" />
           </button>
-          <button
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground p-1 transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          {!isEmbedded && (
+            <button
+              onClick={onClose}
+              className="text-muted-foreground hover:text-foreground p-1 transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
 

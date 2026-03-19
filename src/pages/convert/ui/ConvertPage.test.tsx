@@ -9,6 +9,35 @@ vi.mock('@tanstack/react-router', () => ({
 
 vi.mock('@/widgets/conversion-panel', () => ({
   ConversionPanel: () => <div data-testid="conversion-panel" />,
+  useConversionLogic: () => ({
+    files: [],
+    modelId: 'm1',
+    parallelCount: 1,
+    isConverting: false,
+    batchStatus: '',
+    batchStatusType: null,
+    selectedResultPath: '',
+    isPreferredModel: false,
+    overwriteMode: 'OVERWRITE',
+    isMockMode: false,
+    selectedFile: undefined,
+    completedCount: 0,
+    totalCount: 0,
+    overallProgress: 0,
+    hasFiles: false,
+    addFiles: vi.fn(),
+    removeFile: vi.fn(),
+    handleFileSelect: vi.fn(),
+    handleConvert: vi.fn(),
+    handleStop: vi.fn(),
+    handleResume: vi.fn(),
+    setModelId: vi.fn(),
+    setParallelCount: vi.fn(),
+    setIsPreferredModel: vi.fn(),
+    setOverwriteMode: vi.fn(),
+    setIsMockMode: vi.fn(),
+    setSelectedResultPath: vi.fn(),
+  }),
 }))
 
 vi.mock('@/widgets/results-panel', () => ({
@@ -19,10 +48,16 @@ vi.mock('@/widgets/chat-modal', () => ({
   ChatModal: () => null,
 }))
 
+vi.mock('@/widgets/floating-control-panel', () => ({
+  FloatingControlPanel: () => <div data-testid="floating-control-panel" />,
+}))
+
 vi.mock('@/features/file-upload', () => ({
   useUploadStore: () => ({
     selectedResultPath: '',
     files: [],
+    isMockMode: false,
+    isConverting: false,
   }),
 }))
 
@@ -37,29 +72,25 @@ vi.mock('@/entities/document', () => ({
   useDocumentResult: () => ({ data: undefined, isLoading: false }),
 }))
 
+vi.mock('@/shared/lib/mock-document-result', () => ({
+  MOCK_DOCUMENT_RESULT: undefined,
+}))
+
 describe('ConvertPage', () => {
-  it('ConversionPanel과 ResultsPanel이 렌더링된다', () => {
+  it('ResultsPanel이 렌더링된다', () => {
     const { getByTestId } = render(<ConvertPage />)
-    expect(getByTestId('conversion-panel')).toBeInTheDocument()
     expect(getByTestId('results-panel')).toBeInTheDocument()
   })
 
-  it('레이아웃에 flex gap-6이 적용된다', () => {
-    const { container } = render(<ConvertPage />)
-    const flexContainer = container.querySelector('.flex.gap-6')
-    expect(flexContainer).not.toBeNull()
+  it('FloatingControlPanel이 렌더링된다', () => {
+    const { getByTestId } = render(<ConvertPage />)
+    expect(getByTestId('floating-control-panel')).toBeInTheDocument()
   })
 
-  it('좌측 패널에 w-2/5 클래스가 적용된다', () => {
+  it('결과 영역에 bg-card 클래스가 적용된다', () => {
     const { getByTestId } = render(<ConvertPage />)
-    const leftPanel = getByTestId('conversion-panel').parentElement
-    expect(leftPanel?.className).toContain('w-2/5')
-  })
-
-  it('우측 패널에 flex-1 클래스가 적용된다', () => {
-    const { getByTestId } = render(<ConvertPage />)
-    const rightPanel = getByTestId('results-panel').parentElement
-    expect(rightPanel?.className).toContain('flex-1')
+    const wrapper = getByTestId('results-panel').parentElement
+    expect(wrapper?.className).toContain('bg-card')
   })
 
   it('selectedResultPath가 없으면 AI 질의응답 버튼이 표시되지 않는다', () => {

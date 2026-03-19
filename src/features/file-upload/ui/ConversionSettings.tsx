@@ -12,6 +12,7 @@ interface ConversionSettingsProps {
   onPreferredModelChange: (isPreferred: boolean) => void
   overwriteMode: 'OVERWRITE' | 'KEEP_BOTH'
   onOverwriteModeChange: (mode: 'OVERWRITE' | 'KEEP_BOTH') => void
+  alwaysOpen?: boolean
 }
 
 export function ConversionSettings({
@@ -23,30 +24,35 @@ export function ConversionSettings({
   onPreferredModelChange,
   overwriteMode,
   onOverwriteModeChange,
+  alwaysOpen = false,
 }: ConversionSettingsProps) {
   const { data: modelsData, isLoading: isModelsLoading } = useModels()
   const models = modelsData?.models ?? []
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(alwaysOpen)
 
   return (
     <div>
       {/* Toggle */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="text-muted-foreground hover:text-foreground flex w-full items-center gap-1.5 py-1.5 text-sm font-medium transition-colors"
-      >
-        <ChevronDown
-          className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-        />
-        변환 설정
-      </button>
+      {!alwaysOpen && (
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-muted-foreground hover:text-foreground flex w-full items-center gap-1.5 py-1.5 text-sm font-medium transition-colors"
+        >
+          <ChevronDown
+            className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          />
+          변환 설정
+        </button>
+      )}
 
       {/* Collapsible body */}
-      {isOpen && (
-        <div className="border-border mt-1.5 rounded-lg border">
+      {(alwaysOpen || isOpen) && (
+        <div
+          className={alwaysOpen ? '' : 'border-border mt-1.5 rounded-lg border'}
+        >
           {/* VLM Model */}
-          <div className="px-3 py-2.5">
+          <div className={alwaysOpen ? 'py-1' : 'px-3 py-2.5'}>
             <label className="text-muted-foreground mb-1 block text-sm font-medium">
               VLM 모델
             </label>
@@ -84,11 +90,13 @@ export function ConversionSettings({
             </label>
           </div>
 
-          <div className="border-border border-t" />
+          <div className={alwaysOpen ? 'my-2' : 'border-border border-t'} />
 
           {/* Parallel + Duplicate */}
-          <div className="divide-border grid grid-cols-2 divide-x">
-            <div className="px-3 py-2.5">
+          <div
+            className={`grid grid-cols-2 ${alwaysOpen ? 'gap-3' : 'divide-border divide-x'}`}
+          >
+            <div className={alwaysOpen ? 'py-1' : 'px-3 py-2.5'}>
               <label className="text-muted-foreground mb-1 block text-sm font-medium">
                 병렬 처리
               </label>
@@ -107,7 +115,7 @@ export function ConversionSettings({
               </p>
             </div>
 
-            <div className="px-3 py-2.5">
+            <div className={alwaysOpen ? 'py-1' : 'px-3 py-2.5'}>
               <label className="text-muted-foreground mb-1 block text-sm font-medium">
                 중복 처리
               </label>

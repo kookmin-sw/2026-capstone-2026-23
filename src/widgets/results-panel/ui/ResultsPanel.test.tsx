@@ -3,18 +3,17 @@ import { render, screen } from '@testing-library/react'
 import { ResultsPanel } from './ResultsPanel'
 
 describe('ResultsPanel', () => {
-  it('파일 미선택 시 안내 텍스트가 표시된다', () => {
+  it('파일 미선택 시 워크플로우 안내가 표시된다', () => {
     render(<ResultsPanel selectedFile="" />)
-    expect(screen.getByText('변환 결과 미리보기')).toBeInTheDocument()
-    expect(
-      screen.getByText(/좌측에서 파일을 업로드하고 변환하면/),
-    ).toBeInTheDocument()
+    expect(screen.getByText('문서 업로드')).toBeInTheDocument()
+    expect(screen.getByText('AI 변환')).toBeInTheDocument()
+    expect(screen.getByText('결과 확인')).toBeInTheDocument()
   })
 
-  it('빈 상태에서 아이콘 박스에 bg-accent 클래스가 적용된다', () => {
+  it('빈 상태에서 워크플로우 아이콘이 렌더링된다', () => {
     render(<ResultsPanel selectedFile="" />)
-    const iconBox = document.querySelector('.bg-accent.rounded-2xl')
-    expect(iconBox).not.toBeNull()
+    const iconBoxes = document.querySelectorAll('.rounded-2xl.h-14.w-14')
+    expect(iconBoxes.length).toBe(3)
   })
 
   it('로딩 중이면 스피너와 안내 텍스트가 표시된다', () => {
@@ -69,9 +68,9 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('gpt-5-mini')).toBeInTheDocument()
   })
 
-  it('Card에 flex-1 클래스가 적용된다', () => {
-    render(<ResultsPanel selectedFile="" />)
-    const card = document.querySelector('[data-slot="card"]')
-    expect(card?.className).toContain('flex-1')
+  it('onFilesAdded 전달 시 파일 선택 버튼이 표시된다', () => {
+    render(<ResultsPanel selectedFile="" onFilesAdded={() => {}} />)
+    expect(screen.getByText('파일 선택')).toBeInTheDocument()
+    expect(screen.getByText('폴더 선택')).toBeInTheDocument()
   })
 })
