@@ -57,7 +57,7 @@ export function RecentJobs({
         {isLoading ? (
           <RecentJobsSkeleton />
         ) : items.length === 0 ? (
-          <div className="text-muted-foreground py-8 text-center text-sm">
+          <div className="text-muted-foreground py-16 text-center text-sm">
             아직 처리된 문서가 없습니다.
           </div>
         ) : (

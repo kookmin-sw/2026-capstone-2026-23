@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { FlaskConical } from 'lucide-react'
+import { FlaskConical, Upload, ArrowRight, Sparkles } from 'lucide-react'
 import { Switch } from '@/shared/ui/switch'
 import {
   DashboardStats,
@@ -200,6 +200,70 @@ export function DashboardPage() {
           <Switch checked={isMockMode} onCheckedChange={handleMockToggle} />
         </label>
       </div>
+
+      {/* 빈 상태 CTA */}
+      {!useMock && !showLoading && stats.totalJobs === 0 && (
+        <div className="bg-card border-border overflow-hidden rounded-2xl border">
+          <div className="flex items-center gap-8 px-8 py-10">
+            <div className="flex-1">
+              <div className="mb-3 flex items-center gap-2">
+                <Sparkles className="text-primary h-5 w-5" />
+                <span className="text-primary text-xs font-bold tracking-wide uppercase">
+                  시작하기
+                </span>
+              </div>
+              <h3 className="text-foreground mb-2 text-xl font-bold">
+                첫 번째 문서를 변환해보세요
+              </h3>
+              <p className="text-muted-foreground mb-5 text-sm leading-relaxed">
+                HWP, PDF, 이미지 문서를 업로드하면 AI가 표, 이미지, 텍스트를
+                구조화된 형태로 추출합니다. 변환이 완료되면 여기에 통계가
+                표시됩니다.
+              </p>
+              <button
+                onClick={() => navigate({ to: '/convert' })}
+                className="bg-primary hover:bg-primary/90 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors"
+              >
+                <Upload className="h-4 w-4" />
+                문서 변환하러 가기
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="hidden shrink-0 lg:flex">
+              <div className="flex gap-3">
+                {[
+                  {
+                    label: '업로드',
+                    color: 'bg-primary/10 text-primary',
+                    icon: Upload,
+                  },
+                  {
+                    label: 'AI 변환',
+                    color: 'bg-[#8a3ffc]/10 text-[#8a3ffc]',
+                    icon: Sparkles,
+                  },
+                ].map((step, i) => (
+                  <div key={step.label} className="flex items-center gap-3">
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`flex h-12 w-12 items-center justify-center rounded-xl ${step.color}`}
+                      >
+                        <step.icon className="h-5 w-5" />
+                      </div>
+                      <span className="text-muted-foreground mt-1.5 text-[11px] font-medium">
+                        {step.label}
+                      </span>
+                    </div>
+                    {i === 0 && (
+                      <ArrowRight className="text-border mb-4 h-4 w-4" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <RecentJobs
         mockItems={useMock ? MOCK_RECENT_ITEMS : undefined}
