@@ -2,10 +2,10 @@ name: Build & Push FE
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
 
 concurrency:
-  group: deploy-fe
+  group: deploy-fe-${{ github.ref_name }}
   cancel-in-progress: true
 
 env:
@@ -49,14 +49,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Resolve tags
+        id: tags
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "tags=${{ env.IMAGE }}:${{ github.sha }},${{ env.IMAGE }}:latest" >> "$GITHUB_OUTPUT"
+            echo "event=fe-updated" >> "$GITHUB_OUTPUT"
+          else
+            echo "tags=${{ env.IMAGE }}:dev-${{ github.sha }},${{ env.IMAGE }}:dev-latest" >> "$GITHUB_OUTPUT"
+            echo "event=fe-dev-updated" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build & push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: |
-            ${{ env.IMAGE }}:${{ github.sha }}
-            ${{ env.IMAGE }}:latest
+          tags: ${{ steps.tags.outputs.tags }}
           cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
 
@@ -65,5 +74,5 @@ jobs:
         with:
           token: ${{ secrets.DEPLOY_PAT }}
           repository: kmu-capstone2026/deploy
-          event-type: fe-updated
-          client-payload: '{"image_tag": "${{ github.sha }}"}'
+          event-type: ${{ steps.tags.outputs.event }}
+          client-payload: '{"image_tag": "${{ github.ref_name == ''main'' && github.sha || format(''dev-{0}'', github.sha) }}"}'
