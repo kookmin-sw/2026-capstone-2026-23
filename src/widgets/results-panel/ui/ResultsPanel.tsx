@@ -8,6 +8,11 @@ import {
   Loader2,
   Maximize2,
   X,
+  Upload,
+  FolderOpen,
+  ArrowRight,
+  Sparkles,
+  MessageCircle,
 } from 'lucide-react'
 import { Card, CardContent } from '@/shared/ui/card'
 import type { DocumentResult } from '@/shared/types'
@@ -24,6 +29,7 @@ interface ResultsPanelProps {
   selectedFile: string
   documentResult?: DocumentResult
   isLoading?: boolean
+  onFilesAdded?: (files: File[]) => void
 }
 
 const COLLAPSE_HEIGHT = 300
@@ -83,7 +89,7 @@ function CollapsibleSection({
             if (e.target === e.currentTarget) setIsModalOpen(false)
           }}
         >
-          <div className="bg-background flex max-h-[90vh] w-full max-w-5xl flex-col rounded-xl shadow-2xl">
+          <div className="bg-background flex max-h-[95vh] w-full max-w-7xl flex-col rounded-xl shadow-2xl">
             <div className="border-border flex items-center justify-between border-b px-6 py-4">
               <div className="flex items-center gap-2">
                 {icon}
@@ -110,6 +116,7 @@ export function ResultsPanel({
   selectedFile,
   documentResult,
   isLoading,
+  onFilesAdded,
 }: ResultsPanelProps) {
   const content = useMemo<ParsedContent | null>(() => {
     if (documentResult?.txt?.preview) {
@@ -119,25 +126,7 @@ export function ResultsPanel({
   }, [documentResult])
 
   if (!selectedFile) {
-    return (
-      <Card className="flex-1">
-        <CardContent className="flex h-full items-center justify-center p-8 text-center">
-          <div>
-            <div className="bg-accent mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
-              <FileText className="text-primary/60 h-8 w-8" />
-            </div>
-            <p className="text-foreground mb-1 text-sm font-medium">
-              변환 결과 미리보기
-            </p>
-            <p className="text-muted-foreground text-sm">
-              좌측에서 파일을 업로드하고 변환하면
-              <br />
-              결과가 여기에 표시됩니다.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    )
+    return <EmptyState onFilesAdded={onFilesAdded} />
   }
 
   if (isLoading) {
@@ -301,6 +290,117 @@ export function ResultsPanel({
         </CollapsibleSection>
       </CardContent>
     </Card>
+  )
+}
+
+const ACCEPTED_EXTENSIONS = '.hwp,.hwpx,.pdf,.png,.jpg,.jpeg,.bmp,.tiff'
+
+const WORKFLOW_STEPS = [
+  {
+    icon: Upload,
+    title: '문서 업로드',
+    description: 'HWP, PDF, 이미지 등\n문서를 올려주세요',
+    color: 'text-primary bg-primary/10',
+  },
+  {
+    icon: Sparkles,
+    title: 'AI 변환',
+    description: 'VLM이 표, 이미지, 텍스트를\n구조화된 형태로 추출합니다',
+    color: 'text-[#8a3ffc] bg-[#8a3ffc]/10',
+  },
+  {
+    icon: MessageCircle,
+    title: '결과 확인',
+    description: '변환 결과를 미리보고\nAI 챗봇에게 질문해보세요',
+    color: 'text-[#198038] bg-[#198038]/10',
+  },
+] as const
+
+function EmptyState({
+  onFilesAdded,
+}: {
+  onFilesAdded?: (files: File[]) => void
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const folderInputRef = useRef<HTMLInputElement>(null)
+
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center gap-10 p-8">
+      {/* Workflow steps */}
+      <div className="flex items-start gap-4">
+        {WORKFLOW_STEPS.map((step, i) => (
+          <div key={step.title} className="flex items-start gap-4">
+            <div className="flex w-[160px] flex-col items-center text-center">
+              <div
+                className={`mb-3 flex h-14 w-14 items-center justify-center rounded-2xl ${step.color}`}
+              >
+                <step.icon className="h-6 w-6" />
+              </div>
+              <p className="text-foreground mb-1 text-sm font-semibold">
+                {step.title}
+              </p>
+              <p className="text-muted-foreground text-xs leading-relaxed whitespace-pre-line">
+                {step.description}
+              </p>
+            </div>
+            {i < WORKFLOW_STEPS.length - 1 && (
+              <ArrowRight className="text-border mt-4 h-5 w-5 flex-shrink-0" />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Upload buttons */}
+      {onFilesAdded && (
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="border-border hover:border-primary/40 hover:text-primary text-foreground flex items-center gap-2 rounded-lg border bg-white px-5 py-2.5 text-sm font-medium transition-colors"
+            >
+              <Upload className="h-4 w-4" />
+              파일 선택
+            </button>
+            <button
+              type="button"
+              onClick={() => folderInputRef.current?.click()}
+              className="border-border hover:border-primary/40 hover:text-primary text-foreground flex items-center gap-2 rounded-lg border bg-white px-5 py-2.5 text-sm font-medium transition-colors"
+            >
+              <FolderOpen className="h-4 w-4" />
+              폴더 선택
+            </button>
+          </div>
+          <p className="text-muted-foreground/60 text-xs">
+            또는 이 화면에 파일을 드래그하여 업로드
+          </p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept={ACCEPTED_EXTENSIONS}
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files) onFilesAdded(Array.from(e.target.files))
+              e.target.value = ''
+            }}
+          />
+          <input
+            ref={folderInputRef}
+            type="file"
+            // @ts-expect-error webkitdirectory is valid but not in TS types
+            webkitdirectory=""
+            directory=""
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files) onFilesAdded(Array.from(e.target.files))
+              e.target.value = ''
+            }}
+          />
+        </div>
+      )}
+    </div>
   )
 }
 
