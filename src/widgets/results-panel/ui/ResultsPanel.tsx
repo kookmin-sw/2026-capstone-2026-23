@@ -1,6 +1,14 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useRef, useEffect, type ReactNode } from 'react'
 import DOMPurify from 'dompurify'
-import { FileText, Table, Image, Code, Loader2 } from 'lucide-react'
+import {
+  FileText,
+  Table,
+  Image,
+  Code,
+  Loader2,
+  Maximize2,
+  X,
+} from 'lucide-react'
 import { Card, CardContent } from '@/shared/ui/card'
 import type { DocumentResult } from '@/shared/types'
 
@@ -16,6 +24,88 @@ interface ResultsPanelProps {
   selectedFile: string
   documentResult?: DocumentResult
   isLoading?: boolean
+}
+
+const COLLAPSE_HEIGHT = 300
+
+function CollapsibleSection({
+  title,
+  icon,
+  children,
+}: {
+  title: string
+  icon: ReactNode
+  children: ReactNode
+}) {
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [isOverflow, setIsOverflow] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  useEffect(() => {
+    const el = contentRef.current
+    if (el) {
+      setIsOverflow(el.scrollHeight > COLLAPSE_HEIGHT)
+    }
+  }, [children])
+
+  return (
+    <>
+      <div className="mb-6">
+        <div className="mb-3 flex items-center gap-2">
+          {icon}
+          <h3 className="text-foreground font-semibold">{title}</h3>
+        </div>
+        <div className="relative">
+          <div
+            ref={contentRef}
+            className="overflow-hidden"
+            style={{ maxHeight: COLLAPSE_HEIGHT }}
+          >
+            {children}
+          </div>
+          {isOverflow && (
+            <div className="relative">
+              <div className="from-background pointer-absolute absolute -top-16 right-0 left-0 h-16 bg-gradient-to-t" />
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="text-primary hover:text-primary/80 mt-2 flex items-center gap-1.5 text-sm font-medium transition-colors"
+              >
+                <Maximize2 className="h-4 w-4" />
+                더보기
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsModalOpen(false)
+          }}
+        >
+          <div className="bg-background flex max-h-[90vh] w-full max-w-5xl flex-col rounded-xl shadow-2xl">
+            <div className="border-border flex items-center justify-between border-b px-6 py-4">
+              <div className="flex items-center gap-2">
+                {icon}
+                <h3 className="text-foreground text-lg font-semibold">
+                  {title}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg p-2 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="overflow-y-auto p-6">{children}</div>
+          </div>
+        </div>
+      )}
+    </>
+  )
 }
 
 export function ResultsPanel({
@@ -124,30 +214,28 @@ export function ResultsPanel({
 
         {/* HTML Tables */}
         {content.htmlTables.length > 0 && (
-          <div className="mb-6">
-            <div className="mb-3 flex items-center gap-2">
-              <Table className="text-primary h-5 w-5" />
-              <h3 className="text-foreground font-semibold">HTML 미리보기</h3>
-            </div>
+          <CollapsibleSection
+            title="HTML 미리보기"
+            icon={<Table className="text-primary h-5 w-5" />}
+          >
             {content.htmlTables.map((table, idx) => (
               <div
                 key={idx}
-                className="mb-4 overflow-x-auto"
+                className="bg-card border-border [&_td]:border-border [&_th]:border-border [&_th]:bg-muted mb-4 overflow-x-auto rounded-lg border [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-3 [&_td]:py-2 [&_td]:text-sm [&_th]:border [&_th]:px-3 [&_th]:py-2.5 [&_th]:text-left [&_th]:text-sm [&_th]:font-semibold"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(table.html),
                 }}
               />
             ))}
-          </div>
+          </CollapsibleSection>
         )}
 
         {/* Markdown Tables */}
         {content.markdownTables.length > 0 && (
-          <div className="mb-6">
-            <div className="mb-3 flex items-center gap-2">
-              <Code className="text-primary h-5 w-5" />
-              <h3 className="text-foreground font-semibold">Markdown 선형화</h3>
-            </div>
+          <CollapsibleSection
+            title="Markdown 선형화"
+            icon={<Code className="text-primary h-5 w-5" />}
+          >
             {content.markdownTables.map((table, idx) => (
               <div
                 key={idx}
@@ -182,16 +270,15 @@ export function ResultsPanel({
                 </div>
               </div>
             ))}
-          </div>
+          </CollapsibleSection>
         )}
 
         {/* Image Descriptions */}
         {content.imageDescriptions.length > 0 && (
-          <div className="mb-6">
-            <div className="mb-3 flex items-center gap-2">
-              <Image className="text-primary h-5 w-5" />
-              <h3 className="text-foreground font-semibold">이미지 설명</h3>
-            </div>
+          <CollapsibleSection
+            title="이미지 설명"
+            icon={<Image className="text-primary h-5 w-5" />}
+          >
             {content.imageDescriptions.map((img) => (
               <div
                 key={img.id}
@@ -202,16 +289,18 @@ export function ResultsPanel({
                 </p>
               </div>
             ))}
-          </div>
+          </CollapsibleSection>
         )}
 
         {/* Plain Text */}
-        <div>
-          <h3 className="text-foreground mb-3 font-semibold">원본 텍스트</h3>
+        <CollapsibleSection
+          title="원본 텍스트"
+          icon={<FileText className="text-primary h-5 w-5" />}
+        >
           <pre className="bg-muted/50 overflow-x-auto rounded-lg p-4 font-mono text-xs whitespace-pre-wrap">
             {content.plainText}
           </pre>
-        </div>
+        </CollapsibleSection>
       </CardContent>
     </Card>
   )

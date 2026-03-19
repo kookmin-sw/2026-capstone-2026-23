@@ -17,7 +17,7 @@ export function ConvertPage() {
   return (
     <>
       <div className="flex h-full gap-6">
-        <div className="w-2/5 shrink-0 overflow-y-auto">
+        <div className="sticky top-0 h-[calc(100vh-2.5rem)] w-2/5 shrink-0 self-start">
           <ConversionPanel />
         </div>
         <div className="flex flex-1 flex-col overflow-hidden">
