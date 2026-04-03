@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { FlaskConical, Upload, ArrowRight, Sparkles } from 'lucide-react'
-import { Switch } from '@/shared/ui/switch'
+import { Upload, ArrowRight, Sparkles } from 'lucide-react'
 import {
   DashboardStats,
   TrendChart,
@@ -11,6 +10,7 @@ import { RecentJobs } from '@/widgets/recent-jobs'
 import { SystemMonitor } from '@/widgets/system-monitor'
 import { ErrorLogWidget } from '@/widgets/error-log-widget'
 import { useDashboardSummary } from '@/entities/system'
+import { useUIStore } from '@/app/model/ui-store'
 import { MockIndicator } from '@/shared/ui/mock-indicator'
 import {
   MOCK_DASHBOARD_SUMMARY,
@@ -32,24 +32,12 @@ export function DashboardPage() {
   const [customEndDate, setCustomEndDate] = useState('')
   const datePickerRef = useRef<HTMLDivElement>(null)
 
-  const [isMockMode, setIsMockMode] = useState(false)
-  const [isMockLoading, setIsMockLoading] = useState(false)
+  const { isMockMode } = useUIStore()
 
   const { data: summary, isLoading: isSummaryLoading } = useDashboardSummary()
 
-  const handleMockToggle = (checked: boolean) => {
-    if (checked) {
-      setIsMockLoading(true)
-      setIsMockMode(true)
-      setTimeout(() => setIsMockLoading(false), 2000)
-    } else {
-      setIsMockMode(false)
-      setIsMockLoading(false)
-    }
-  }
-
-  const useMock = isMockMode && !isMockLoading
-  const showLoading = isMockMode ? isMockLoading : isSummaryLoading
+  const useMock = isMockMode
+  const showLoading = isMockMode ? false : isSummaryLoading
 
   const stats = useMock
     ? MOCK_DASHBOARD_SUMMARY
@@ -192,13 +180,6 @@ export function DashboardPage() {
             전체 문서 처리 현황을 한눈에 확인하세요
           </p>
         </div>
-
-        {/* Mock toggle */}
-        <label className="text-muted-foreground flex cursor-pointer items-center gap-2">
-          <FlaskConical className="h-3.5 w-3.5" />
-          <span className="text-xs font-medium">목업</span>
-          <Switch checked={isMockMode} onCheckedChange={handleMockToggle} />
-        </label>
       </div>
 
       {/* 빈 상태 CTA */}

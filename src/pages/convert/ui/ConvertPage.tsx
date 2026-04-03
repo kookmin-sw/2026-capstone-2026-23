@@ -62,8 +62,8 @@ function BatchStatusBanner({
 }
 
 export function ConvertPage() {
-  const { selectedResultPath, files, isMockMode } = useUploadStore()
-  const { isChatOpen, setIsChatOpen } = useUIStore()
+  const { selectedResultPath, files } = useUploadStore()
+  const { isChatOpen, setIsChatOpen, isMockMode } = useUIStore()
   const logic = useConversionLogic()
   const [isDragging, setIsDragging] = useState(false)
   const [isPanelExpanded, setIsPanelExpanded] = useState(false)

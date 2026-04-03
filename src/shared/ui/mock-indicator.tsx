@@ -1,10 +1,14 @@
+import { useUIStore } from '@/app/model/ui-store'
+
 interface MockIndicatorProps {
   label?: string
   children: React.ReactNode
 }
 
 export function MockIndicator({ label, children }: MockIndicatorProps) {
-  if (!import.meta.env.DEV) return <>{children}</>
+  const { isMockMode } = useUIStore()
+
+  if (!import.meta.env.DEV || !isMockMode) return <>{children}</>
 
   return (
     <div className="relative">

@@ -13,6 +13,7 @@ import {
   FolderOpen,
   ChevronRight,
   X,
+  FlaskConical,
 } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import { Switch } from '@/shared/ui/switch'
@@ -20,11 +21,13 @@ import { MockIndicator } from '@/shared/ui/mock-indicator'
 import { UnconnectedBadge } from '@/shared/ui/unconnected-badge'
 import { Card, CardContent } from '@/shared/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
+import { useUIStore } from '@/app/model/ui-store'
 
 const inputClass =
   'border-border bg-card text-foreground focus:border-primary focus:ring-primary/20 h-9 w-full rounded-lg border px-3 text-sm transition-colors focus:ring-2 focus:outline-none'
 
 export function SettingsPage() {
+  const { isMockMode, setIsMockMode } = useUIStore()
   const [appTitle, setAppTitle] = useState('Luminir Document Parser')
   const [inviteEmail, setInviteEmail] = useState('')
   const storageUsedGB = 847.3
@@ -97,6 +100,38 @@ export function SettingsPage() {
 
             {/* ═══ 개인 설정 ═══ */}
             <TabsContent value="personal" className="mt-4 space-y-4">
+              {/* 목업 데이터 */}
+              <Card>
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#8a3ffc]/10">
+                        <FlaskConical className="h-4 w-4 text-[#8a3ffc]" />
+                      </div>
+                      <div>
+                        <h2 className="text-foreground text-base font-semibold">
+                          목업 데이터
+                        </h2>
+                        <p className="text-muted-foreground text-xs">
+                          API 미연결 화면에 샘플 데이터를 표시합니다
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Switch
+                        checked={isMockMode}
+                        onCheckedChange={setIsMockMode}
+                      />
+                      <span
+                        className={`text-xs font-semibold ${isMockMode ? 'text-[#8a3ffc]' : 'text-muted-foreground'}`}
+                      >
+                        {isMockMode ? 'ON' : 'OFF'}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* 계정 정보 */}
               <Card>
                 <CardContent className="space-y-5 p-5">
