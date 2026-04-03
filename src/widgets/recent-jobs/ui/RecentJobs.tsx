@@ -22,10 +22,21 @@ function RecentJobsSkeleton() {
   )
 }
 
-export function RecentJobs() {
+import type { DocumentItem } from '@/shared/types'
+
+interface RecentJobsProps {
+  mockItems?: DocumentItem[]
+  isLoading?: boolean
+}
+
+export function RecentJobs({
+  mockItems,
+  isLoading: externalLoading,
+}: RecentJobsProps = {}) {
   const navigate = useNavigate()
-  const { data, isLoading } = useDashboardRecentItems(5)
-  const items = data?.items ?? []
+  const { data: liveData, isLoading: liveLoading } = useDashboardRecentItems(5)
+  const isLoading = externalLoading ?? (mockItems ? false : liveLoading)
+  const items = mockItems ?? liveData?.items ?? []
 
   return (
     <Card>
@@ -46,7 +57,7 @@ export function RecentJobs() {
         {isLoading ? (
           <RecentJobsSkeleton />
         ) : items.length === 0 ? (
-          <div className="text-muted-foreground py-8 text-center text-sm">
+          <div className="text-muted-foreground py-16 text-center text-sm">
             아직 처리된 문서가 없습니다.
           </div>
         ) : (

@@ -11,8 +11,23 @@ import { Card, CardContent } from '@/shared/ui/card'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { useDashboardSummary } from '@/entities/system'
 
-export function SuccessRateChart() {
-  const { data: summary, isLoading } = useDashboardSummary()
+interface SuccessRateChartProps {
+  mockSummary?: {
+    completedJobs: number
+    failedJobs: number
+    processingJobs: number
+    totalJobs: number
+  }
+  isLoading?: boolean
+}
+
+export function SuccessRateChart({
+  mockSummary,
+  isLoading: externalLoading,
+}: SuccessRateChartProps = {}) {
+  const { data: liveSummary, isLoading: liveLoading } = useDashboardSummary()
+  const summary = mockSummary ?? liveSummary
+  const isLoading = externalLoading ?? (mockSummary ? false : liveLoading)
 
   const chartData = summary
     ? [

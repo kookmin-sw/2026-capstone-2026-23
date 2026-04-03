@@ -5,6 +5,7 @@ import {
   useJobStatus,
   useCancelJob,
 } from '@/entities/parser'
+import { useUIStore } from '@/app/model/ui-store'
 
 export function useConversionLogic() {
   const {
@@ -17,7 +18,6 @@ export function useConversionLogic() {
     isPreferredModel,
     overwriteMode,
     jobId,
-    isMockMode,
     addFiles,
     removeFile,
     updateFile,
@@ -29,8 +29,9 @@ export function useConversionLogic() {
     setIsPreferredModel,
     setOverwriteMode,
     setJobId,
-    setIsMockMode,
   } = useUploadStore()
+
+  const { isMockMode, setIsMockMode } = useUIStore()
 
   const convertMutation = useConvertDocuments()
   const cancelMutation = useCancelJob()

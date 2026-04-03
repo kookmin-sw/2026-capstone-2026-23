@@ -237,7 +237,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => onFileSelect(doc.documentId)}
-                        className="text-primary hover:text-primary/80 text-left text-sm font-medium transition-colors hover:underline"
+                        className="text-foreground hover:text-foreground/80 text-left text-sm font-medium transition-colors hover:underline"
                       >
                         {doc.originalFilename}
                       </button>

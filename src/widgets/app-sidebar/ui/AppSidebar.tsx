@@ -21,6 +21,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/shared/ui/sidebar'
+import { useUIStore } from '@/app/model/ui-store'
 
 const menuItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -33,12 +34,15 @@ export function AppSidebar() {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
   const { state, toggleSidebar } = useSidebar()
+  const { isMockMode } = useUIStore()
   const isCollapsed = state === 'collapsed'
 
-  // Mock storage data
-  const storageUsedGB = 847.3
+  // Storage data (mock or null)
+  const storageUsedGB = isMockMode ? 847.3 : null
   const storageLimitGB = 1000
-  const storagePercent = (storageUsedGB / storageLimitGB) * 100
+  const storagePercent = storageUsedGB
+    ? (storageUsedGB / storageLimitGB) * 100
+    : 0
 
   const getStorageColor = () => {
     if (storagePercent >= 90)
@@ -114,31 +118,33 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        {/* Storage */}
-        <div className="border-sidebar-border border-t p-4 group-data-[collapsible=icon]:hidden">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <HardDrive className="text-sidebar-foreground/60 h-4 w-4" />
-                <span className="text-sidebar-foreground/80 text-sm font-medium">
-                  스토리지
+        {/* Storage — only when data available */}
+        {storageUsedGB !== null && (
+          <div className="border-sidebar-border border-t p-4 group-data-[collapsible=icon]:hidden">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <HardDrive className="text-sidebar-foreground/60 h-4 w-4" />
+                  <span className="text-sidebar-foreground/80 text-sm font-medium">
+                    스토리지
+                  </span>
+                </div>
+                <span className={`text-sm font-semibold ${storageColor.text}`}>
+                  {storagePercent.toFixed(0)}%
                 </span>
               </div>
-              <span className={`text-sm font-semibold ${storageColor.text}`}>
-                {storagePercent.toFixed(0)}%
-              </span>
-            </div>
-            <div className="bg-sidebar-accent h-2 w-full overflow-hidden">
-              <div
-                className={`h-full ${storageColor.bg} transition-all duration-300`}
-                style={{ width: `${Math.min(storagePercent, 100)}%` }}
-              />
-            </div>
-            <div className="text-sidebar-foreground/60 text-xs">
-              {storageUsedGB.toFixed(1)} GB / {storageLimitGB} GB
+              <div className="bg-sidebar-accent h-2 w-full overflow-hidden">
+                <div
+                  className={`h-full ${storageColor.bg} transition-all duration-300`}
+                  style={{ width: `${Math.min(storagePercent, 100)}%` }}
+                />
+              </div>
+              <div className="text-sidebar-foreground/60 text-xs">
+                {storageUsedGB.toFixed(1)} GB / {storageLimitGB} GB
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Settings */}
         <SidebarGroup className="border-sidebar-border border-t">

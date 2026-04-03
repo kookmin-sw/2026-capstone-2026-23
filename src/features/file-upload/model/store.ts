@@ -23,7 +23,6 @@ interface UploadState {
   isPreferredModel: boolean
   overwriteMode: 'OVERWRITE' | 'KEEP_BOTH'
   jobId: string | null
-  isMockMode: boolean
   addFiles: (files: File[]) => void
   removeFile: (id: string) => void
   updateFile: (id: string, updates: Partial<UploadFileItem>) => void
@@ -35,7 +34,6 @@ interface UploadState {
   setIsPreferredModel: (preferred: boolean) => void
   setOverwriteMode: (mode: 'OVERWRITE' | 'KEEP_BOTH') => void
   setJobId: (jobId: string | null) => void
-  setIsMockMode: (mock: boolean) => void
   reset: () => void
 }
 
@@ -49,7 +47,6 @@ export const useUploadStore = create<UploadState>((set) => ({
   isPreferredModel: false,
   overwriteMode: 'OVERWRITE',
   jobId: null,
-  isMockMode: false,
   addFiles: (newFiles) =>
     set((state) => ({
       files: [
@@ -76,7 +73,6 @@ export const useUploadStore = create<UploadState>((set) => ({
   setIsPreferredModel: (isPreferredModel) => set({ isPreferredModel }),
   setOverwriteMode: (overwriteMode) => set({ overwriteMode }),
   setJobId: (jobId) => set({ jobId }),
-  setIsMockMode: (isMockMode) => set({ isMockMode }),
   reset: () =>
     set({
       files: [],
