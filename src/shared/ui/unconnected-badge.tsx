@@ -1,4 +1,5 @@
 import { Unplug } from 'lucide-react'
+import { useUIStore } from '@/app/model/ui-store'
 
 interface UnconnectedBadgeProps {
   children: React.ReactNode
@@ -7,10 +8,12 @@ interface UnconnectedBadgeProps {
 
 /**
  * API 미연결 버튼에 표시하는 뱃지.
- * DEV 환경에서만 표시됩니다.
+ * DEV 환경 + 목업 모드일 때만 표시됩니다.
  */
 export function UnconnectedBadge({ children, label }: UnconnectedBadgeProps) {
-  if (!import.meta.env.DEV) return <>{children}</>
+  const { isMockMode } = useUIStore()
+
+  if (!import.meta.env.DEV || !isMockMode) return <>{children}</>
 
   return (
     <div className="group/unconnected relative inline-flex">
