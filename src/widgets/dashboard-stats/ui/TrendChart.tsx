@@ -13,8 +13,18 @@ import { Card, CardContent } from '@/shared/ui/card'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { useDocuments } from '@/entities/document'
 
-export function TrendChart() {
-  const { data, isLoading } = useDocuments()
+interface TrendChartProps {
+  mockData?: { items: { uploadedAt: string }[] }
+  isLoading?: boolean
+}
+
+export function TrendChart({
+  mockData,
+  isLoading: externalLoading,
+}: TrendChartProps = {}) {
+  const { data: liveData, isLoading: liveLoading } = useDocuments()
+  const data = mockData ?? liveData
+  const isLoading = externalLoading ?? (mockData ? false : liveLoading)
 
   const chartData = useMemo(() => {
     if (!data?.items?.length) return []
@@ -64,7 +74,10 @@ export function TrendChart() {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={chartData}>
+            <AreaChart
+              data={chartData}
+              margin={{ top: 10, right: 5, left: -35, bottom: 0 }}
+            >
               <defs>
                 <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#ff7121" stopOpacity={0.2} />
