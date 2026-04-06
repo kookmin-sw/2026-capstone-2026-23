@@ -4,6 +4,7 @@ import type {
   ConvertResult,
   DocumentResult,
   JobStatusData,
+  JobItemsData,
 } from '@/shared/types'
 
 export interface ConvertParams {
@@ -15,12 +16,11 @@ export interface ConvertParams {
   language?: string
 }
 
-// 문서 변환 (POST /parser/convert)
+// 문서 변환 Job 생성 (POST /parser/jobs) — 큐에 등록 후 jobId 즉시 반환
 export const convertDocuments = ({
   files,
   userId = 'u-demo',
   modelId = 'm1',
-  duplicatePolicy = 'OVERWRITE',
   parallelism = 1,
   language = '한국어',
 }: ConvertParams) => {
@@ -28,18 +28,20 @@ export const convertDocuments = ({
   files.forEach((file) => formData.append('files', file))
   formData.append('userId', userId)
   formData.append('modelId', modelId)
-  formData.append('duplicatePolicy', duplicatePolicy)
   formData.append('parallelism', String(parallelism))
   formData.append('language', language)
-  return api.post<ConvertResult>('/parser/convert', formData, {
+  return api.post<ConvertResult>('/parser/jobs', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: 600000, // 변환은 오래 걸릴 수 있으므로 10분
   })
 }
 
 // Job 상태 조회 (GET /parser/jobs/{jobId})
 export const getJobStatus = (jobId: string) =>
   api.get<JobStatusData>(`/parser/jobs/${jobId}`)
+
+// Job Item 목록 조회 (GET /parser/jobs/{jobId}/items)
+export const getJobItems = (jobId: string) =>
+  api.get<JobItemsData>(`/parser/jobs/${jobId}/items`)
 
 // Job 취소 (POST /parser/jobs/{jobId}/cancel)
 export const cancelJob = (jobId: string) =>

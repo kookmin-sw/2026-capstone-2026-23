@@ -1,1 +1,6 @@
-export { useConvertDocuments, useJobStatus, useCancelJob } from './api/queries'
+export {
+  useConvertDocuments,
+  useJobStatus,
+  useJobItems,
+  useCancelJob,
+} from './api/queries'
