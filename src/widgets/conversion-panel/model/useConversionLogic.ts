@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useUploadStore } from '@/features/file-upload'
 import {
   useConvertDocuments,
   useJobStatus,
+  useJobItems,
   useCancelJob,
 } from '@/entities/parser'
 import { useUIStore } from '@/app/model/ui-store'
@@ -36,6 +37,23 @@ export function useConversionLogic() {
   const convertMutation = useConvertDocuments()
   const cancelMutation = useCancelJob()
   const { data: jobData } = useJobStatus(jobId ?? undefined, isConverting)
+  const { data: jobItemsData } = useJobItems(jobId ?? undefined, isConverting)
+  const itemsMappedRef = useRef(false)
+
+  // Job items에서 documentId 매핑 (한 번만 실행)
+  useEffect(() => {
+    if (!jobItemsData?.items || itemsMappedRef.current) return
+    const jobItems = jobItemsData.items
+    if (jobItems.length === 0) return
+
+    jobItems.forEach((item, index) => {
+      if (files[index] && item.documentId) {
+        updateFile(files[index].id, { documentId: item.documentId })
+      }
+    })
+    itemsMappedRef.current = true
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to jobItemsData
+  }, [jobItemsData])
 
   // Job 상태 폴링으로 파일 상태 업데이트
   useEffect(() => {
@@ -123,21 +141,15 @@ export function useConversionLogic() {
     })
 
     try {
+      itemsMappedRef.current = false
       const result = await convertMutation.mutateAsync({
         files: files.map((f) => f.file),
         modelId,
         parallelism: parallelCount,
-        duplicatePolicy: overwriteMode,
       })
 
       setJobId(result.jobId)
-
-      // 변환 결과의 documentId를 파일에 매핑
-      result.items.forEach((item, index) => {
-        if (files[index]) {
-          updateFile(files[index].id, { documentId: item.documentId })
-        }
-      })
+      // documentId 매핑은 useJobItems 폴링에서 처리
     } catch (error) {
       setIsConverting(false)
       const message = error instanceof Error ? error.message : '변환 요청 실패'

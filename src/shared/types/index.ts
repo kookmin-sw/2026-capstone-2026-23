@@ -101,9 +101,25 @@ export interface ConvertResult {
   jobId: string
   status: JobStatus
   modelId: string
-  duplicatePolicy: 'OVERWRITE' | 'KEEP_BOTH'
   parallelism: number
-  items: ConvertResultItem[]
+  totalItems: number
+  timeoutSeconds: number
+  maxRetries: number
+}
+
+// Job Item 목록 응답
+export interface JobItemData {
+  jobItemId: string
+  documentId: string
+  status: DocumentStatus
+  retryCount: number
+  fileName?: string
+  sourcePath?: string
+}
+
+export interface JobItemsData {
+  jobId: string
+  items: JobItemData[]
 }
 
 // ── Job ──
