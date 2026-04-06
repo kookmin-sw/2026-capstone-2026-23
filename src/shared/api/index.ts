@@ -10,6 +10,7 @@ export {
 export {
   convertDocuments,
   getJobStatus,
+  getJobItems,
   cancelJob,
   getDocumentProgress,
   getDocumentParserResult,
