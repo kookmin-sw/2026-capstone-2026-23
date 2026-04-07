@@ -173,7 +173,7 @@ export function AppSidebar() {
                   tooltip={user?.name ?? '사용자'}
                   className="data-[state=open]:bg-sidebar-accent"
                 >
-                  <span className="bg-sidebar-accent inline-flex size-4 shrink-0 items-center justify-center rounded text-[10px] font-semibold">
+                  <span className="bg-sidebar-accent inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs font-semibold">
                     {user?.name?.charAt(0) ?? '?'}
                   </span>
                   <span className="truncate text-sm">
