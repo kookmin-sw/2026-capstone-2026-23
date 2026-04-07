@@ -1,4 +1,12 @@
 export { api } from './client'
+export {
+  getBootstrapStatus,
+  login,
+  createSuperuser,
+  getMe,
+  changePassword,
+  createUser,
+} from './auth'
 export { getHealth } from './health'
 export {
   uploadFiles,
