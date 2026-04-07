@@ -11,6 +11,16 @@ export const api = axios.create({
   },
 })
 
+const TOKEN_KEY = 'luminir_token'
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem(TOKEN_KEY)
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
 api.interceptors.response.use(
   (response) => {
     // 백엔드 { success, data, error } 래퍼 자동 unwrap
@@ -33,9 +43,15 @@ api.interceptors.response.use(
         toast.error('서버에 연결할 수 없습니다. 백엔드 서버를 확인해주세요.')
       } else {
         const status = error.response.status
+        if (status === 401) {
+          localStorage.removeItem(TOKEN_KEY)
+          if (!window.location.pathname.startsWith('/login')) {
+            window.location.href = '/login'
+          }
+          return Promise.reject(error)
+        }
         const messages: Record<number, string> = {
           400: '잘못된 요청입니다.',
-          401: '인증이 필요합니다.',
           403: '접근 권한이 없습니다.',
           404: '요청한 리소스를 찾을 수 없습니다.',
           422: '입력 데이터가 올바르지 않습니다.',

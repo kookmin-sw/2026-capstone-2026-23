@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as BootstrapRouteImport } from './routes/bootstrap'
 import { Route as ApiTestRouteImport } from './routes/api-test'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
@@ -20,6 +22,16 @@ import { Route as LayoutConvertRouteImport } from './routes/_layout/convert'
 import { Route as LayoutFilesIndexRouteImport } from './routes/_layout/files.index'
 import { Route as LayoutFilesFileIdRouteImport } from './routes/_layout/files.$fileId'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BootstrapRoute = BootstrapRouteImport.update({
+  id: '/bootstrap',
+  path: '/bootstrap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTestRoute = ApiTestRouteImport.update({
   id: '/api-test',
   path: '/api-test',
@@ -73,6 +85,8 @@ const LayoutFilesFileIdRoute = LayoutFilesFileIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/api-test': typeof ApiTestRoute
+  '/bootstrap': typeof BootstrapRoute
+  '/login': typeof LoginRoute
   '/convert': typeof LayoutConvertRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/errors': typeof LayoutErrorsRoute
@@ -83,6 +97,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/api-test': typeof ApiTestRoute
+  '/bootstrap': typeof BootstrapRoute
+  '/login': typeof LoginRoute
   '/convert': typeof LayoutConvertRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/errors': typeof LayoutErrorsRoute
@@ -95,6 +111,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/api-test': typeof ApiTestRoute
+  '/bootstrap': typeof BootstrapRoute
+  '/login': typeof LoginRoute
   '/_layout/convert': typeof LayoutConvertRoute
   '/_layout/dashboard': typeof LayoutDashboardRoute
   '/_layout/errors': typeof LayoutErrorsRoute
@@ -109,6 +127,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/api-test'
+    | '/bootstrap'
+    | '/login'
     | '/convert'
     | '/dashboard'
     | '/errors'
@@ -119,6 +139,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/api-test'
+    | '/bootstrap'
+    | '/login'
     | '/convert'
     | '/dashboard'
     | '/errors'
@@ -130,6 +152,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_layout'
     | '/api-test'
+    | '/bootstrap'
+    | '/login'
     | '/_layout/convert'
     | '/_layout/dashboard'
     | '/_layout/errors'
@@ -143,10 +167,26 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
   ApiTestRoute: typeof ApiTestRoute
+  BootstrapRoute: typeof BootstrapRoute
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bootstrap': {
+      id: '/bootstrap'
+      path: '/bootstrap'
+      fullPath: '/bootstrap'
+      preLoaderRoute: typeof BootstrapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api-test': {
       id: '/api-test'
       path: '/api-test'
@@ -258,6 +298,8 @@ const LayoutRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   ApiTestRoute: ApiTestRoute,
+  BootstrapRoute: BootstrapRoute,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

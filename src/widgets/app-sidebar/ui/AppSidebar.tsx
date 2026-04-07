@@ -1,4 +1,4 @@
-import { Link, useRouterState } from '@tanstack/react-router'
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   LayoutDashboard,
   Upload,
@@ -8,6 +8,8 @@ import {
   HardDrive,
   PanelLeftClose,
   PanelLeftOpen,
+  LogOut,
+  User,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -22,6 +24,7 @@ import {
   useSidebar,
 } from '@/shared/ui/sidebar'
 import { useUIStore } from '@/app/model/ui-store'
+import { useSessionStore, useCurrentUser } from '@/entities/session'
 
 const menuItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -31,11 +34,19 @@ const menuItems = [
 ]
 
 export function AppSidebar() {
+  const navigate = useNavigate()
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
   const { state, toggleSidebar } = useSidebar()
   const { isMockMode } = useUIStore()
+  const clearSession = useSessionStore((s) => s.clearSession)
+  const { data: user } = useCurrentUser()
   const isCollapsed = state === 'collapsed'
+
+  const handleLogout = () => {
+    clearSession()
+    navigate({ to: '/login' })
+  }
 
   // Storage data (mock or null)
   const storageUsedGB = isMockMode ? 847.3 : null
@@ -146,7 +157,7 @@ export function AppSidebar() {
           </div>
         )}
 
-        {/* Settings */}
+        {/* Settings + Auth */}
         <SidebarGroup className="border-sidebar-border border-t">
           <SidebarGroupContent>
             <SidebarMenu>
@@ -165,6 +176,25 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* User info + Logout */}
+        <div className="border-sidebar-border border-t p-3 group-data-[collapsible=icon]:px-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2 group-data-[collapsible=icon]:justify-center">
+              <User className="text-sidebar-foreground/60 h-4 w-4 shrink-0" />
+              <span className="text-sidebar-foreground/80 truncate text-sm group-data-[collapsible=icon]:hidden">
+                {user?.name ?? '...'}
+              </span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="text-sidebar-foreground/60 hover:text-destructive shrink-0 p-1 group-data-[collapsible=icon]:hidden"
+              title="로그아웃"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
       </SidebarFooter>
     </Sidebar>
   )
