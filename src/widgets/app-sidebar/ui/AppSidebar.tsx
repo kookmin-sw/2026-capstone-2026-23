@@ -9,7 +9,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   LogOut,
-  User,
+  ChevronsUpDown,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -23,6 +23,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/shared/ui/sidebar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu'
 import { useUIStore } from '@/app/model/ui-store'
 import { useSessionStore, useCurrentUser } from '@/entities/session'
 
@@ -128,7 +135,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="!gap-0 !p-0">
         {/* Storage — only when data available */}
         {storageUsedGB !== null && (
           <div className="border-sidebar-border border-t p-4 group-data-[collapsible=icon]:hidden">
@@ -157,44 +164,47 @@ export function AppSidebar() {
           </div>
         )}
 
-        {/* Settings + Auth */}
-        <SidebarGroup className="border-sidebar-border border-t">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
+        {/* User dropdown */}
+        <SidebarMenu className="border-sidebar-border border-t p-2">
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
-                  asChild
-                  isActive={currentPath === '/settings'}
-                  tooltip="설정"
+                  tooltip={user?.name ?? '사용자'}
+                  className="data-[state=open]:bg-sidebar-accent"
                 >
-                  <Link to="/settings">
-                    <Settings className="h-5 w-5" />
-                    <span>설정</span>
-                  </Link>
+                  <span className="bg-sidebar-accent inline-flex size-4 shrink-0 items-center justify-center rounded text-[10px] font-semibold">
+                    {user?.name?.charAt(0) ?? '?'}
+                  </span>
+                  <span className="truncate text-sm">
+                    {user?.name ?? '...'}
+                  </span>
+                  <ChevronsUpDown className="text-sidebar-foreground/50 ml-auto h-4 w-4 shrink-0" />
                 </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* User info + Logout */}
-        <div className="border-sidebar-border border-t p-3 group-data-[collapsible=icon]:px-2">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2 group-data-[collapsible=icon]:justify-center">
-              <User className="text-sidebar-foreground/60 h-4 w-4 shrink-0" />
-              <span className="text-sidebar-foreground/80 truncate text-sm group-data-[collapsible=icon]:hidden">
-                {user?.name ?? '...'}
-              </span>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="text-sidebar-foreground/60 hover:text-destructive shrink-0 p-1 group-data-[collapsible=icon]:hidden"
-              title="로그아웃"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                align="start"
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56"
+              >
+                <DropdownMenuItem asChild>
+                  <Link to="/settings" className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    설정
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-destructive focus:text-destructive cursor-pointer"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  로그아웃
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   )
