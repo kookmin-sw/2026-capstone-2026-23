@@ -1,4 +1,4 @@
-import { Link, useRouterState } from '@tanstack/react-router'
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   LayoutDashboard,
   Upload,
@@ -8,6 +8,8 @@ import {
   HardDrive,
   PanelLeftClose,
   PanelLeftOpen,
+  LogOut,
+  ChevronsUpDown,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -21,7 +23,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/shared/ui/sidebar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu'
 import { useUIStore } from '@/app/model/ui-store'
+import { useSessionStore, useCurrentUser } from '@/entities/session'
 
 const menuItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -31,11 +41,19 @@ const menuItems = [
 ]
 
 export function AppSidebar() {
+  const navigate = useNavigate()
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
   const { state, toggleSidebar } = useSidebar()
   const { isMockMode } = useUIStore()
+  const clearSession = useSessionStore((s) => s.clearSession)
+  const { data: user } = useCurrentUser()
   const isCollapsed = state === 'collapsed'
+
+  const handleLogout = () => {
+    clearSession()
+    navigate({ to: '/login' })
+  }
 
   // Storage data (mock or null)
   const storageUsedGB = isMockMode ? 847.3 : null
@@ -117,7 +135,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="!gap-0 !p-0">
         {/* Storage — only when data available */}
         {storageUsedGB !== null && (
           <div className="border-sidebar-border border-t p-4 group-data-[collapsible=icon]:hidden">
@@ -146,25 +164,47 @@ export function AppSidebar() {
           </div>
         )}
 
-        {/* Settings */}
-        <SidebarGroup className="border-sidebar-border border-t">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
+        {/* User dropdown */}
+        <SidebarMenu className="border-sidebar-border border-t p-2">
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
-                  asChild
-                  isActive={currentPath === '/settings'}
-                  tooltip="설정"
+                  tooltip={user?.name ?? '사용자'}
+                  className="data-[state=open]:bg-sidebar-accent"
                 >
-                  <Link to="/settings">
-                    <Settings className="h-5 w-5" />
-                    <span>설정</span>
-                  </Link>
+                  <span className="bg-sidebar-accent inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs font-semibold">
+                    {user?.name?.charAt(0) ?? '?'}
+                  </span>
+                  <span className="truncate text-sm">
+                    {user?.name ?? '...'}
+                  </span>
+                  <ChevronsUpDown className="text-sidebar-foreground/50 ml-auto h-4 w-4 shrink-0" />
                 </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                align="start"
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56"
+              >
+                <DropdownMenuItem asChild>
+                  <Link to="/settings" className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    설정
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-destructive focus:text-destructive cursor-pointer"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  로그아웃
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   )

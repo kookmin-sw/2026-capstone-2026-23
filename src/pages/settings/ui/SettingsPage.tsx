@@ -1,18 +1,14 @@
 import { useState } from 'react'
 import {
   Save,
-  UserPlus,
   Shield,
   Bot,
   FileBox,
   User,
   Lock,
-  Eye,
-  EyeOff,
   HardDrive,
   FolderOpen,
   ChevronRight,
-  X,
   FlaskConical,
 } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
@@ -22,6 +18,8 @@ import { UnconnectedBadge } from '@/shared/ui/unconnected-badge'
 import { Card, CardContent } from '@/shared/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 import { useUIStore } from '@/app/model/ui-store'
+import { useCurrentUser } from '@/entities/session'
+import { UserManagement, PasswordChangeDialog } from '@/features/auth'
 
 const inputClass =
   'border-border bg-card text-foreground focus:border-primary focus:ring-primary/20 h-9 w-full rounded-lg border px-3 text-sm transition-colors focus:ring-2 focus:outline-none'
@@ -29,7 +27,6 @@ const inputClass =
 export function SettingsPage() {
   const { isMockMode, setIsMockMode } = useUIStore()
   const [appTitle, setAppTitle] = useState('Luminir Document Parser')
-  const [inviteEmail, setInviteEmail] = useState('')
   const storageUsedGB = 847.3
   const storageLimitGB = 1000
   const storagePercent = (storageUsedGB / storageLimitGB) * 100
@@ -38,19 +35,13 @@ export function SettingsPage() {
   const [duplicateFileHandling, setDuplicateFileHandling] = useState<
     'overwrite' | 'create-new'
   >('create-new')
-  const [userId] = useState('kim.cheolsu')
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [fullName, setFullName] = useState('김철수')
-  const isFullNameSet = fullName.trim() !== ''
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-  const [showNewPassword, setShowNewPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isPasswordPanelOpen, setIsPasswordPanelOpen] = useState(false)
 
-  // TODO: 추후 백엔드 연동 시 실제 유저 권한으로 교체
-  const isAdmin = true
+  const { data: currentUser } = useCurrentUser()
+  const isAdmin =
+    currentUser?.role === 'SUPERUSER' || currentUser?.role === 'ADMIN'
+  const fullName = currentUser?.name ?? ''
+  const userId = currentUser?.loginId ?? ''
 
   const getStorageColor = () => {
     if (storagePercent >= 90)
@@ -149,35 +140,12 @@ export function SettingsPage() {
                       <label className="text-muted-foreground mb-1.5 block text-xs font-medium">
                         본명
                       </label>
-                      {isFullNameSet ? (
-                        <>
-                          <input
-                            type="text"
-                            value={fullName}
-                            disabled
-                            className="border-border bg-muted/50 text-muted-foreground h-9 w-full cursor-not-allowed rounded-lg border px-3 text-sm"
-                          />
-                          <p className="text-muted-foreground mt-1 text-[11px]">
-                            본명은 최초 1회만 설정할 수 있습니다.
-                          </p>
-                        </>
-                      ) : (
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={fullName}
-                            onChange={(e) => setFullName(e.target.value)}
-                            placeholder="본명을 입력하세요"
-                            className={`${inputClass} flex-1`}
-                          />
-                          <UnconnectedBadge>
-                            <Button>
-                              <Save className="mr-1.5 h-3.5 w-3.5" />
-                              저장
-                            </Button>
-                          </UnconnectedBadge>
-                        </div>
-                      )}
+                      <input
+                        type="text"
+                        value={fullName}
+                        disabled
+                        className="border-border bg-muted/50 text-muted-foreground h-9 w-full cursor-not-allowed rounded-lg border px-3 text-sm"
+                      />
                     </div>
                     <div>
                       <label className="text-muted-foreground mb-1.5 block text-xs font-medium">
@@ -376,27 +344,6 @@ export function SettingsPage() {
                         앱의 표시 이름을 변경합니다.
                       </p>
                     </div>
-
-                    <div className="border-border border-t pt-5">
-                      <label className="text-muted-foreground mb-1.5 block text-xs font-medium">
-                        사용자 초대
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="email"
-                          value={inviteEmail}
-                          onChange={(e) => setInviteEmail(e.target.value)}
-                          placeholder="초대할 사용자의 이메일 주소"
-                          className={`${inputClass} flex-1`}
-                        />
-                        <UnconnectedBadge>
-                          <Button className="bg-[#198038] hover:bg-[#0e6027]">
-                            <UserPlus className="mr-1.5 h-3.5 w-3.5" />
-                            초대
-                          </Button>
-                        </UnconnectedBadge>
-                      </div>
-                    </div>
                   </CardContent>
                 </Card>
 
@@ -472,131 +419,17 @@ export function SettingsPage() {
                     </div>
                   </CardContent>
                 </Card>
+                <UserManagement />
               </TabsContent>
             )}
           </Tabs>
         </div>
       </MockIndicator>
 
-      {/* 비밀번호 변경 사이드 패널 */}
-      {isPasswordPanelOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-40 bg-black/30 transition-opacity"
-            onClick={() => setIsPasswordPanelOpen(false)}
-          />
-          <div className="bg-card border-border fixed top-0 right-0 z-50 flex h-full w-[400px] flex-col border-l shadow-2xl">
-            {/* Header */}
-            <div className="border-border flex items-center justify-between border-b px-6 py-5">
-              <div className="flex items-center gap-2.5">
-                <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-lg">
-                  <Lock className="text-primary h-4 w-4" />
-                </div>
-                <h2 className="text-foreground text-base font-semibold">
-                  비밀번호 변경
-                </h2>
-              </div>
-              <button
-                onClick={() => setIsPasswordPanelOpen(false)}
-                className="text-muted-foreground hover:text-foreground rounded-lg p-1.5 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
-              {[
-                {
-                  label: '현재 비밀번호',
-                  placeholder: '현재 비밀번호를 입력하세요',
-                  value: currentPassword,
-                  onChange: setCurrentPassword,
-                  show: showCurrentPassword,
-                  toggleShow: () =>
-                    setShowCurrentPassword(!showCurrentPassword),
-                },
-                {
-                  label: '새 비밀번호',
-                  placeholder: '새 비밀번호를 입력하세요',
-                  value: newPassword,
-                  onChange: setNewPassword,
-                  show: showNewPassword,
-                  toggleShow: () => setShowNewPassword(!showNewPassword),
-                },
-                {
-                  label: '새 비밀번호 확인',
-                  placeholder: '새 비밀번호를 다시 입력하세요',
-                  value: confirmPassword,
-                  onChange: setConfirmPassword,
-                  show: showConfirmPassword,
-                  toggleShow: () =>
-                    setShowConfirmPassword(!showConfirmPassword),
-                },
-              ].map((field) => (
-                <div key={field.label}>
-                  <label className="text-muted-foreground mb-1.5 block text-xs font-medium">
-                    {field.label}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={field.show ? 'text' : 'password'}
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      placeholder={field.placeholder}
-                      className={`${inputClass} pr-10`}
-                    />
-                    <button
-                      type="button"
-                      onClick={field.toggleShow}
-                      className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
-                    >
-                      {field.show ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              {newPassword &&
-                confirmPassword &&
-                newPassword !== confirmPassword && (
-                  <p className="text-destructive text-xs">
-                    새 비밀번호가 일치하지 않습니다.
-                  </p>
-                )}
-            </div>
-
-            {/* Footer */}
-            <div className="border-border border-t px-6 py-4">
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setIsPasswordPanelOpen(false)}
-                  className="text-muted-foreground hover:text-foreground hover:bg-muted flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors"
-                >
-                  취소
-                </button>
-                <UnconnectedBadge>
-                  <Button
-                    className="flex-1"
-                    disabled={
-                      !currentPassword ||
-                      !newPassword ||
-                      newPassword !== confirmPassword
-                    }
-                  >
-                    <Lock className="mr-1.5 h-3.5 w-3.5" />
-                    변경하기
-                  </Button>
-                </UnconnectedBadge>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      <PasswordChangeDialog
+        open={isPasswordPanelOpen}
+        onOpenChange={setIsPasswordPanelOpen}
+      />
     </>
   )
 }

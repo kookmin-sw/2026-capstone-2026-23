@@ -231,6 +231,39 @@ export interface DateFilter {
   endDate?: string
 }
 
+// ── Auth ──
+
+export type UserRole = 'SUPERUSER' | 'ADMIN' | 'USER'
+
+export interface AuthUser {
+  userId: string
+  loginId: string
+  name: string
+  role: UserRole
+  mustChangePassword: boolean
+  createdAt: string
+  lastLoginAt: string | null
+}
+
+export interface BootstrapStatus {
+  bootstrapRequired: boolean
+  adminEnvConfigured: boolean
+}
+
+export interface LoginResponse {
+  accessToken: string
+  tokenType: string
+  expiresAt: string
+  user: AuthUser
+}
+
+export interface BootstrapLoginResponse {
+  bootstrapRequired: true
+  bootstrapToken: string
+  expiresAt: string
+  next: string
+}
+
 // ── 채팅 (UI용) ──
 
 export interface ChatMessage {
