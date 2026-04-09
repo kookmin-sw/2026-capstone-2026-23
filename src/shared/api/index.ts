@@ -14,6 +14,7 @@ export {
   getDocuments,
   getSupportedFileTypes,
   getDocumentResult,
+  deleteDocument,
 } from './documents'
 export {
   convertDocuments,

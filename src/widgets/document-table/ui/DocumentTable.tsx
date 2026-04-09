@@ -9,7 +9,11 @@ import {
 import { Button } from '@/shared/ui/button'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { StatusBadge } from '@/shared/ui/status-badge'
-import { useDocuments, useDownloadFile } from '@/entities/document'
+import {
+  useDocuments,
+  useDownloadFile,
+  useDeleteDocuments,
+} from '@/entities/document'
 import type { DocumentItem } from '@/shared/types'
 
 interface DocumentWithSelection extends DocumentItem {
@@ -23,6 +27,7 @@ interface DocumentTableProps {
 export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   const { data, isLoading, refetch } = useDocuments()
   const downloadMutation = useDownloadFile()
+  const deleteMutation = useDeleteDocuments()
   const [documents, setDocuments] = useState<DocumentWithSelection[]>([])
   const [selectAll, setSelectAll] = useState(false)
   const [showDeleteDropdown, setShowDeleteDropdown] = useState(false)
@@ -170,10 +175,18 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
               {showDeleteDropdown && selectedCount > 0 && (
                 <div className="bg-card border-border absolute right-0 z-10 mt-1 w-40 border shadow-lg">
                   <button
-                    onClick={() => setShowDeleteDropdown(false)}
-                    className="hover:bg-accent text-foreground w-full px-4 py-2 text-left text-sm transition-colors"
+                    onClick={() => {
+                      const ids = documents
+                        .filter((d) => d.selected)
+                        .map((d) => d.documentId)
+                      deleteMutation.mutate(ids)
+                      setShowDeleteDropdown(false)
+                      setSelectAll(false)
+                    }}
+                    disabled={deleteMutation.isPending}
+                    className="hover:bg-accent text-foreground w-full px-4 py-2 text-left text-sm transition-colors disabled:opacity-50"
                   >
-                    선택 항목 삭제
+                    {deleteMutation.isPending ? '삭제 중...' : '선택 항목 삭제'}
                   </button>
                 </div>
               )}

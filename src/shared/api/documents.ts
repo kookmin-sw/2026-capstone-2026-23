@@ -32,3 +32,7 @@ export const getSupportedFileTypes = () =>
 // 문서 결과 (GET /documents/{documentId}/result)
 export const getDocumentResult = (documentId: string) =>
   api.get<DocumentResult>(`/documents/${documentId}/result`)
+
+// 문서 삭제 (DELETE /documents/{documentId})
+export const deleteDocument = (documentId: string) =>
+  api.delete(`/documents/${documentId}`)

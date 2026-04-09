@@ -3,4 +3,5 @@ export {
   useDocumentResult,
   useUploadFiles,
   useDownloadFile,
+  useDeleteDocuments,
 } from './api/queries'
