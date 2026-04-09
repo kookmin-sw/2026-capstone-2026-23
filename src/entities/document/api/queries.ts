@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
+  deleteDocument,
   downloadFile,
   getDocumentResult,
   getDocuments,
@@ -48,6 +49,25 @@ export function useDownloadFile() {
     mutationFn: async (fileId: string) => {
       const { data } = await downloadFile(fileId)
       return data
+    },
+  })
+}
+
+export function useDeleteDocuments() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (documentIds: string[]) => {
+      const results = await Promise.allSettled(
+        documentIds.map((id) => deleteDocument(id)),
+      )
+      const failed = results.filter((r) => r.status === 'rejected')
+      if (failed.length > 0) {
+        throw new Error(`${failed.length}건 삭제 실패`)
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['documents'] })
     },
   })
 }
