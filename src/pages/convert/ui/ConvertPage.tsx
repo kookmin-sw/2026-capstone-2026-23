@@ -271,7 +271,7 @@ export function ConvertPage() {
         {/* 메인 콘텐츠 영역 (패딩 복원) */}
         <div className="flex flex-1 flex-col py-5 pr-4 pl-0">
           <div
-            className={`relative flex flex-1 flex-col overflow-hidden rounded-2xl transition-all ${
+            className={`border-border relative flex flex-1 flex-col overflow-hidden rounded-xl border transition-all ${
               isDragging ? 'ring-primary ring-2 ring-inset' : ''
             }`}
             onDrop={handleDrop}
@@ -286,7 +286,7 @@ export function ConvertPage() {
           >
             {/* Drag overlay */}
             {isDragging && (
-              <div className="bg-primary/5 absolute inset-0 z-10 flex items-center justify-center rounded-2xl">
+              <div className="bg-primary/5 absolute inset-0 z-10 flex items-center justify-center rounded-xl">
                 <div className="text-center">
                   <div className="bg-primary/10 mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl">
                     <svg
@@ -321,7 +321,7 @@ export function ConvertPage() {
                 className="h-full"
               />
             ) : (
-              <div className="bg-card flex h-full flex-col rounded-2xl">
+              <div className="bg-card flex h-full flex-col">
                 <EmptyState onFilesAdded={addFiles} />
               </div>
             )}
