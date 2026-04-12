@@ -138,7 +138,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   return (
     <div className="flex h-full flex-col gap-3">
       {/* Top Control Bar */}
-      <div className="bg-card border-border border p-3">
+      <div className="bg-card border-border rounded-xl border p-3">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" onClick={() => refetch()}>
             <RefreshCw className="h-4 w-4" />
@@ -196,7 +196,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
       </div>
 
       {/* Document Table */}
-      <div className="bg-card border-border flex-1 overflow-hidden border">
+      <div className="bg-card border-border flex-1 overflow-hidden rounded-xl border">
         <div className="overflow-x-auto">
           <table className="w-full whitespace-nowrap">
             <thead className="bg-muted/50 border-border border-b">
