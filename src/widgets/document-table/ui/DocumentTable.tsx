@@ -196,7 +196,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
       </div>
 
       {/* Document Table */}
-      <div className="bg-card border-border flex-1 overflow-hidden rounded-xl border">
+      <div className="bg-card border-border min-h-[calc(100dvh-11rem)] overflow-hidden rounded-xl border">
         <div className="overflow-x-auto">
           <table className="w-full whitespace-nowrap">
             <thead className="bg-muted/50 border-border border-b">
