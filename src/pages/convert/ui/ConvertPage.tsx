@@ -261,7 +261,7 @@ export function ConvertPage() {
     <>
       {/* 전체 레이아웃: main 패딩을 뚫고 나가서 우측 사이드바를 최상위처럼 배치 */}
       <div
-        className="-my-5 -mr-4 flex h-dvh"
+        className="-my-4 -mr-4 flex h-dvh"
         style={
           {
             '--convert-sidebar-w': isSidebarOpen ? '280px' : '44px',
