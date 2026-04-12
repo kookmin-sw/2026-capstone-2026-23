@@ -21,7 +21,7 @@ function LayoutComponent() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <main className="flex-1 overflow-auto px-4 py-5">
+        <main className="flex-1 overflow-auto p-4">
           <Outlet />
         </main>
       </SidebarInset>

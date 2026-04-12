@@ -269,7 +269,7 @@ export function ConvertPage() {
         }
       >
         {/* 메인 콘텐츠 영역 (패딩 복원) */}
-        <div className="flex flex-1 flex-col py-5 pr-4 pl-0">
+        <div className="flex flex-1 flex-col p-4 pl-0">
           <div
             className={`border-border relative flex flex-1 flex-col overflow-hidden rounded-xl border transition-all ${
               isDragging ? 'ring-primary ring-2 ring-inset' : ''
@@ -364,7 +364,7 @@ export function ConvertPage() {
 
       {/* Chat — 우측 사이드바 왼쪽에 위치 */}
       <div
-        className="pointer-events-none fixed bottom-0 z-50"
+        className="pointer-events-none fixed bottom-0 z-50 transition-[right] duration-300 ease-out"
         style={{ right: 'calc(var(--convert-sidebar-w, 280px) + 0.75rem)' }}
       >
         {displayFile && !isChatOpen && (

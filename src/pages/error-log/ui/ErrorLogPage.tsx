@@ -161,7 +161,7 @@ export function ErrorLogPage() {
 
   return (
     <MockIndicator label="에러 로그">
-      <div className="flex min-h-[calc(100dvh-2.5rem)] flex-col gap-3">
+      <div className="flex h-full flex-col gap-3">
         <div>
           <h2 className="text-foreground flex items-center gap-2 text-2xl font-bold">
             <AlertTriangle className="text-destructive h-6 w-6" />
