@@ -173,7 +173,7 @@ export function ErrorLogPage() {
         </div>
 
         {allErrors.length === 0 ? (
-          <div className="bg-card border-border flex flex-col items-center justify-center rounded-xl border py-16">
+          <div className="bg-card border-border flex min-h-[calc(100dvh-10rem)] flex-col items-center justify-center rounded-xl border">
             <Inbox className="text-muted-foreground/40 mb-3 h-12 w-12" />
             <p className="text-muted-foreground text-sm font-medium">
               에러 로그가 없습니다

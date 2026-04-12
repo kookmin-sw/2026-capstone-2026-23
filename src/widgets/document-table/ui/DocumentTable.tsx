@@ -136,7 +136,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex h-full flex-col gap-3">
       {/* Top Control Bar */}
       <div className="bg-card border-border border p-3">
         <div className="flex items-center gap-4">
@@ -196,7 +196,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
       </div>
 
       {/* Document Table */}
-      <div className="bg-card border-border overflow-hidden border">
+      <div className="bg-card border-border flex-1 overflow-hidden border">
         <div className="overflow-x-auto">
           <table className="w-full whitespace-nowrap">
             <thead className="bg-muted/50 border-border border-b">

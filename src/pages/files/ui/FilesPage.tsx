@@ -11,7 +11,7 @@ export function FilesPage() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex min-h-[calc(100dvh-2.5rem)] flex-col gap-3">
       <div>
         <h2 className="text-foreground flex items-center gap-2 text-2xl font-bold">
           <FolderOpen className="text-primary h-6 w-6" />
@@ -21,7 +21,9 @@ export function FilesPage() {
           변환된 문서를 관리하고 다운로드하세요
         </p>
       </div>
-      <DocumentTable onFileSelect={handleFileSelect} />
+      <div className="flex-1">
+        <DocumentTable onFileSelect={handleFileSelect} />
+      </div>
     </div>
   )
 }
