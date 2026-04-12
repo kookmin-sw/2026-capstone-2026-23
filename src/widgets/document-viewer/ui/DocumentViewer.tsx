@@ -1,68 +1,68 @@
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState } from 'react'
 import DOMPurify from 'dompurify'
-import {
-  Table,
-  Image,
-  Code,
-  FileText,
-  Loader2,
-  AlertCircle,
-} from 'lucide-react'
+import { FileText, Loader2, AlertCircle, Eye } from 'lucide-react'
 import type { DocumentResult } from '@/shared/types'
 import {
   parseDocumentContent,
   buildJsonView,
-  buildMarkdownView,
   type ParsedDocument,
-  type ParsedSection,
-  type HtmlTableData,
-  type MarkdownTableData,
-  type ImageData,
-  type TextData,
+  type ContentBlock,
 } from '../lib/parse-content'
 
 // ── Types ──
 
 interface DocumentViewerProps {
+  /** The conversion result to display on the right panel */
   documentResult?: DocumentResult
   isLoading?: boolean
+  /** Original file for the left preview panel. File object or blob URL string. */
+  originalFile?: File | null
   className?: string
 }
 
 const FORMAT_TABS = [
-  { key: 'sections', label: '구조화 보기' },
-  { key: 'raw', label: '원본 텍스트' },
-  { key: 'markdown', label: 'Markdown' },
+  { key: 'preview', label: 'Preview' },
+  { key: 'html', label: 'HTML' },
   { key: 'json', label: 'JSON' },
 ] as const
 
 type FormatTab = (typeof FORMAT_TABS)[number]['key']
 
-// ── Section type config ──
+// ── Block type styling ──
 
-const SECTION_META: Record<
-  ParsedSection['type'],
-  { icon: typeof Table; color: string; bg: string }
+const BLOCK_STYLES: Record<
+  ContentBlock['type'],
+  { color: string; bg: string; hoverBorder: string; hoverBg: string }
 > = {
-  'html-table': {
-    icon: Table,
+  header: {
     color: 'text-[#0f62fe]',
-    bg: 'bg-[#0f62fe]/10',
+    bg: 'bg-[#0f62fe]/8',
+    hoverBorder: 'border-[#0f62fe]/40',
+    hoverBg: 'bg-[#0f62fe]/5',
+  },
+  paragraph: {
+    color: 'text-[#198038]',
+    bg: 'bg-[#198038]/8',
+    hoverBorder: 'border-[#198038]/40',
+    hoverBg: 'bg-[#198038]/5',
+  },
+  table: {
+    color: 'text-[#8a3ffc]',
+    bg: 'bg-[#8a3ffc]/8',
+    hoverBorder: 'border-[#8a3ffc]/40',
+    hoverBg: 'bg-[#8a3ffc]/5',
   },
   'markdown-table': {
-    icon: Code,
     color: 'text-[#8a3ffc]',
-    bg: 'bg-[#8a3ffc]/10',
+    bg: 'bg-[#8a3ffc]/8',
+    hoverBorder: 'border-[#8a3ffc]/40',
+    hoverBg: 'bg-[#8a3ffc]/5',
   },
   image: {
-    icon: Image,
-    color: 'text-[#198038]',
-    bg: 'bg-[#198038]/10',
-  },
-  text: {
-    icon: FileText,
     color: 'text-[#ff7121]',
-    bg: 'bg-[#ff7121]/10',
+    bg: 'bg-[#ff7121]/8',
+    hoverBorder: 'border-[#ff7121]/40',
+    hoverBg: 'bg-[#ff7121]/5',
   },
 }
 
@@ -71,11 +71,11 @@ const SECTION_META: Record<
 export function DocumentViewer({
   documentResult,
   isLoading,
+  originalFile,
   className = '',
 }: DocumentViewerProps) {
-  const [selectedSection, setSelectedSection] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<FormatTab>('sections')
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const [activeTab, setActiveTab] = useState<FormatTab>('preview')
+  const [hoveredBlock, setHoveredBlock] = useState<string | null>(null)
 
   const parsed = useMemo<ParsedDocument | null>(() => {
     if (documentResult?.txt?.preview) {
@@ -84,11 +84,10 @@ export function DocumentViewer({
     return null
   }, [documentResult])
 
-  // Derive active section: use selected, or fall back to first
-  const activeSection =
-    selectedSection && parsed?.sections.some((s) => s.id === selectedSection)
-      ? selectedSection
-      : (parsed?.sections[0]?.id ?? null)
+  const originalFileUrl = useMemo(() => {
+    if (!originalFile) return null
+    return URL.createObjectURL(originalFile)
+  }, [originalFile])
 
   if (isLoading) {
     return (
@@ -136,86 +135,45 @@ export function DocumentViewer({
     )
   }
 
-  const handleSectionClick = (id: string) => {
-    setSelectedSection(id)
-    setActiveTab('sections')
-    sectionRefs.current[id]?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    })
-  }
-
   return (
-    <div
-      className={`flex h-full gap-0 overflow-hidden rounded-2xl ${className}`}
-    >
-      {/* ── Left: Section List ── */}
-      <div className="bg-card border-border flex w-[340px] flex-shrink-0 flex-col border-r">
-        {/* Header */}
-        <div className="border-border flex items-center justify-between border-b px-4 py-3">
-          <div>
-            <h3 className="text-foreground text-sm font-semibold">변환 결과</h3>
-            <p className="text-muted-foreground text-xs">
-              {parsed.sections.length}개 섹션
-              {parsed.metadata.pageCount && ` · ${parsed.metadata.pageCount}p`}
-            </p>
-          </div>
-          {documentResult && (
-            <span className="bg-muted text-muted-foreground rounded-md px-2 py-0.5 font-mono text-[10px]">
-              {documentResult.modelCode}
+    <div className={`flex h-full overflow-hidden rounded-2xl ${className}`}>
+      {/* ── Left: Original Document Viewer ── */}
+      <div className="bg-muted/30 border-border flex w-1/2 flex-col border-r">
+        <div className="border-border flex items-center justify-between border-b px-4 py-2.5">
+          <div className="flex items-center gap-2">
+            <Eye className="text-muted-foreground h-3.5 w-3.5" />
+            <span className="text-foreground text-xs font-semibold">
+              원본 문서
             </span>
-          )}
+          </div>
+          <span className="text-muted-foreground truncate pl-4 font-mono text-[10px]">
+            {documentResult?.fileName}
+          </span>
         </div>
-
-        {/* Section cards */}
-        <div className="flex-1 space-y-1 overflow-y-auto p-2">
-          {parsed.sections.map((section, idx) => {
-            const meta = SECTION_META[section.type]
-            const Icon = meta.icon
-            const isActive = activeSection === section.id
-
-            return (
-              <button
-                key={section.id}
-                onClick={() => handleSectionClick(section.id)}
-                className={`group w-full rounded-xl p-3 text-left transition-all ${
-                  isActive
-                    ? 'bg-primary/5 ring-primary/30 ring-1'
-                    : 'hover:bg-muted/50'
-                }`}
-              >
-                <div className="mb-1.5 flex items-center gap-2">
-                  <div
-                    className={`flex h-6 w-6 items-center justify-center rounded-lg ${meta.bg}`}
-                  >
-                    <Icon className={`h-3 w-3 ${meta.color}`} />
-                  </div>
-                  <span className="text-foreground text-xs font-semibold">
-                    {section.label}
-                  </span>
-                  <span className="text-muted-foreground/50 ml-auto font-mono text-[10px]">
-                    {String(idx + 1).padStart(2, '0')}
-                  </span>
-                </div>
-                <p className="text-muted-foreground line-clamp-2 pl-8 text-[11px] leading-relaxed">
-                  {section.preview}
-                </p>
-              </button>
-            )
-          })}
+        <div className="flex-1 overflow-hidden">
+          <OriginalFilePreview
+            file={originalFile}
+            fileUrl={originalFileUrl}
+            fileName={documentResult?.fileName}
+          />
         </div>
       </div>
 
-      {/* ── Right: Format Viewer ── */}
-      <div className="bg-card flex flex-1 flex-col overflow-hidden">
+      {/* ── Right: Parsed Document ── */}
+      <div className="bg-card flex w-1/2 flex-col overflow-hidden">
         {/* Tab bar */}
-        <div className="border-border flex items-center border-b">
+        <div className="border-border flex items-center justify-between border-b">
+          <div className="flex items-center gap-1 px-2">
+            <span className="text-foreground px-2 text-xs font-semibold">
+              Document parsing
+            </span>
+          </div>
           <div className="flex">
             {FORMAT_TABS.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`relative px-4 py-3 text-xs font-semibold transition-colors ${
+                className={`relative px-4 py-2.5 text-xs font-medium transition-colors ${
                   activeTab === tab.key
                     ? 'text-primary'
                     : 'text-muted-foreground hover:text-foreground'
@@ -228,33 +186,24 @@ export function DocumentViewer({
               </button>
             ))}
           </div>
-          <div className="flex-1" />
-          <span className="text-muted-foreground/40 pr-4 font-mono text-[10px]">
-            {documentResult?.fileName}
-          </span>
         </div>
 
-        {/* Content area */}
+        {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          {activeTab === 'sections' && (
-            <SectionsView
-              sections={parsed.sections}
-              activeSection={activeSection}
-              sectionRefs={sectionRefs}
+          {activeTab === 'preview' && (
+            <BlocksPreview
+              blocks={parsed.blocks}
+              hoveredBlock={hoveredBlock}
+              onHoverBlock={setHoveredBlock}
             />
           )}
-          {activeTab === 'raw' && (
-            <pre className="p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap">
+          {activeTab === 'html' && (
+            <pre className="text-foreground/80 p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {parsed.rawText}
             </pre>
           )}
-          {activeTab === 'markdown' && (
-            <pre className="p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap">
-              {buildMarkdownView(parsed)}
-            </pre>
-          )}
           {activeTab === 'json' && (
-            <pre className="p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap">
+            <pre className="text-foreground/80 p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {buildJsonView(parsed)}
             </pre>
           )}
@@ -264,50 +213,105 @@ export function DocumentViewer({
   )
 }
 
-// ── Sections View (rendered content) ──
+// ── Original File Preview ──
 
-function SectionsView({
-  sections,
-  activeSection,
-  sectionRefs,
+function OriginalFilePreview({
+  file,
+  fileUrl,
+  fileName,
 }: {
-  sections: ParsedSection[]
-  activeSection: string | null
-  sectionRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>
+  file?: File | null
+  fileUrl: string | null
+  fileName?: string
+}) {
+  const ext = (fileName ?? file?.name ?? '').split('.').pop()?.toLowerCase()
+
+  // PDF
+  if (ext === 'pdf' && fileUrl) {
+    return (
+      <iframe
+        src={fileUrl}
+        className="h-full w-full border-0"
+        title="원본 PDF"
+      />
+    )
+  }
+
+  // Image formats
+  if (
+    fileUrl &&
+    ext &&
+    ['png', 'jpg', 'jpeg', 'bmp', 'tiff', 'tif', 'gif', 'webp'].includes(ext)
+  ) {
+    return (
+      <div className="flex h-full items-center justify-center overflow-auto p-4">
+        <img
+          src={fileUrl}
+          alt="원본 이미지"
+          className="max-h-full max-w-full object-contain"
+        />
+      </div>
+    )
+  }
+
+  // Fallback: unsupported or no file
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-3">
+      <div className="bg-muted flex h-16 w-16 items-center justify-center rounded-2xl">
+        <FileText className="text-muted-foreground h-8 w-8" />
+      </div>
+      <div className="text-center">
+        <p className="text-muted-foreground text-sm font-medium">
+          {fileName ?? '원본 파일'}
+        </p>
+        <p className="text-muted-foreground/60 mt-1 text-xs">
+          {fileUrl
+            ? '이 파일 형식은 미리보기를 지원하지 않습니다'
+            : '원본 파일이 없습니다'}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+// ── Blocks Preview (main parsed view) ──
+
+function BlocksPreview({
+  blocks,
+  hoveredBlock,
+  onHoverBlock,
+}: {
+  blocks: ContentBlock[]
+  hoveredBlock: string | null
+  onHoverBlock: (id: string | null) => void
 }) {
   return (
-    <div className="space-y-6 p-5">
-      {sections.map((section) => {
-        const meta = SECTION_META[section.type]
-        const Icon = meta.icon
-        const isActive = activeSection === section.id
+    <div className="space-y-0 p-4">
+      {blocks.map((block) => {
+        const style = BLOCK_STYLES[block.type]
+        const isHovered = hoveredBlock === block.id
 
         return (
           <div
-            key={section.id}
-            ref={(el) => {
-              sectionRefs.current[section.id] = el
-            }}
-            className={`rounded-xl border transition-all ${
-              isActive ? 'border-primary/30 shadow-sm' : 'border-border'
+            key={block.id}
+            className={`relative border-l-2 py-2 pr-3 pl-4 transition-all duration-150 ${
+              isHovered
+                ? `${style.hoverBorder} ${style.hoverBg}`
+                : 'border-transparent'
             }`}
+            onMouseEnter={() => onHoverBlock(block.id)}
+            onMouseLeave={() => onHoverBlock(null)}
           >
-            {/* Section header */}
-            <div className="border-border flex items-center gap-2 border-b px-4 py-2.5">
-              <div
-                className={`flex h-6 w-6 items-center justify-center rounded-lg ${meta.bg}`}
-              >
-                <Icon className={`h-3 w-3 ${meta.color}`} />
-              </div>
-              <span className="text-foreground text-sm font-semibold">
-                {section.label}
-              </span>
-            </div>
+            {/* Type label — shows on hover */}
+            <span
+              className={`absolute top-2 right-3 rounded px-1.5 py-0.5 text-[10px] font-semibold transition-opacity ${style.color} ${style.bg} ${
+                isHovered ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              {block.index + 1} - {block.label}
+            </span>
 
-            {/* Section body */}
-            <div className="p-4">
-              <SectionContent section={section} />
-            </div>
+            <BlockContent block={block} />
           </div>
         )
       })}
@@ -315,71 +319,46 @@ function SectionsView({
   )
 }
 
-// ── Section Content Renderer ──
+// ── Block Content Renderer ──
 
-function SectionContent({ section }: { section: ParsedSection }) {
-  switch (section.type) {
-    case 'html-table': {
-      const d = section.data as HtmlTableData
+function BlockContent({ block }: { block: ContentBlock }) {
+  switch (block.type) {
+    case 'header':
+      return (
+        <p className="text-foreground text-base leading-relaxed font-semibold">
+          {block.content}
+        </p>
+      )
+
+    case 'paragraph':
+      return (
+        <p className="text-foreground/85 text-sm leading-[1.7]">
+          {block.content}
+        </p>
+      )
+
+    case 'table':
       return (
         <div
-          className="[&_td]:border-border [&_th]:border-border [&_th]:bg-muted overflow-x-auto [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-3 [&_td]:py-2 [&_td]:text-sm [&_th]:border [&_th]:px-3 [&_th]:py-2.5 [&_th]:text-left [&_th]:text-sm [&_th]:font-semibold"
+          className="[&_td]:border-border [&_th]:border-border [&_th]:bg-muted/50 overflow-x-auto text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:text-xs [&_th]:border [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold"
           dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(d.html),
+            __html: DOMPurify.sanitize(block.htmlContent ?? block.content),
           }}
         />
       )
-    }
-    case 'markdown-table': {
-      const d = section.data as MarkdownTableData
+
+    case 'markdown-table':
       return (
-        <div className="space-y-3">
-          {d.headerPath.length > 0 && (
-            <div>
-              <p className="text-foreground mb-1 text-xs font-semibold">
-                HeaderPath 구조
-              </p>
-              <ul className="space-y-0.5">
-                {d.headerPath.map((path, i) => (
-                  <li key={i} className="text-muted-foreground text-xs">
-                    <span className="text-primary mr-1.5">·</span>
-                    {path.trim()}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <div>
-            <p className="text-foreground mb-1 text-xs font-semibold">
-              데이터 (사실 문장)
-            </p>
-            <ul className="space-y-0.5">
-              {d.rows.map((row, i) => (
-                <li key={i} className="text-muted-foreground text-xs">
-                  <span className="text-primary mr-1.5">·</span>
-                  {row}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )
-    }
-    case 'image': {
-      const d = section.data as ImageData
-      return (
-        <p className="text-foreground text-sm leading-relaxed whitespace-pre-line">
-          {d.description}
-        </p>
-      )
-    }
-    case 'text': {
-      const d = section.data as TextData
-      return (
-        <pre className="text-foreground overflow-x-auto font-mono text-xs leading-relaxed whitespace-pre-wrap">
-          {d.text}
+        <pre className="text-foreground/80 overflow-x-auto font-mono text-xs leading-relaxed whitespace-pre-wrap">
+          {block.content}
         </pre>
       )
-    }
+
+    case 'image':
+      return (
+        <div className="text-foreground/80 text-sm leading-relaxed italic">
+          {block.content}
+        </div>
+      )
   }
 }

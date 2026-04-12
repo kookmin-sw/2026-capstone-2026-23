@@ -309,6 +309,7 @@ export function ConvertPage() {
           <DocumentViewer
             documentResult={displayResult}
             isLoading={displayLoading}
+            originalFile={selectedFile?.file ?? null}
             className="h-full"
           />
         ) : (

@@ -1,181 +1,177 @@
-export interface ParsedSection {
+/** Sequential content block — represents one piece of the parsed document */
+export interface ContentBlock {
   id: string
-  type: 'html-table' | 'markdown-table' | 'image' | 'text'
+  index: number
+  type: 'header' | 'paragraph' | 'table' | 'markdown-table' | 'image'
   label: string
-  preview: string
-  data: HtmlTableData | MarkdownTableData | ImageData | TextData
-}
-
-export interface HtmlTableData {
-  html: string
-}
-
-export interface MarkdownTableData {
-  title: string
-  headerPath: string[]
-  rows: string[]
-}
-
-export interface ImageData {
-  description: string
-}
-
-export interface TextData {
-  text: string
+  content: string
+  htmlContent?: string
 }
 
 export interface ParsedDocument {
   metadata: { originalPath?: string; pageCount?: number }
-  sections: ParsedSection[]
+  blocks: ContentBlock[]
   rawText: string
 }
 
+/**
+ * Parse converted document text into sequential blocks.
+ * Preserves the linear order of content as it appears in the document.
+ */
 export function parseDocumentContent(text: string): ParsedDocument {
-  const lines = text.split('\n')
   const metadata: ParsedDocument['metadata'] = {}
-  const sections: ParsedSection[] = []
+  const blocks: ContentBlock[] = []
+  let blockIdx = 0
 
-  lines.slice(0, 3).forEach((line) => {
-    if (line.includes('원본 파일 경로:'))
+  // Extract metadata from first few lines
+  const lines = text.split('\n')
+  const metaLines: number[] = []
+  lines.slice(0, 5).forEach((line, i) => {
+    if (line.includes('원본 파일 경로:')) {
       metadata.originalPath = line.split(':').slice(1).join(':').trim()
-    else if (line.includes('페이지 수:'))
+      metaLines.push(i)
+    } else if (line.includes('페이지 수:')) {
       metadata.pageCount = parseInt(line.split(':')[1].trim())
+      metaLines.push(i)
+    }
   })
 
-  let match: RegExpExecArray | null
-  let sectionId = 0
+  // Build a marker map: find all marker positions in the text
+  interface Marker {
+    start: number
+    end: number
+    type: 'table' | 'markdown-table' | 'image'
+    content: string
+  }
 
-  // HTML Tables
+  const markers: Marker[] = []
+
   const htmlTableRegex = /\[\[TABLE\]\]([\s\S]*?)\[\[\/TABLE\]\]/g
+  let match: RegExpExecArray | null
   while ((match = htmlTableRegex.exec(text)) !== null) {
-    const html = match[1].trim()
-    sections.push({
-      id: `section-${sectionId++}`,
-      type: 'html-table',
-      label: `HTML 표 ${sectionId}`,
-      preview: html.replace(/<[^>]*>/g, '').slice(0, 80) + '…',
-      data: { html } as HtmlTableData,
+    markers.push({
+      start: match.index,
+      end: match.index + match[0].length,
+      type: 'table',
+      content: match[1].trim(),
     })
   }
 
-  // Markdown Tables
-  const markdownTableRegex =
+  const mdTableRegex =
     /\[\[TABLE_MARKDOWN\]\]([\s\S]*?)\[\[\/TABLE_MARKDOWN\]\]/g
-  while ((match = markdownTableRegex.exec(text)) !== null) {
-    const tableContent = match[1].trim()
-    const titleMatch = tableContent.match(/# TableTitle: (.+)/)
-    const title = titleMatch ? titleMatch[1] : `마크다운 표`
-    const headerPathSection = tableContent.match(
-      /## HeaderPath 구조([\s\S]*?)## 데이터/,
-    )
-    const headerPath: string[] = []
-    if (headerPathSection) {
-      headerPathSection[1]
-        .trim()
-        .split('\n')
-        .forEach((line) => {
-          const trimmed = line.trim()
-          if (trimmed.startsWith('-'))
-            headerPath.push(trimmed.substring(1).trim())
-        })
-    }
-    const rowsSection = tableContent.match(/## 데이터 \(사실 문장\)([\s\S]*)/)
-    const rows: string[] = []
-    if (rowsSection) {
-      rowsSection[1]
-        .trim()
-        .split('\n')
-        .forEach((line) => {
-          const trimmed = line.trim()
-          if (trimmed.startsWith('-')) rows.push(trimmed.substring(1).trim())
-        })
-    }
-    sections.push({
-      id: `section-${sectionId++}`,
+  while ((match = mdTableRegex.exec(text)) !== null) {
+    markers.push({
+      start: match.index,
+      end: match.index + match[0].length,
       type: 'markdown-table',
-      label: title,
-      preview: rows.slice(0, 2).join(' / ').slice(0, 80) + '…',
-      data: { title, headerPath, rows } as MarkdownTableData,
+      content: match[1].trim(),
     })
   }
 
-  // Image Descriptions
   const imageRegex = /\[\[IMAGE\]\]([\s\S]*?)\[\[\/IMAGE\]\]/g
-  let imageIdx = 1
   while ((match = imageRegex.exec(text)) !== null) {
-    const description = match[1].trim()
-    sections.push({
-      id: `section-${sectionId++}`,
+    markers.push({
+      start: match.index,
+      end: match.index + match[0].length,
       type: 'image',
-      label: `이미지 ${imageIdx++}`,
-      preview: description.slice(0, 80) + '…',
-      data: { description } as ImageData,
+      content: match[1].trim(),
     })
   }
 
-  // Plain text (everything with markers stripped)
-  const plainText = text
-    .replace(/\[\[TABLE\]\][\s\S]*?\[\[\/TABLE\]\]/g, '')
-    .replace(/\[\[TABLE_MARKDOWN\]\][\s\S]*?\[\[\/TABLE_MARKDOWN\]\]/g, '')
-    .replace(/\[\[IMAGE\]\][\s\S]*?\[\[\/IMAGE\]\]/g, '')
-    .trim()
+  // Sort markers by position
+  markers.sort((a, b) => a.start - b.start)
 
-  if (plainText) {
-    sections.push({
-      id: `section-${sectionId++}`,
-      type: 'text',
-      label: '텍스트',
-      preview: plainText.slice(0, 80) + '…',
-      data: { text: plainText } as TextData,
-    })
+  // Walk through text linearly, creating blocks
+  let cursor = 0
+
+  // Skip metadata lines at the very beginning
+  if (metaLines.length > 0) {
+    const lastMetaLine = metaLines[metaLines.length - 1]
+    let charCount = 0
+    for (let i = 0; i <= lastMetaLine; i++) {
+      charCount += lines[i].length + 1 // +1 for \n
+    }
+    cursor = charCount
   }
 
-  return { metadata, sections, rawText: text }
+  const addTextBlocks = (rawText: string) => {
+    const trimmed = rawText.trim()
+    if (!trimmed) return
+
+    // Split into paragraphs by double newlines or page markers
+    const paragraphs = trimmed.split(/\n{2,}|(?=---\s*페이지)/)
+
+    for (const para of paragraphs) {
+      const cleaned = para.trim()
+      if (!cleaned) continue
+
+      // Detect if it's a header/heading line (short, no period, possibly starts with page marker)
+      const isPageMarker = /^---\s*페이지/.test(cleaned)
+      if (isPageMarker) {
+        blocks.push({
+          id: `block-${blockIdx}`,
+          index: blockIdx++,
+          type: 'header',
+          label: 'Page',
+          content: cleaned,
+        })
+        continue
+      }
+
+      // Short lines without punctuation are likely headings
+      const isHeading = cleaned.length < 80 && !cleaned.includes('.')
+      blocks.push({
+        id: `block-${blockIdx}`,
+        index: blockIdx++,
+        type: isHeading ? 'header' : 'paragraph',
+        label: isHeading ? 'Heading' : 'Paragraph',
+        content: cleaned,
+      })
+    }
+  }
+
+  for (const marker of markers) {
+    // Add any text before this marker
+    if (marker.start > cursor) {
+      addTextBlocks(text.slice(cursor, marker.start))
+    }
+
+    const typeLabels: Record<string, string> = {
+      table: 'Table',
+      'markdown-table': 'Table',
+      image: 'Image',
+    }
+
+    blocks.push({
+      id: `block-${blockIdx}`,
+      index: blockIdx++,
+      type: marker.type,
+      label: typeLabels[marker.type],
+      content: marker.content,
+      htmlContent: marker.type === 'table' ? marker.content : undefined,
+    })
+
+    cursor = marker.end
+  }
+
+  // Add any remaining text after last marker
+  if (cursor < text.length) {
+    addTextBlocks(text.slice(cursor))
+  }
+
+  return { metadata, blocks, rawText: text }
 }
 
 /** Build a JSON representation of the parsed document */
 export function buildJsonView(doc: ParsedDocument): string {
   const structured = {
     metadata: doc.metadata,
-    sections: doc.sections.map((s) => ({
-      type: s.type,
-      label: s.label,
-      ...(s.data as Record<string, unknown>),
+    blocks: doc.blocks.map((b) => ({
+      index: b.index,
+      type: b.type,
+      label: b.label,
+      content: b.content,
     })),
   }
   return JSON.stringify(structured, null, 2)
-}
-
-/** Build a Markdown representation */
-export function buildMarkdownView(doc: ParsedDocument): string {
-  const lines: string[] = []
-  if (doc.metadata.originalPath)
-    lines.push(`> 원본: ${doc.metadata.originalPath}`)
-  if (doc.metadata.pageCount) lines.push(`> 페이지: ${doc.metadata.pageCount}`)
-  if (lines.length) lines.push('')
-
-  for (const section of doc.sections) {
-    if (section.type === 'html-table') {
-      const d = section.data as HtmlTableData
-      lines.push(`## ${section.label}`, '', '```html', d.html, '```', '')
-    } else if (section.type === 'markdown-table') {
-      const d = section.data as MarkdownTableData
-      lines.push(`## ${d.title}`, '')
-      if (d.headerPath.length) {
-        lines.push('**HeaderPath:**')
-        d.headerPath.forEach((p) => lines.push(`- ${p}`))
-        lines.push('')
-      }
-      lines.push('**데이터:**')
-      d.rows.forEach((r) => lines.push(`- ${r}`))
-      lines.push('')
-    } else if (section.type === 'image') {
-      const d = section.data as ImageData
-      lines.push(`## ${section.label}`, '', d.description, '')
-    } else if (section.type === 'text') {
-      const d = section.data as TextData
-      lines.push(`## 텍스트`, '', d.text, '')
-    }
-  }
-  return lines.join('\n')
 }
