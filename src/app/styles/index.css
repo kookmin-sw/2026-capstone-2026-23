@@ -342,6 +342,35 @@
   }
 }
 
+/* ───── Floating shape animations ───── */
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(3deg);
+  }
+}
+@keyframes float-mid {
+  0%,
+  100% {
+    transform: translateY(0) rotate(12deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(15deg);
+  }
+}
+
+@layer utilities {
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+  .animate-float-mid {
+    animation: float-mid 6s ease-in-out infinite;
+  }
+}
+
 /* ───── Luminir Color Combos (bg + text matching) ───── */
 @layer utilities {
   .luminir-pink-80 {

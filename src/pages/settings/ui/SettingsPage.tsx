@@ -347,6 +347,8 @@ export function SettingsPage() {
                   </CardContent>
                 </Card>
 
+                <UserManagement />
+
                 {/* 스토리지 */}
                 <Card>
                   <CardContent className="space-y-5 p-5">
@@ -419,7 +421,6 @@ export function SettingsPage() {
                     </div>
                   </CardContent>
                 </Card>
-                <UserManagement />
               </TabsContent>
             )}
           </Tabs>
