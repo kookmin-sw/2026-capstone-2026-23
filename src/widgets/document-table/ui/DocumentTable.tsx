@@ -207,7 +207,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
       </div>
 
       {/* ── 테이블 ── */}
-      <div className="bg-card border-border flex flex-1 flex-col overflow-hidden rounded-xl border">
+      <div className="bg-card border-border flex min-h-[calc(100dvh-11rem)] flex-col overflow-hidden rounded-xl border">
         <div className="flex-1 overflow-x-auto">
           <table className="w-full">
             {/* 헤더 */}
