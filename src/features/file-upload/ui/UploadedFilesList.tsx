@@ -273,7 +273,7 @@ export function UploadedFilesList({
         {/* 파일 추가 영역 */}
         {files.length === 0 ? (
           <div
-            className={`flex flex-col items-center gap-3 rounded-lg border-2 border-dashed px-4 py-8 text-center transition-all ${
+            className={`flex flex-col items-center gap-3 rounded-lg border-2 border-dashed px-4 py-6 text-center transition-all ${
               isDragging
                 ? 'border-primary bg-primary/5 text-primary'
                 : 'border-border text-muted-foreground'

@@ -85,16 +85,16 @@ export function FloatingControlPanel({
 
   return (
     <div
-      className={`bg-card border-border relative flex h-full flex-shrink-0 overflow-hidden border-l transition-[width] duration-300 ease-out ${
+      className={`bg-card border-border relative flex h-full flex-shrink-0 overflow-hidden border-l transition-[width] duration-420 ease-[cubic-bezier(0.22,1,0.36,1)] ${
         isOpen ? 'w-[280px]' : 'w-11'
       }`}
     >
       <div
         aria-hidden={!isOpen}
-        className={`absolute inset-0 flex flex-col overflow-hidden transition-all duration-300 ease-out ${
+        className={`absolute inset-0 flex flex-col overflow-hidden transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen
-            ? 'translate-x-0 opacity-100'
-            : 'pointer-events-none translate-x-3 opacity-0'
+            ? 'translate-x-0 opacity-100 delay-120'
+            : 'pointer-events-none translate-x-2 opacity-0 delay-0'
         }`}
       >
         {overallProgress > 0 && (
@@ -188,9 +188,19 @@ export function FloatingControlPanel({
             )}
         </div>
 
-        <div className="flex-1 overflow-x-hidden overflow-y-auto">
+        <div
+          className={`flex-1 overflow-x-hidden overflow-y-auto transition-opacity duration-260 ease-out ${
+            isOpen ? 'opacity-100 delay-170' : 'opacity-0 delay-0'
+          }`}
+        >
           {activeTab === 'files' && (
-            <div className="px-3 py-3">
+            <div
+              className={`px-3 py-3 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                isOpen
+                  ? 'translate-y-0 opacity-100 delay-180'
+                  : 'translate-y-1.5 opacity-0 delay-0'
+              }`}
+            >
               <UploadedFilesList
                 files={files}
                 onRemoveFile={onRemoveFile}
@@ -203,7 +213,13 @@ export function FloatingControlPanel({
           )}
 
           {activeTab === 'settings' && (
-            <div className="px-3 py-3">
+            <div
+              className={`px-3 py-3 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                isOpen
+                  ? 'translate-y-0 opacity-100 delay-180'
+                  : 'translate-y-1.5 opacity-0 delay-0'
+              }`}
+            >
               {batchStatusNode && <div className="mb-3">{batchStatusNode}</div>}
               <ConversionSettings
                 modelId={modelId}
@@ -220,7 +236,13 @@ export function FloatingControlPanel({
           )}
         </div>
 
-        <div className="border-border border-t">
+        <div
+          className={`border-border border-t transition-[opacity,transform] duration-260 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isOpen
+              ? 'translate-y-0 opacity-100 delay-220'
+              : 'translate-y-2 opacity-0 delay-0'
+          }`}
+        >
           <div className="border-border border-b px-3 py-2">
             <label className="flex cursor-pointer items-center justify-between">
               <span className="text-muted-foreground flex items-center gap-1.5 text-[11px] font-medium">
@@ -245,10 +267,10 @@ export function FloatingControlPanel({
 
       <div
         aria-hidden={isOpen}
-        className={`absolute inset-0 flex flex-col items-center overflow-hidden transition-all duration-300 ease-out ${
+        className={`absolute inset-0 flex flex-col items-center overflow-hidden transition-[opacity,transform] duration-260 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen
-            ? 'pointer-events-none -translate-x-2 opacity-0'
-            : 'translate-x-0 opacity-100'
+            ? 'pointer-events-none -translate-x-1 opacity-0 delay-0'
+            : 'translate-x-0 opacity-100 delay-200'
         }`}
       >
         {isConverting && (
