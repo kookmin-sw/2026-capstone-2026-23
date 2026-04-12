@@ -192,11 +192,10 @@ export function ConvertPage() {
   const { isChatOpen, setIsChatOpen, isMockMode } = useUIStore()
   const logic = useConversionLogic()
   const [isDragging, setIsDragging] = useState(false)
-  const [isPanelExpanded, setIsPanelExpanded] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
-  const addFilesAndExpand = (newFiles: File[]) => {
+  const addFiles = (newFiles: File[]) => {
     logic.addFiles(newFiles)
-    setIsPanelExpanded(true)
   }
 
   const selectedFile = files.find((f) => f.resultPath === selectedResultPath)
@@ -251,7 +250,7 @@ export function ConvertPage() {
         }
       }
       if (droppedFiles.length > 0) {
-        addFilesAndExpand(droppedFiles)
+        addFiles(droppedFiles)
       }
     }
 
@@ -260,114 +259,132 @@ export function ConvertPage() {
 
   return (
     <>
-      {/* Main content area — drag & drop zone */}
+      {/* 전체 레이아웃: main 패딩을 뚫고 나가서 우측 사이드바를 최상위처럼 배치 */}
       <div
-        className={`relative flex h-[calc(100dvh-2.5rem)] flex-col overflow-hidden rounded-2xl transition-all ${
-          isDragging ? 'ring-primary ring-2' : ''
-        }`}
-        onDrop={handleDrop}
-        onDragOver={(e) => {
-          e.preventDefault()
-          setIsDragging(true)
-        }}
-        onDragLeave={(e) => {
-          e.preventDefault()
-          setIsDragging(false)
-        }}
+        className="-my-5 -mr-4 flex h-dvh"
+        style={
+          {
+            '--convert-sidebar-w': isSidebarOpen ? '280px' : '44px',
+          } as React.CSSProperties
+        }
       >
-        {/* Drag overlay */}
-        {isDragging && (
-          <div className="bg-primary/5 absolute inset-0 z-10 flex items-center justify-center rounded-2xl">
-            <div className="text-center">
-              <div className="bg-primary/10 mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl">
-                <svg
-                  className="text-primary h-8 w-8"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 4v16m0-16l-4 4m4-4l4 4"
-                  />
-                </svg>
+        {/* 메인 콘텐츠 영역 (패딩 복원) */}
+        <div className="flex flex-1 flex-col py-5 pr-4 pl-0">
+          <div
+            className={`relative flex flex-1 flex-col overflow-hidden rounded-2xl transition-all ${
+              isDragging ? 'ring-primary ring-2 ring-inset' : ''
+            }`}
+            onDrop={handleDrop}
+            onDragOver={(e) => {
+              e.preventDefault()
+              setIsDragging(true)
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault()
+              setIsDragging(false)
+            }}
+          >
+            {/* Drag overlay */}
+            {isDragging && (
+              <div className="bg-primary/5 absolute inset-0 z-10 flex items-center justify-center rounded-2xl">
+                <div className="text-center">
+                  <div className="bg-primary/10 mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl">
+                    <svg
+                      className="text-primary h-8 w-8"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4v16m0-16l-4 4m4-4l4 4"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-primary text-sm font-semibold">
+                    여기에 파일을 놓으세요
+                  </p>
+                  <p className="text-primary/60 mt-1 text-xs">
+                    HWP, HWPX, PDF, PNG, JPG, BMP, TIFF
+                  </p>
+                </div>
               </div>
-              <p className="text-primary text-sm font-semibold">
-                여기에 파일을 놓으세요
-              </p>
-              <p className="text-primary/60 mt-1 text-xs">
-                HWP, HWPX, PDF, PNG, JPG, BMP, TIFF
-              </p>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* Content: Empty state OR Document viewer */}
-        {hasResult ? (
-          <DocumentViewer
-            documentResult={displayResult}
-            isLoading={displayLoading}
-            originalFile={selectedFile?.file ?? null}
-            className="h-full"
-          />
-        ) : (
-          <div className="bg-card flex h-full flex-col rounded-2xl">
-            <EmptyState onFilesAdded={addFilesAndExpand} />
+            {hasResult ? (
+              <DocumentViewer
+                documentResult={displayResult}
+                isLoading={displayLoading}
+                originalFile={selectedFile?.file ?? null}
+                className="h-full"
+              />
+            ) : (
+              <div className="bg-card flex h-full flex-col rounded-2xl">
+                <EmptyState onFilesAdded={addFiles} />
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
+        {/* 우측 사이드바 — main 패딩 바깥, 화면 끝까지 full height */}
+        <FloatingControlPanel
+          files={logic.files}
+          onRemoveFile={logic.removeFile}
+          onFileSelect={logic.handleFileSelect}
+          onFilesAdded={addFiles}
+          expanded={isSidebarOpen}
+          onExpandedChange={setIsSidebarOpen}
+          selectedFileId={logic.selectedFile?.id}
+          overallProgress={logic.overallProgress}
+          modelId={logic.modelId}
+          onModelIdChange={logic.setModelId}
+          parallelCount={logic.parallelCount}
+          onParallelCountChange={logic.setParallelCount}
+          isPreferredModel={logic.isPreferredModel}
+          onPreferredModelChange={logic.setIsPreferredModel}
+          overwriteMode={logic.overwriteMode}
+          onOverwriteModeChange={logic.setOverwriteMode}
+          isMockMode={logic.isMockMode}
+          onMockModeChange={logic.setIsMockMode}
+          onConvert={logic.handleConvert}
+          onStop={logic.handleStop}
+          onResume={logic.handleResume}
+          isConverting={logic.isConverting}
+          hasFiles={logic.hasFiles}
+          batchStatusNode={
+            <BatchStatusBanner
+              batchStatus={logic.batchStatus}
+              batchStatusType={logic.batchStatusType}
+            />
+          }
+        />
       </div>
 
-      {/* Floating control panel (files + settings) */}
-      <FloatingControlPanel
-        files={logic.files}
-        onRemoveFile={logic.removeFile}
-        onFileSelect={logic.handleFileSelect}
-        onFilesAdded={addFilesAndExpand}
-        expanded={isPanelExpanded}
-        onExpandedChange={setIsPanelExpanded}
-        selectedFileId={logic.selectedFile?.id}
-        overallProgress={logic.overallProgress}
-        modelId={logic.modelId}
-        onModelIdChange={logic.setModelId}
-        parallelCount={logic.parallelCount}
-        onParallelCountChange={logic.setParallelCount}
-        isPreferredModel={logic.isPreferredModel}
-        onPreferredModelChange={logic.setIsPreferredModel}
-        overwriteMode={logic.overwriteMode}
-        onOverwriteModeChange={logic.setOverwriteMode}
-        isMockMode={logic.isMockMode}
-        onMockModeChange={logic.setIsMockMode}
-        onConvert={logic.handleConvert}
-        onStop={logic.handleStop}
-        onResume={logic.handleResume}
-        isConverting={logic.isConverting}
-        hasFiles={logic.hasFiles}
-        batchStatusNode={
-          <BatchStatusBanner
-            batchStatus={logic.batchStatus}
-            batchStatusType={logic.batchStatusType}
+      {/* Chat — 우측 사이드바 왼쪽에 위치 */}
+      <div
+        className="pointer-events-none fixed bottom-0 z-50"
+        style={{ right: 'calc(var(--convert-sidebar-w, 280px) + 0.75rem)' }}
+      >
+        {displayFile && !isChatOpen && (
+          <button
+            onClick={() => setIsChatOpen(true)}
+            className="bg-primary hover:bg-primary/85 pointer-events-auto mb-3 rounded-full p-4 text-white shadow-2xl transition-all hover:scale-110"
+          >
+            <MessageCircle className="h-5 w-5" />
+          </button>
+        )}
+
+        <div className="pointer-events-auto">
+          <ChatModal
+            variant="embedded"
+            isOpen={isChatOpen}
+            onClose={() => setIsChatOpen(false)}
+            selectedFile={selectedResultPath}
           />
-        }
-      />
-
-      {/* Chat toggle button */}
-      {displayFile && !isChatOpen && (
-        <button
-          onClick={() => setIsChatOpen(true)}
-          className="bg-primary hover:bg-primary/85 fixed right-6 bottom-3 z-50 rounded-full p-4 text-white shadow-2xl transition-all hover:scale-110"
-        >
-          <MessageCircle className="h-5 w-5" />
-        </button>
-      )}
-
-      <ChatModal
-        variant="embedded"
-        isOpen={isChatOpen}
-        onClose={() => setIsChatOpen(false)}
-        selectedFile={selectedResultPath}
-      />
+        </div>
+      </div>
     </>
   )
 }
