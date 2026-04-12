@@ -44,6 +44,7 @@ export function useCurrentUser() {
 
 export function useLogin() {
   const setSession = useSessionStore((s) => s.setSession)
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async ({
@@ -60,6 +61,7 @@ export function useLogin() {
       if ('accessToken' in data) {
         const res = data as LoginResponse
         setSession(res.accessToken, res.user)
+        queryClient.setQueryData(['auth', 'me'], res.user)
       }
     },
   })
@@ -67,6 +69,7 @@ export function useLogin() {
 
 export function useCreateSuperuser() {
   const setSession = useSessionStore((s) => s.setSession)
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (params: {
@@ -85,6 +88,7 @@ export function useCreateSuperuser() {
     },
     onSuccess: (data) => {
       setSession(data.accessToken, data.user)
+      queryClient.setQueryData(['auth', 'me'], data.user)
     },
   })
 }

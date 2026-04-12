@@ -209,7 +209,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
       {/* ── 테이블 ── */}
       <div className="bg-card border-border flex flex-1 flex-col overflow-hidden rounded-xl border">
         <div className="flex-1 overflow-auto">
-          <table className="w-full">
+          <table className="w-full table-fixed">
             {/* 헤더 */}
             <thead className="bg-card sticky top-0 z-10">
               <tr className="border-border border-b">
@@ -221,16 +221,16 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                     className="h-4 w-4"
                   />
                 </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
+                <th className="text-muted-foreground w-[38%] px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
                   문서명
                 </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
+                <th className="text-muted-foreground w-[14%] px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
                   상태
                 </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
+                <th className="text-muted-foreground w-[24%] px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
                   업로드 일시
                 </th>
-                <th className="text-muted-foreground px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
+                <th className="text-muted-foreground w-[14%] px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
                   모델
                 </th>
                 <th className="text-muted-foreground w-24 px-4 py-3 text-center text-[11px] font-semibold tracking-wide uppercase">
@@ -256,11 +256,11 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                   return (
                     <tr
                       key={doc.documentId}
-                      className={`border-border group border-b transition-colors last:border-b-0 ${
+                      className={`group transition-colors ${
                         isSelected ? 'bg-primary/[0.03]' : 'hover:bg-muted/40'
                       }`}
                     >
-                      <td className="px-5 py-3.5">
+                      <td className="border-border border-b px-5 py-3.5">
                         <input
                           type="checkbox"
                           checked={isSelected}
@@ -268,10 +268,17 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                           className="h-4 w-4"
                         />
                       </td>
-                      <td className="px-4 py-3.5">
+                      <td className="border-border border-b px-4 py-3.5 align-top">
                         <button
                           onClick={() => onFileSelect(doc.documentId)}
-                          className="text-foreground group-hover:text-primary text-left text-sm font-medium transition-colors"
+                          className="text-foreground group-hover:text-primary block w-full text-left text-sm font-medium break-all transition-colors"
+                          style={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
                         >
                           {doc.originalFilename}
                         </button>
@@ -279,20 +286,20 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                           {doc.fileType}
                         </p>
                       </td>
-                      <td className="px-4 py-3.5">
+                      <td className="border-border border-b px-4 py-3.5">
                         <StatusBadge status={doc.latestStatus} />
                       </td>
-                      <td className="px-4 py-3.5">
+                      <td className="border-border border-b px-4 py-3.5">
                         <span className="text-muted-foreground text-sm tabular-nums">
                           {new Date(doc.uploadedAt).toLocaleString('ko-KR')}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5">
+                      <td className="border-border border-b px-4 py-3.5">
                         <span className="bg-muted text-muted-foreground rounded-md px-2 py-0.5 font-mono text-[10px]">
                           {doc.modelCode || '—'}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-center">
+                      <td className="border-border border-b px-4 py-3.5 text-center">
                         <button
                           onClick={() => handleDownload(doc.documentId)}
                           disabled={doc.latestStatus !== 'COMPLETED'}
