@@ -196,8 +196,9 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
       </div>
 
       {/* Document Table */}
-      <div className="bg-card border-border min-h-[calc(100dvh-11rem)] overflow-hidden rounded-xl border">
-        <div className="overflow-x-auto">
+      <div className="bg-card border-border flex min-h-[calc(100dvh-11rem)] flex-col overflow-hidden rounded-xl border">
+        {/* Table header + body */}
+        <div className="flex-1 overflow-x-auto">
           <table className="w-full whitespace-nowrap">
             <thead className="bg-muted/50 border-border border-b">
               <tr>
@@ -287,8 +288,8 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="border-border bg-muted/30 flex items-center justify-between border-t px-4 py-3">
+        {/* Pagination — 항상 하단 고정 */}
+        <div className="border-border bg-muted/30 mt-auto flex items-center justify-between border-t px-4 py-3">
           <div className="text-muted-foreground text-sm">
             {documents.length > 0
               ? `${startIndex + 1}-${Math.min(startIndex + itemsPerPage, documents.length)} / ${documents.length}`
