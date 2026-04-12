@@ -61,6 +61,7 @@ export function useConversionLogic() {
 
     const { status, completedDocuments, totalDocuments, failedDocuments } =
       jobData
+    if (totalDocuments == null || completedDocuments == null) return
     const progress =
       totalDocuments > 0
         ? Math.floor(
