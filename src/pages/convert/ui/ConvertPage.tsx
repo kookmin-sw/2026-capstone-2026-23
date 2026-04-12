@@ -262,7 +262,7 @@ export function ConvertPage() {
     <>
       {/* Main content area — drag & drop zone */}
       <div
-        className={`relative flex h-full flex-col overflow-hidden rounded-2xl transition-all ${
+        className={`relative flex h-[calc(100dvh-2.5rem)] flex-col overflow-hidden rounded-2xl transition-all ${
           isDragging ? 'ring-primary ring-2' : ''
         }`}
         onDrop={handleDrop}

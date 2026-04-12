@@ -102,7 +102,7 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
   const StatusIcon = statusDisplay.icon
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-[calc(100dvh-2.5rem)] flex-col">
       {/* Top bar */}
       <div className="border-border flex items-center justify-between border-b px-6 py-3">
         <button

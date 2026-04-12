@@ -136,9 +136,11 @@ export function DocumentViewer({
   }
 
   return (
-    <div className={`flex h-full overflow-hidden rounded-2xl ${className}`}>
-      {/* ── Left: Original Document Viewer ── */}
-      <div className="bg-muted/30 border-border flex w-1/2 flex-col border-r">
+    <div
+      className={`flex h-full min-h-0 overflow-hidden rounded-2xl ${className}`}
+    >
+      {/* ── Left: Original Document Viewer (화면 높이에 고정) ── */}
+      <div className="bg-muted/30 border-border flex h-full w-1/2 flex-shrink-0 flex-col border-r">
         <div className="border-border flex items-center justify-between border-b px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Eye className="text-muted-foreground h-3.5 w-3.5" />
@@ -150,7 +152,7 @@ export function DocumentViewer({
             {documentResult?.fileName}
           </span>
         </div>
-        <div className="flex-1 overflow-hidden">
+        <div className="min-h-0 flex-1 overflow-auto">
           <OriginalFilePreview
             file={originalFile}
             fileUrl={originalFileUrl}
@@ -159,8 +161,8 @@ export function DocumentViewer({
         </div>
       </div>
 
-      {/* ── Right: Parsed Document ── */}
-      <div className="bg-card flex w-1/2 flex-col overflow-hidden">
+      {/* ── Right: Parsed Document (스크롤 가능) ── */}
+      <div className="bg-card flex h-full w-1/2 flex-col overflow-hidden">
         {/* Tab bar */}
         <div className="border-border flex items-center justify-between border-b">
           <div className="flex items-center gap-1 px-2">
