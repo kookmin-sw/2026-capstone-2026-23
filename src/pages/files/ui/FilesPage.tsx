@@ -21,9 +21,7 @@ export function FilesPage() {
           변환된 문서를 관리하고 다운로드하세요
         </p>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col">
-        <DocumentTable onFileSelect={handleFileSelect} />
-      </div>
+      <DocumentTable onFileSelect={handleFileSelect} />
     </div>
   )
 }
