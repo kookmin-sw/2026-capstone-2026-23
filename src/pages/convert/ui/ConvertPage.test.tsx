@@ -40,8 +40,8 @@ vi.mock('@/widgets/conversion-panel', () => ({
   }),
 }))
 
-vi.mock('@/widgets/results-panel', () => ({
-  ResultsPanel: () => <div data-testid="results-panel" />,
+vi.mock('@/widgets/document-viewer', () => ({
+  DocumentViewer: () => <div data-testid="document-viewer" />,
 }))
 
 vi.mock('@/widgets/chat-modal', () => ({
@@ -77,20 +77,14 @@ vi.mock('@/shared/lib/mock-document-result', () => ({
 }))
 
 describe('ConvertPage', () => {
-  it('ResultsPanel이 렌더링된다', () => {
-    const { getByTestId } = render(<ConvertPage />)
-    expect(getByTestId('results-panel')).toBeInTheDocument()
-  })
-
   it('FloatingControlPanel이 렌더링된다', () => {
     const { getByTestId } = render(<ConvertPage />)
     expect(getByTestId('floating-control-panel')).toBeInTheDocument()
   })
 
-  it('결과 영역에 bg-card 클래스가 적용된다', () => {
-    const { getByTestId } = render(<ConvertPage />)
-    const wrapper = getByTestId('results-panel').parentElement
-    expect(wrapper?.className).toContain('bg-card')
+  it('selectedResultPath가 없으면 빈 상태가 표시된다', () => {
+    const { getByText } = render(<ConvertPage />)
+    expect(getByText('문서 업로드')).toBeInTheDocument()
   })
 
   it('selectedResultPath가 없으면 AI 질의응답 버튼이 표시되지 않는다', () => {

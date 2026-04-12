@@ -11,6 +11,7 @@ import {
   Upload,
 } from 'lucide-react'
 import { Skeleton } from '@/shared/ui/skeleton'
+import { DocumentViewer } from '@/widgets/document-viewer'
 import { useDocumentResult } from '@/entities/document'
 import type { DocumentStatus } from '@/shared/types'
 
@@ -64,22 +65,12 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-card min-h-full">
-        <div className="border-border border-b px-8 py-4">
+      <div className="flex h-full flex-col">
+        <div className="border-border border-b px-6 py-3">
           <Skeleton className="h-5 w-48" />
         </div>
-        <div className="mx-auto max-w-5xl px-8 py-12">
-          <Skeleton className="mb-4 h-7 w-24" />
-          <Skeleton className="mb-6 h-10 w-80" />
-          <div className="mb-8 flex gap-6">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-4 w-36" />
-          </div>
-          <Skeleton className="h-9 w-44" />
-          <div className="border-border mt-8 border-t pt-8">
-            <Skeleton className="h-[400px] w-full" />
-          </div>
+        <div className="flex-1 p-6">
+          <Skeleton className="h-full w-full rounded-2xl" />
         </div>
       </div>
     )
@@ -87,17 +78,17 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
 
   if (!result) {
     return (
-      <div className="bg-card min-h-full">
-        <div className="border-border border-b px-8 py-4">
+      <div className="flex h-full flex-col">
+        <div className="border-border border-b px-6 py-3">
           <button
             onClick={() => navigate({ to: '/files' })}
             className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
           >
-            <ArrowLeft className="h-5 w-5" />
-            <span className="font-medium">파일 관리로 돌아가기</span>
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-sm font-medium">파일 관리로 돌아가기</span>
           </button>
         </div>
-        <div className="flex min-h-[400px] items-center justify-center">
+        <div className="flex flex-1 items-center justify-center">
           <div className="text-muted-foreground text-center">
             <AlertCircle className="mx-auto mb-3 h-12 w-12 opacity-50" />
             <p className="text-lg font-medium">문서를 찾을 수 없습니다</p>
@@ -111,100 +102,54 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
   const StatusIcon = statusDisplay.icon
 
   return (
-    <div className="bg-card min-h-full">
-      <div className="border-border border-b px-8 py-4">
+    <div className="flex h-[calc(100dvh-2.5rem)] flex-col">
+      {/* Top bar */}
+      <div className="border-border flex items-center justify-between border-b px-6 py-3">
         <button
           onClick={() => navigate({ to: '/files' })}
           className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
         >
-          <ArrowLeft className="h-5 w-5" />
-          <span className="font-medium">파일 관리로 돌아가기</span>
+          <ArrowLeft className="h-4 w-4" />
+          <span className="text-sm font-medium">파일 관리</span>
         </button>
-      </div>
 
-      <div className="mx-auto max-w-5xl px-8 py-12">
-        <div className="mb-4">
+        <div className="flex items-center gap-4">
+          <h2 className="text-foreground text-sm font-semibold">
+            {result.fileName}
+          </h2>
           <div
-            className={`inline-flex items-center gap-2 px-3 py-1.5 ${statusDisplay.bgColor}`}
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${statusDisplay.bgColor}`}
           >
-            <StatusIcon className={`h-4 w-4 ${statusDisplay.color}`} />
-            <span className={`text-sm font-medium ${statusDisplay.color}`}>
+            <StatusIcon className={`h-3 w-3 ${statusDisplay.color}`} />
+            <span className={`text-xs font-medium ${statusDisplay.color}`}>
               {statusDisplay.text}
             </span>
           </div>
         </div>
 
-        <h2 className="text-foreground mb-6 text-4xl font-bold">
-          {result.fileName}
-        </h2>
-
-        <div className="text-muted-foreground mb-8 flex flex-wrap gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span>모델: {result.modelCode}</span>
-          </div>
+        <div className="text-muted-foreground flex items-center gap-4 text-xs">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="h-3.5 w-3.5" />
+            {result.modelCode}
+          </span>
           {result.meta?.totalPages != null && (
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span>{result.meta.totalPages as number} 페이지</span>
-            </div>
+            <span className="flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5" />
+              {result.meta.totalPages as number}p
+            </span>
           )}
           {result.meta?.processingTimeMs != null && (
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span>
-                처리 시간:{' '}
-                {((result.meta.processingTimeMs as number) / 1000).toFixed(1)}초
-              </span>
-            </div>
+            <span className="flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5" />
+              {((result.meta.processingTimeMs as number) / 1000).toFixed(1)}s
+            </span>
           )}
         </div>
+      </div>
 
-        <div className="border-border border-t pt-8">
-          <div className="grid grid-cols-2 gap-6">
-            <div className="border-border bg-muted/30 min-h-[600px] border p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-foreground text-lg font-semibold">
-                  원본 문서
-                </h3>
-                <span className="text-muted-foreground bg-card border-border border px-2 py-1 text-xs">
-                  {result.fileName}
-                </span>
-              </div>
-              <div className="bg-card border-border flex h-[520px] items-center justify-center border">
-                <div className="text-muted-foreground text-center">
-                  <FileText className="mx-auto mb-3 h-12 w-12 opacity-50" />
-                  <p className="text-sm font-medium">원본 파일 뷰어</p>
-                  <p className="mt-1 text-xs">한컴 뷰어 등 필요</p>
-                </div>
-              </div>
-            </div>
-            <div className="border-border bg-accent/30 min-h-150 border p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-foreground text-lg font-semibold">
-                  변환된 문서
-                </h3>
-                <span className="text-primary bg-accent border-primary/20 border px-2 py-1 text-xs font-medium">
-                  구조화된 데이터
-                </span>
-              </div>
-              <div className="bg-card border-border h-130 overflow-auto border p-4">
-                {result.txt?.preview ? (
-                  <pre className="text-sm whitespace-pre-wrap">
-                    {result.txt.preview}
-                  </pre>
-                ) : (
-                  <div className="text-muted-foreground flex h-full items-center justify-center text-center">
-                    <div>
-                      <FileText className="mx-auto mb-3 h-12 w-12 opacity-50" />
-                      <p className="text-sm font-medium">변환 결과 없음</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Document viewer — reused split panel */}
+      <div className="flex-1 overflow-hidden p-4">
+        <DocumentViewer documentResult={result} className="h-full" />
       </div>
     </div>
   )

@@ -5,6 +5,8 @@ import {
   Download,
   RefreshCw,
   Trash2,
+  FileText,
+  ArrowDownToLine,
 } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import { Skeleton } from '@/shared/ui/skeleton'
@@ -38,7 +40,6 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   const itemsPerPage = 10
   const deleteDropdownRef = useRef<HTMLDivElement>(null)
 
-  // API 데이터가 변경되면 로컬 상태 업데이트
   useEffect(() => {
     if (data?.items) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing API data to local selection state
@@ -107,73 +108,81 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-3">
-        <div className="bg-card border-border border p-3">
+      <div className="flex h-full flex-col gap-3">
+        <div className="bg-card border-border rounded-xl border p-3">
           <div className="flex items-center gap-4">
-            <Skeleton className="h-9 w-9" />
-            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-9 w-9 rounded-lg" />
+            <Skeleton className="h-4 w-32 rounded" />
           </div>
         </div>
-        <div className="bg-card border-border border">
-          <div className="space-y-0">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className="border-border flex items-center gap-4 border-b px-4 py-3"
-              >
-                <Skeleton className="h-4 w-4" />
-                <Skeleton className="h-4 w-48" />
-                <Skeleton className="h-5 w-16" />
-                <Skeleton className="h-4 w-36" />
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-8 w-8" />
-              </div>
-            ))}
-          </div>
+        <div className="bg-card border-border flex-1 rounded-xl border">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div
+              key={i}
+              className="border-border flex items-center gap-6 border-b px-5 py-4"
+            >
+              <Skeleton className="h-4 w-4 rounded" />
+              <Skeleton className="h-4 w-48 rounded" />
+              <Skeleton className="h-5 w-14 rounded-full" />
+              <Skeleton className="h-4 w-36 rounded" />
+              <Skeleton className="h-4 w-20 rounded" />
+              <Skeleton className="ml-auto h-8 w-8 rounded-lg" />
+            </div>
+          ))}
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-3">
-      {/* Top Control Bar */}
-      <div className="bg-card border-border border p-3">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={() => refetch()}>
+    <div className="flex h-full flex-col gap-3">
+      {/* ── 컨트롤 바 ── */}
+      <div className="bg-card border-border rounded-xl border px-4 py-2.5">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => refetch()}
+            className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg p-2 transition-colors"
+          >
             <RefreshCw className="h-4 w-4" />
-          </Button>
-          <div className="text-muted-foreground text-sm">
-            {selectedCount > 0
-              ? `${selectedCount}개 파일 선택됨`
-              : '선택된 파일 없음'}
-          </div>
+          </button>
+
+          <span className="text-muted-foreground text-xs">
+            {selectedCount > 0 ? (
+              <span className="text-primary font-semibold">
+                {selectedCount}개 선택
+              </span>
+            ) : (
+              `총 ${documents.length}개`
+            )}
+          </span>
+
           <div className="flex-1" />
-          <div className="flex items-center gap-2">
+
+          <div className="flex items-center gap-1.5">
             <Button
               size="sm"
-              className="bg-[#198038] text-white hover:bg-[#0e6027]"
               onClick={() => {
                 documents
                   .filter((d) => d.selected)
                   .forEach((d) => handleDownload(d.documentId))
               }}
               disabled={selectedCount === 0}
+              className="h-8 gap-1.5 rounded-lg bg-[#198038] px-3 text-xs text-white hover:bg-[#0e6027]"
             >
-              <Download className="mr-1 h-4 w-4" />
+              <ArrowDownToLine className="h-3.5 w-3.5" />
               다운로드
             </Button>
+
             <div className="relative" ref={deleteDropdownRef}>
-              <Button
-                variant="ghost"
-                size="icon"
+              <button
                 onClick={() => setShowDeleteDropdown(!showDeleteDropdown)}
                 disabled={selectedCount === 0}
+                className="text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-lg p-2 transition-colors disabled:pointer-events-none disabled:opacity-30"
               >
-                <Trash2 className="text-destructive h-5 w-5" />
-              </Button>
+                <Trash2 className="h-4 w-4" />
+              </button>
               {showDeleteDropdown && selectedCount > 0 && (
-                <div className="bg-card border-border absolute right-0 z-10 mt-1 w-40 border shadow-lg">
+                <div className="bg-card border-border absolute right-0 z-10 mt-1 w-44 overflow-hidden rounded-xl border shadow-xl">
                   <button
                     onClick={() => {
                       const ids = documents
@@ -184,9 +193,11 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                       setSelectAll(false)
                     }}
                     disabled={deleteMutation.isPending}
-                    className="hover:bg-accent text-foreground w-full px-4 py-2 text-left text-sm transition-colors disabled:opacity-50"
+                    className="text-destructive hover:bg-destructive/5 w-full px-4 py-2.5 text-left text-sm font-medium transition-colors disabled:opacity-50"
                   >
-                    {deleteMutation.isPending ? '삭제 중...' : '선택 항목 삭제'}
+                    {deleteMutation.isPending
+                      ? '삭제 중...'
+                      : `${selectedCount}개 항목 삭제`}
                   </button>
                 </div>
               )}
@@ -195,13 +206,14 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
         </div>
       </div>
 
-      {/* Document Table */}
-      <div className="bg-card border-border overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="w-full whitespace-nowrap">
-            <thead className="bg-muted/50 border-border border-b">
-              <tr>
-                <th className="w-12 px-4 py-3 text-left">
+      {/* ── 테이블 ── */}
+      <div className="bg-card border-border flex flex-1 flex-col overflow-hidden rounded-xl border">
+        <div className="flex-1 overflow-auto">
+          <table className="w-full">
+            {/* 헤더 */}
+            <thead className="bg-card sticky top-0 z-10">
+              <tr className="border-border border-b">
+                <th className="w-12 px-5 py-3 text-left">
                   <input
                     type="checkbox"
                     checked={selectAll}
@@ -209,100 +221,110 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                     className="h-4 w-4"
                   />
                 </th>
-                <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
+                <th className="text-muted-foreground px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
                   문서명
                 </th>
-                <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
+                <th className="text-muted-foreground px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
                   상태
                 </th>
-                <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
+                <th className="text-muted-foreground px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
                   업로드 일시
                 </th>
-                <th className="text-foreground px-4 py-3 text-left text-sm font-semibold">
+                <th className="text-muted-foreground px-4 py-3 text-left text-[11px] font-semibold tracking-wide uppercase">
                   모델
                 </th>
-                <th className="text-foreground w-48 px-4 py-3 text-center text-sm font-semibold">
+                <th className="text-muted-foreground w-24 px-4 py-3 text-center text-[11px] font-semibold tracking-wide uppercase">
                   다운로드
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-border divide-y">
+
+            {/* 바디 */}
+            <tbody>
               {documents.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="text-muted-foreground px-4 py-8 text-center"
-                  >
-                    문서가 없습니다.
+                  <td colSpan={6} className="px-4 py-16 text-center">
+                    <FileText className="text-muted-foreground/30 mx-auto mb-2 h-8 w-8" />
+                    <p className="text-muted-foreground text-sm">
+                      문서가 없습니다
+                    </p>
                   </td>
                 </tr>
               ) : (
-                paginatedDocuments.map((doc) => (
-                  <tr key={doc.documentId} className="hover:bg-muted/30">
-                    <td className="px-4 py-3">
-                      <input
-                        type="checkbox"
-                        checked={doc.selected}
-                        onChange={() => toggleDocSelection(doc.documentId)}
-                        className="h-4 w-4"
-                      />
-                    </td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => onFileSelect(doc.documentId)}
-                        className="text-foreground hover:text-foreground/80 text-left text-sm font-medium transition-colors hover:underline"
-                      >
-                        {doc.originalFilename}
-                      </button>
-                      <div className="text-muted-foreground text-xs">
-                        {doc.fileType}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={doc.latestStatus} />
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-muted-foreground text-sm">
-                        {new Date(doc.uploadedAt).toLocaleString('ko-KR')}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="bg-muted text-muted-foreground px-2 py-1 font-mono text-xs whitespace-nowrap">
-                        {doc.modelCode || '-'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => handleDownload(doc.documentId)}
-                        disabled={doc.latestStatus !== 'COMPLETED'}
-                        className="hover:bg-accent inline-flex h-10 w-10 items-center justify-center transition-colors disabled:cursor-not-allowed disabled:opacity-30"
-                      >
-                        <Download className="h-6 w-6 text-[#198038]" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                paginatedDocuments.map((doc) => {
+                  const isSelected = doc.selected
+                  return (
+                    <tr
+                      key={doc.documentId}
+                      className={`border-border group border-b transition-colors last:border-b-0 ${
+                        isSelected ? 'bg-primary/[0.03]' : 'hover:bg-muted/40'
+                      }`}
+                    >
+                      <td className="px-5 py-3.5">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleDocSelection(doc.documentId)}
+                          className="h-4 w-4"
+                        />
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <button
+                          onClick={() => onFileSelect(doc.documentId)}
+                          className="text-foreground group-hover:text-primary text-left text-sm font-medium transition-colors"
+                        >
+                          {doc.originalFilename}
+                        </button>
+                        <p className="text-muted-foreground/60 mt-0.5 font-mono text-[10px] uppercase">
+                          {doc.fileType}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <StatusBadge status={doc.latestStatus} />
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span className="text-muted-foreground text-sm tabular-nums">
+                          {new Date(doc.uploadedAt).toLocaleString('ko-KR')}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span className="bg-muted text-muted-foreground rounded-md px-2 py-0.5 font-mono text-[10px]">
+                          {doc.modelCode || '—'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-center">
+                        <button
+                          onClick={() => handleDownload(doc.documentId)}
+                          disabled={doc.latestStatus !== 'COMPLETED'}
+                          className="hover:bg-muted inline-flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:pointer-events-none disabled:opacity-20"
+                        >
+                          <Download className="h-4 w-4 text-[#198038]" />
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })
               )}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="border-border bg-muted/30 flex items-center justify-between border-t px-4 py-3">
-          <div className="text-muted-foreground text-sm">
+        {/* ── 페이지네이션 — 하단 고정 ── */}
+        <div className="border-border mt-auto flex items-center justify-between border-t px-5 py-2.5">
+          <span className="text-muted-foreground font-mono text-xs tabular-nums">
             {documents.length > 0
-              ? `${startIndex + 1}-${Math.min(startIndex + itemsPerPage, documents.length)} / ${documents.length}`
-              : '0개'}
-          </div>
-          <div className="flex items-center gap-2">
+              ? `${startIndex + 1}–${Math.min(startIndex + itemsPerPage, documents.length)} / ${documents.length}`
+              : '0'}
+          </span>
+          <div className="flex items-center gap-1">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className="border-border hover:bg-card border px-3 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg p-1.5 transition-colors disabled:pointer-events-none disabled:opacity-30"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <span className="text-foreground text-sm font-medium">
+            <span className="text-foreground min-w-[3rem] text-center text-xs font-medium tabular-nums">
               {currentPage} / {totalPages}
             </span>
             <button
@@ -310,7 +332,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                 setCurrentPage((prev) => Math.min(totalPages, prev + 1))
               }
               disabled={currentPage === totalPages}
-              className="border-border hover:bg-card border px-3 py-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg p-1.5 transition-colors disabled:pointer-events-none disabled:opacity-30"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
