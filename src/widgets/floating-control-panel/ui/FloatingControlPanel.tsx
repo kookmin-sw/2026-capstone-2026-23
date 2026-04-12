@@ -175,24 +175,13 @@ export function FloatingControlPanel({
       <div className="border-border space-y-2.5 border-b px-3 pt-3 pb-3">
         <div className="flex items-center justify-between">
           <span className="text-foreground text-xs font-semibold">Options</span>
-          <div className="flex items-center gap-0.5">
-            {files.length > 0 && (
-              <button
-                onClick={reset}
-                className="text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-md p-1 transition-colors"
-                title="전체 초기화"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-              </button>
-            )}
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1 transition-colors"
-              title="패널 접기"
-            >
-              <PanelRightOpen className="h-3.5 w-3.5" />
-            </button>
-          </div>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-md p-1 transition-colors"
+            title="패널 접기"
+          >
+            <PanelRightOpen className="h-3.5 w-3.5" />
+          </button>
         </div>
 
         {/* 탭 — 하단 라인 스타일 */}
@@ -232,7 +221,7 @@ export function FloatingControlPanel({
           ))}
         </div>
 
-        {/* 상태 카운터 */}
+        {/* 상태 카운터 + 초기화 */}
         {files.length > 0 &&
           (convertingCount > 0 || completedCount > 0 || failedCount > 0) && (
             <div className="flex items-center gap-2.5 font-mono text-[10px]">
@@ -254,6 +243,13 @@ export function FloatingControlPanel({
                   {failedCount} failed
                 </span>
               )}
+              <button
+                onClick={reset}
+                className="text-muted-foreground hover:text-destructive hover:bg-destructive/5 ml-auto rounded-md p-0.5 transition-colors"
+                title="전체 초기화"
+              >
+                <RotateCcw className="h-3 w-3" />
+              </button>
             </div>
           )}
       </div>
