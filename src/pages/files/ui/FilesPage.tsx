@@ -11,7 +11,7 @@ export function FilesPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100dvh-5rem)] flex-col gap-3">
+    <div className="flex min-h-[calc(100dvh-2.5rem)] flex-col gap-3">
       <div>
         <h2 className="text-foreground flex items-center gap-2 text-2xl font-bold">
           <FolderOpen className="text-primary h-6 w-6" />
