@@ -1,13 +1,15 @@
 import type { DocumentResult } from '@/shared/types'
 
+export const MOCK_DOCUMENT_RESULT_ID = 'd_65827ab200'
+
 export const MOCK_DOCUMENT_RESULT: DocumentResult = {
-  documentId: 'd_mock001',
+  documentId: MOCK_DOCUMENT_RESULT_ID,
   status: 'COMPLETED',
-  fileName: '2026학년도_1학기_수강신청_확인서.hwp',
-  modelCode: 'gpt-4.1',
+  fileName: '2026_1학기_수강신청_확인서.pdf',
+  modelCode: 'gpt-5.4-mini',
   txt: {
-    path: '/output/mock.txt',
-    preview: `원본 파일 경로: /input/2026학년도_1학기_수강신청_확인서.hwp
+    path: '/output/d_65827ab200/result.txt',
+    preview: `원본 파일 경로: /input/2026_1학기_수강신청_확인서.pdf
 페이지 수: 3
 
 [[TABLE]]
@@ -99,7 +101,23 @@ export const MOCK_DOCUMENT_RESULT: DocumentResult = {
   },
   htmlPreview: null,
   markdown: null,
-  imageDescriptions: [],
-  meta: {},
+  imageDescriptions: [
+    {
+      page: 1,
+      description:
+        '상단 중앙에 문서 제목이 있고, 좌측 상단에는 대학교 로고가 배치된 수강신청 확인서 형식의 문서다.',
+    },
+    {
+      page: 3,
+      description:
+        '문서 하단에 발급일자와 총장 직인이 포함되어 있으며, 안내 문구가 각주 형태로 정리되어 있다.',
+    },
+  ],
+  meta: {
+    totalPages: 3,
+    processedPages: 3,
+    processingTimeMs: 1840,
+    completedAt: '2026-04-13T09:30:00Z',
+  },
   error: null,
 }

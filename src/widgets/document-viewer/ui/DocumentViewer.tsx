@@ -140,7 +140,7 @@ export function DocumentViewer({
       className={`flex h-full min-h-0 overflow-hidden rounded-2xl ${className}`}
     >
       {/* ── Left: Original Document Viewer (화면 높이에 고정) ── */}
-      <div className="bg-muted/30 border-border flex h-full w-1/2 flex-shrink-0 flex-col border-r">
+      <div className="bg-muted/30 border-border flex h-full min-h-0 w-1/2 flex-shrink-0 flex-col border-r">
         <div className="border-border flex items-center justify-between border-b px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Eye className="text-muted-foreground h-3.5 w-3.5" />
@@ -162,7 +162,7 @@ export function DocumentViewer({
       </div>
 
       {/* ── Right: Parsed Document (스크롤 가능) ── */}
-      <div className="bg-card flex h-full w-1/2 flex-col overflow-hidden">
+      <div className="bg-card flex h-full min-h-0 w-1/2 flex-col overflow-hidden">
         {/* Tab bar */}
         <div className="border-border flex items-center justify-between border-b">
           <div className="flex items-center gap-1 px-2">
@@ -191,7 +191,7 @@ export function DocumentViewer({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto">
           {activeTab === 'preview' && (
             <BlocksPreview
               blocks={parsed.blocks}
@@ -288,7 +288,7 @@ function BlocksPreview({
   onHoverBlock: (id: string | null) => void
 }) {
   return (
-    <div className="space-y-0 p-4">
+    <div className="min-h-full space-y-0 p-4">
       {blocks.map((block) => {
         const style = BLOCK_STYLES[block.type]
         const isHovered = hoveredBlock === block.id
