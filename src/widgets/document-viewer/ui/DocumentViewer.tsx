@@ -188,11 +188,11 @@ export function DocumentViewer({
 
   return (
     <div
-      className={`flex h-full min-h-0 overflow-hidden rounded-2xl border border-border bg-[#eef1f5] shadow-sm ${className}`}
+      className={`border-border flex h-full min-h-0 overflow-hidden rounded-2xl border bg-[#eef1f5] shadow-sm ${className}`}
     >
       {/* ── Left: Original Document Viewer (화면 높이에 고정) ── */}
       <div className="flex h-full min-h-0 w-1/2 flex-shrink-0 flex-col overflow-hidden bg-white">
-        <div className="border-border bg-[#f7f8fa] flex items-center justify-between border-b px-4 py-2.5">
+        <div className="border-border flex items-center justify-between border-b bg-[#f7f8fa] px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Eye className="text-muted-foreground h-3.5 w-3.5" />
             <span className="text-foreground text-xs font-semibold">
@@ -222,7 +222,7 @@ export function DocumentViewer({
         }}
       >
         {/* Tab bar */}
-        <div className="border-border bg-[#f4f6f8] flex items-center justify-between border-b">
+        <div className="border-border flex items-center justify-between border-b bg-[#f4f6f8]">
           <div className="flex items-center gap-1 px-2">
             <span className="text-foreground px-2 text-xs font-semibold">
               Document parsing
@@ -241,7 +241,7 @@ export function DocumentViewer({
               >
                 {tab.label}
                 {activeTab === tab.key && (
-                  <span className="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-t" />
+                  <span className="bg-primary absolute bottom-0 left-0 right-0 h-0.5 rounded-t" />
                 )}
               </button>
             ))}
@@ -252,7 +252,7 @@ export function DocumentViewer({
           <button
             type="button"
             onClick={handleCopy}
-            className={`border-border bg-background/95 text-muted-foreground hover:text-foreground absolute top-14 right-3 z-10 inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium shadow-sm backdrop-blur transition-all ${
+            className={`border-border bg-background/95 text-muted-foreground hover:text-foreground absolute right-3 top-14 z-10 inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium shadow-sm backdrop-blur transition-all ${
               isParsedPanelHovered
                 ? 'pointer-events-auto opacity-100'
                 : 'pointer-events-none opacity-0'
@@ -277,12 +277,12 @@ export function DocumentViewer({
             />
           )}
           {activeTab === 'html' && (
-            <pre className="text-foreground/80 p-5 pt-12 font-mono text-xs leading-relaxed whitespace-pre-wrap">
+            <pre className="text-foreground/80 whitespace-pre-wrap p-5 pt-12 font-mono text-xs leading-relaxed">
               {parsed.rawText}
             </pre>
           )}
           {activeTab === 'json' && (
-            <pre className="text-foreground/80 p-5 pt-12 font-mono text-xs leading-relaxed whitespace-pre-wrap">
+            <pre className="text-foreground/80 whitespace-pre-wrap p-5 pt-12 font-mono text-xs leading-relaxed">
               {buildJsonView(parsed)}
             </pre>
           )}
@@ -373,7 +373,7 @@ function BlocksPreview({
         return (
           <div
             key={block.id}
-            className={`relative border-l-2 py-2 pr-3 pl-4 transition-all duration-150 ${
+            className={`relative border-l-2 py-2 pl-4 pr-3 transition-all duration-150 ${
               isHovered
                 ? `${style.hoverBorder} ${style.hoverBg}`
                 : 'border-transparent'
@@ -383,7 +383,7 @@ function BlocksPreview({
           >
             {/* Type label — shows on hover */}
             <span
-              className={`absolute top-2 right-3 rounded px-1.5 py-0.5 text-[10px] font-semibold transition-opacity ${style.color} ${style.bg} ${
+              className={`absolute right-3 top-2 rounded px-1.5 py-0.5 text-[10px] font-semibold transition-opacity ${style.color} ${style.bg} ${
                 isHovered ? 'opacity-100' : 'opacity-0'
               }`}
             >
@@ -404,7 +404,7 @@ function BlockContent({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case 'header':
       return (
-        <p className="text-foreground text-base leading-relaxed font-semibold">
+        <p className="text-foreground text-base font-semibold leading-relaxed">
           {block.content}
         </p>
       )
@@ -428,14 +428,14 @@ function BlockContent({ block }: { block: ContentBlock }) {
 
     case 'markdown-table':
       return (
-        <pre className="text-foreground/80 overflow-x-auto font-mono text-xs leading-relaxed whitespace-pre-wrap">
+        <pre className="text-foreground/80 overflow-x-auto whitespace-pre-wrap font-mono text-xs leading-relaxed">
           {block.content}
         </pre>
       )
 
     case 'image':
       return (
-        <div className="text-foreground/80 text-sm leading-relaxed italic">
+        <div className="text-foreground/80 text-sm italic leading-relaxed">
           {block.content}
         </div>
       )
