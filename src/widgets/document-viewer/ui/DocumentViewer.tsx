@@ -269,7 +269,25 @@ export function DocumentViewer({
         </div>
 
         {/* Content */}
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="relative min-h-0 flex-1 overflow-y-auto">
+          {copyText && (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className={`border-border bg-background/95 text-muted-foreground hover:text-foreground absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium shadow-sm backdrop-blur transition-all ${
+                isParsedPanelHovered
+                  ? 'pointer-events-auto opacity-100'
+                  : 'pointer-events-none opacity-0'
+              }`}
+            >
+              {isCopied ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
+              {isCopied ? 'Copied' : 'Copy'}
+            </button>
+          )}
           {activeTab === 'preview' && (
             <BlocksPreview
               blocks={parsed.blocks}
