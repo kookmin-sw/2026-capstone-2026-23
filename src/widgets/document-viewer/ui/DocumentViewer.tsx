@@ -228,48 +228,46 @@ export function DocumentViewer({
               Document parsing
             </span>
           </div>
-          <div className="flex items-center gap-2 pr-2">
-            {copyText && (
+          <div className="flex">
+            {FORMAT_TABS.map((tab) => (
               <button
-                type="button"
-                onClick={handleCopy}
-                className={`border-border bg-background text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium transition-all ${
-                  isParsedPanelHovered
-                    ? 'pointer-events-auto opacity-100'
-                    : 'pointer-events-none opacity-0'
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`relative px-4 py-2.5 text-xs font-medium transition-colors ${
+                  activeTab === tab.key
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                {isCopied ? (
-                  <Check className="h-3.5 w-3.5" />
-                ) : (
-                  <Copy className="h-3.5 w-3.5" />
+                {tab.label}
+                {activeTab === tab.key && (
+                  <span className="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-t" />
                 )}
-                {isCopied ? 'Copied' : 'Copy'}
               </button>
-            )}
-            <div className="flex">
-              {FORMAT_TABS.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`relative px-4 py-2.5 text-xs font-medium transition-colors ${
-                    activeTab === tab.key
-                      ? 'text-primary'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {tab.label}
-                  {activeTab === tab.key && (
-                    <span className="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-t" />
-                  )}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
 
         {/* Content */}
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="relative min-h-0 flex-1 overflow-y-auto">
+          {copyText && (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className={`border-border bg-background/95 text-muted-foreground hover:text-foreground absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium shadow-sm backdrop-blur transition-all ${
+                isParsedPanelHovered
+                  ? 'pointer-events-auto opacity-100'
+                  : 'pointer-events-none opacity-0'
+              }`}
+            >
+              {isCopied ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
+              {isCopied ? 'Copied' : 'Copy'}
+            </button>
+          )}
           {activeTab === 'preview' && (
             <BlocksPreview
               blocks={parsed.blocks}
