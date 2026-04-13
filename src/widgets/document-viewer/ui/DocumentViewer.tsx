@@ -252,7 +252,7 @@ export function DocumentViewer({
           <button
             type="button"
             onClick={handleCopy}
-            className={`border-border bg-background/95 text-muted-foreground hover:text-foreground absolute right-3 top-14 z-10 inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium shadow-sm backdrop-blur transition-all ${
+            className={`border-border bg-background/95 text-muted-foreground hover:text-foreground absolute top-14 right-3 z-10 inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium shadow-sm backdrop-blur transition-all ${
               isParsedPanelHovered
                 ? 'pointer-events-auto opacity-100'
                 : 'pointer-events-none opacity-0'
@@ -277,12 +277,12 @@ export function DocumentViewer({
             />
           )}
           {activeTab === 'html' && (
-            <pre className="text-foreground/80 whitespace-pre-wrap p-5 pt-12 font-mono text-xs leading-relaxed">
+            <pre className="text-foreground/80 p-5 pt-12 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {parsed.rawText}
             </pre>
           )}
           {activeTab === 'json' && (
-            <pre className="text-foreground/80 whitespace-pre-wrap p-5 pt-12 font-mono text-xs leading-relaxed">
+            <pre className="text-foreground/80 p-5 pt-12 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {buildJsonView(parsed)}
             </pre>
           )}
@@ -419,7 +419,7 @@ function BlockContent({ block }: { block: ContentBlock }) {
     case 'table':
       return (
         <div
-          className="[&_td]:border-border [&_th]:border-border [&_th]:bg-muted/50 overflow-x-auto text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:text-xs [&_th]:border [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold"
+          className="[&_td]:border-border [&_th]:border-border overflow-x-auto text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:text-xs [&_th]:border [&_th]:bg-[#f5f7fa] [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(block.htmlContent ?? block.content),
           }}
