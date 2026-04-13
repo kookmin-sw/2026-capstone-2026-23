@@ -188,11 +188,11 @@ export function DocumentViewer({
 
   return (
     <div
-      className={`flex h-full min-h-0 overflow-hidden rounded-2xl ${className}`}
+      className={`flex h-full min-h-0 overflow-hidden rounded-2xl border border-border bg-[#eef1f5] shadow-sm ${className}`}
     >
       {/* ── Left: Original Document Viewer (화면 높이에 고정) ── */}
-      <div className="bg-muted/30 border-border flex h-full min-h-0 w-1/2 flex-shrink-0 flex-col border-r">
-        <div className="border-border flex items-center justify-between border-b px-4 py-2.5">
+      <div className="flex h-full min-h-0 w-1/2 flex-shrink-0 flex-col overflow-hidden bg-white">
+        <div className="border-border bg-[#f7f8fa] flex items-center justify-between border-b px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Eye className="text-muted-foreground h-3.5 w-3.5" />
             <span className="text-foreground text-xs font-semibold">
@@ -203,7 +203,7 @@ export function DocumentViewer({
             {documentResult?.fileName}
           </span>
         </div>
-        <div className="min-h-0 flex-1 overflow-auto">
+        <div className="min-h-0 flex-1 overflow-auto bg-white">
           <OriginalFilePreview
             file={originalFile}
             fileUrl={originalFileUrl}
@@ -214,7 +214,7 @@ export function DocumentViewer({
 
       {/* ── Right: Parsed Document (스크롤 가능) ── */}
       <div
-        className="bg-card flex h-full min-h-0 w-1/2 flex-col overflow-hidden"
+        className="border-border relative flex h-full min-h-0 w-1/2 flex-col overflow-hidden border-l bg-[#fcfcfd]"
         onMouseEnter={() => setIsParsedPanelHovered(true)}
         onMouseLeave={() => {
           setIsParsedPanelHovered(false)
@@ -222,72 +222,53 @@ export function DocumentViewer({
         }}
       >
         {/* Tab bar */}
-        <div className="border-border flex items-center justify-between border-b">
+        <div className="border-border bg-[#f4f6f8] flex items-center justify-between border-b">
           <div className="flex items-center gap-1 px-2">
             <span className="text-foreground px-2 text-xs font-semibold">
               Document parsing
             </span>
           </div>
-          <div className="flex items-center gap-2 pr-2">
-            {copyText && (
+          <div className="flex">
+            {FORMAT_TABS.map((tab) => (
               <button
-                type="button"
-                onClick={handleCopy}
-                className={`border-border bg-background text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium transition-all ${
-                  isParsedPanelHovered
-                    ? 'pointer-events-auto opacity-100'
-                    : 'pointer-events-none opacity-0'
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`relative px-4 py-2.5 text-xs font-medium transition-colors ${
+                  activeTab === tab.key
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                {isCopied ? (
-                  <Check className="h-3.5 w-3.5" />
-                ) : (
-                  <Copy className="h-3.5 w-3.5" />
+                {tab.label}
+                {activeTab === tab.key && (
+                  <span className="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-t" />
                 )}
-                {isCopied ? 'Copied' : 'Copy'}
               </button>
-            )}
-            <div className="flex">
-              {FORMAT_TABS.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`relative px-4 py-2.5 text-xs font-medium transition-colors ${
-                    activeTab === tab.key
-                      ? 'text-primary'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {tab.label}
-                  {activeTab === tab.key && (
-                    <span className="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-t" />
-                  )}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
 
+        {copyText && (
+          <button
+            type="button"
+            onClick={handleCopy}
+            className={`border-border bg-background/95 text-muted-foreground hover:text-foreground absolute top-14 right-3 z-10 inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium shadow-sm backdrop-blur transition-all ${
+              isParsedPanelHovered
+                ? 'pointer-events-auto opacity-100'
+                : 'pointer-events-none opacity-0'
+            }`}
+          >
+            {isCopied ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+            {isCopied ? 'Copied' : 'Copy'}
+          </button>
+        )}
+
         {/* Content */}
-        <div className="relative min-h-0 flex-1 overflow-y-auto">
-          {copyText && (
-            <button
-              type="button"
-              onClick={handleCopy}
-              className={`border-border bg-background/95 text-muted-foreground hover:text-foreground absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium shadow-sm backdrop-blur transition-all ${
-                isParsedPanelHovered
-                  ? 'pointer-events-auto opacity-100'
-                  : 'pointer-events-none opacity-0'
-              }`}
-            >
-              {isCopied ? (
-                <Check className="h-3.5 w-3.5" />
-              ) : (
-                <Copy className="h-3.5 w-3.5" />
-              )}
-              {isCopied ? 'Copied' : 'Copy'}
-            </button>
-          )}
+        <div className="min-h-0 flex-1 overflow-y-auto">
           {activeTab === 'preview' && (
             <BlocksPreview
               blocks={parsed.blocks}
@@ -296,12 +277,12 @@ export function DocumentViewer({
             />
           )}
           {activeTab === 'html' && (
-            <pre className="text-foreground/80 p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap">
+            <pre className="text-foreground/80 p-5 pt-12 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {parsed.rawText}
             </pre>
           )}
           {activeTab === 'json' && (
-            <pre className="text-foreground/80 p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap">
+            <pre className="text-foreground/80 p-5 pt-12 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {buildJsonView(parsed)}
             </pre>
           )}
@@ -355,7 +336,7 @@ function OriginalFilePreview({
   // Fallback: unsupported or no file
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3">
-      <div className="bg-muted flex h-16 w-16 items-center justify-center rounded-2xl">
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f3f4f6]">
         <FileText className="text-muted-foreground h-8 w-8" />
       </div>
       <div className="text-center">
@@ -438,7 +419,7 @@ function BlockContent({ block }: { block: ContentBlock }) {
     case 'table':
       return (
         <div
-          className="[&_td]:border-border [&_th]:border-border [&_th]:bg-muted/50 overflow-x-auto text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:text-xs [&_th]:border [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold"
+          className="[&_td]:border-border [&_th]:border-border [&_th]:bg-[#f5f7fa] overflow-x-auto text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:text-xs [&_th]:border [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(block.htmlContent ?? block.content),
           }}
