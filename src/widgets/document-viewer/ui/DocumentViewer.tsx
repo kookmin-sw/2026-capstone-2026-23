@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import DOMPurify from 'dompurify'
-import { FileText, Loader2, AlertCircle, Eye } from 'lucide-react'
+import { FileText, Loader2, AlertCircle, Eye, Copy, Check } from 'lucide-react'
+import { toast } from 'sonner'
 import type { DocumentResult } from '@/shared/types'
 import {
   parseDocumentContent,
@@ -27,6 +28,30 @@ const FORMAT_TABS = [
 ] as const
 
 type FormatTab = (typeof FORMAT_TABS)[number]['key']
+
+function hideMetadataDivider(text: string): string {
+  const pageHeaderIndex = text.search(/^##\s*Page\b/m)
+  if (pageHeaderIndex === -1) return text
+
+  const metadataSection = text.slice(0, pageHeaderIndex)
+  const contentSection = text.slice(pageHeaderIndex)
+  const metadataLines = metadataSection.split('\n')
+
+  const cleanedMetadataLines = metadataLines.filter((line, index) => {
+    const trimmed = line.trim()
+    const previousLine = metadataLines[index - 1]?.trim()
+
+    if (!/^[-]{3,}$/.test(trimmed)) return true
+
+    return !(
+      previousLine?.startsWith('원본 파일') ||
+      previousLine?.startsWith('원본 파일 경로') ||
+      previousLine?.startsWith('페이지 수:')
+    )
+  })
+
+  return `${cleanedMetadataLines.join('\n')}${contentSection}`
+}
 
 // ── Block type styling ──
 
@@ -76,18 +101,44 @@ export function DocumentViewer({
 }: DocumentViewerProps) {
   const [activeTab, setActiveTab] = useState<FormatTab>('preview')
   const [hoveredBlock, setHoveredBlock] = useState<string | null>(null)
+  const [isParsedPanelHovered, setIsParsedPanelHovered] = useState(false)
+  const [isCopied, setIsCopied] = useState(false)
 
   const parsed = useMemo<ParsedDocument | null>(() => {
     if (documentResult?.txt?.preview) {
-      return parseDocumentContent(documentResult.txt.preview)
+      return parseDocumentContent(
+        hideMetadataDivider(documentResult.txt.preview),
+      )
     }
     return null
   }, [documentResult])
+
+  const copyText = useMemo(() => {
+    if (!parsed) return null
+    if (activeTab === 'html') return parsed.rawText
+    if (activeTab === 'json') return buildJsonView(parsed)
+    return null
+  }, [activeTab, parsed])
 
   const originalFileUrl = useMemo(() => {
     if (!originalFile) return null
     return URL.createObjectURL(originalFile)
   }, [originalFile])
+
+  const handleCopy = async () => {
+    if (!copyText) return
+
+    try {
+      await navigator.clipboard.writeText(copyText)
+      setIsCopied(true)
+      toast.success(
+        activeTab === 'json' ? 'JSON을 복사했습니다.' : 'HTML을 복사했습니다.',
+      )
+      window.setTimeout(() => setIsCopied(false), 1500)
+    } catch {
+      toast.error('복사에 실패했습니다.')
+    }
+  }
 
   if (isLoading) {
     return (
@@ -140,7 +191,7 @@ export function DocumentViewer({
       className={`flex h-full min-h-0 overflow-hidden rounded-2xl ${className}`}
     >
       {/* ── Left: Original Document Viewer (화면 높이에 고정) ── */}
-      <div className="bg-muted/30 border-border flex h-full w-1/2 flex-shrink-0 flex-col border-r">
+      <div className="bg-muted/30 border-border flex h-full min-h-0 w-1/2 flex-shrink-0 flex-col border-r">
         <div className="border-border flex items-center justify-between border-b px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Eye className="text-muted-foreground h-3.5 w-3.5" />
@@ -162,7 +213,14 @@ export function DocumentViewer({
       </div>
 
       {/* ── Right: Parsed Document (스크롤 가능) ── */}
-      <div className="bg-card flex h-full w-1/2 flex-col overflow-hidden">
+      <div
+        className="bg-card flex h-full min-h-0 w-1/2 flex-col overflow-hidden"
+        onMouseEnter={() => setIsParsedPanelHovered(true)}
+        onMouseLeave={() => {
+          setIsParsedPanelHovered(false)
+          setIsCopied(false)
+        }}
+      >
         {/* Tab bar */}
         <div className="border-border flex items-center justify-between border-b">
           <div className="flex items-center gap-1 px-2">
@@ -170,28 +228,48 @@ export function DocumentViewer({
               Document parsing
             </span>
           </div>
-          <div className="flex">
-            {FORMAT_TABS.map((tab) => (
+          <div className="flex items-center gap-2 pr-2">
+            {copyText && (
               <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`relative px-4 py-2.5 text-xs font-medium transition-colors ${
-                  activeTab === tab.key
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
+                type="button"
+                onClick={handleCopy}
+                className={`border-border bg-background text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium transition-all ${
+                  isParsedPanelHovered
+                    ? 'pointer-events-auto opacity-100'
+                    : 'pointer-events-none opacity-0'
                 }`}
               >
-                {tab.label}
-                {activeTab === tab.key && (
-                  <span className="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-t" />
+                {isCopied ? (
+                  <Check className="h-3.5 w-3.5" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" />
                 )}
+                {isCopied ? 'Copied' : 'Copy'}
               </button>
-            ))}
+            )}
+            <div className="flex">
+              {FORMAT_TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`relative px-4 py-2.5 text-xs font-medium transition-colors ${
+                    activeTab === tab.key
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {tab.label}
+                  {activeTab === tab.key && (
+                    <span className="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-t" />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto">
           {activeTab === 'preview' && (
             <BlocksPreview
               blocks={parsed.blocks}
@@ -288,7 +366,7 @@ function BlocksPreview({
   onHoverBlock: (id: string | null) => void
 }) {
   return (
-    <div className="space-y-0 p-4">
+    <div className="min-h-full space-y-0 p-4">
       {blocks.map((block) => {
         const style = BLOCK_STYLES[block.type]
         const isHovered = hoveredBlock === block.id
