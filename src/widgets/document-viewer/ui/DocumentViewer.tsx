@@ -28,6 +28,30 @@ const FORMAT_TABS = [
 
 type FormatTab = (typeof FORMAT_TABS)[number]['key']
 
+function hideMetadataDivider(text: string): string {
+  const pageHeaderIndex = text.search(/^##\s*Page\b/m)
+  if (pageHeaderIndex === -1) return text
+
+  const metadataSection = text.slice(0, pageHeaderIndex)
+  const contentSection = text.slice(pageHeaderIndex)
+  const metadataLines = metadataSection.split('\n')
+
+  const cleanedMetadataLines = metadataLines.filter((line, index) => {
+    const trimmed = line.trim()
+    const previousLine = metadataLines[index - 1]?.trim()
+
+    if (!/^[-]{3,}$/.test(trimmed)) return true
+
+    return !(
+      previousLine?.startsWith('원본 파일') ||
+      previousLine?.startsWith('원본 파일 경로') ||
+      previousLine?.startsWith('페이지 수:')
+    )
+  })
+
+  return `${cleanedMetadataLines.join('\n')}${contentSection}`
+}
+
 // ── Block type styling ──
 
 const BLOCK_STYLES: Record<
@@ -79,7 +103,9 @@ export function DocumentViewer({
 
   const parsed = useMemo<ParsedDocument | null>(() => {
     if (documentResult?.txt?.preview) {
-      return parseDocumentContent(documentResult.txt.preview)
+      return parseDocumentContent(
+        hideMetadataDivider(documentResult.txt.preview),
+      )
     }
     return null
   }, [documentResult])
