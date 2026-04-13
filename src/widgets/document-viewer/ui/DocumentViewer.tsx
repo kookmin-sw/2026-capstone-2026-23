@@ -241,7 +241,7 @@ export function DocumentViewer({
               >
                 {tab.label}
                 {activeTab === tab.key && (
-                  <span className="bg-primary absolute bottom-0 left-0 right-0 h-0.5 rounded-t" />
+                  <span className="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-t" />
                 )}
               </button>
             ))}
@@ -373,7 +373,7 @@ function BlocksPreview({
         return (
           <div
             key={block.id}
-            className={`relative border-l-2 py-2 pl-4 pr-3 transition-all duration-150 ${
+            className={`relative border-l-2 py-2 pr-3 pl-4 transition-all duration-150 ${
               isHovered
                 ? `${style.hoverBorder} ${style.hoverBg}`
                 : 'border-transparent'
@@ -383,7 +383,7 @@ function BlocksPreview({
           >
             {/* Type label — shows on hover */}
             <span
-              className={`absolute right-3 top-2 rounded px-1.5 py-0.5 text-[10px] font-semibold transition-opacity ${style.color} ${style.bg} ${
+              className={`absolute top-2 right-3 rounded px-1.5 py-0.5 text-[10px] font-semibold transition-opacity ${style.color} ${style.bg} ${
                 isHovered ? 'opacity-100' : 'opacity-0'
               }`}
             >
@@ -404,7 +404,7 @@ function BlockContent({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case 'header':
       return (
-        <p className="text-foreground text-base font-semibold leading-relaxed">
+        <p className="text-foreground text-base leading-relaxed font-semibold">
           {block.content}
         </p>
       )
@@ -428,14 +428,14 @@ function BlockContent({ block }: { block: ContentBlock }) {
 
     case 'markdown-table':
       return (
-        <pre className="text-foreground/80 overflow-x-auto whitespace-pre-wrap font-mono text-xs leading-relaxed">
+        <pre className="text-foreground/80 overflow-x-auto font-mono text-xs leading-relaxed whitespace-pre-wrap">
           {block.content}
         </pre>
       )
 
     case 'image':
       return (
-        <div className="text-foreground/80 text-sm italic leading-relaxed">
+        <div className="text-foreground/80 text-sm leading-relaxed italic">
           {block.content}
         </div>
       )
