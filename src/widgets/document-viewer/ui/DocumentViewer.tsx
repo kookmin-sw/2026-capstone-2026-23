@@ -419,7 +419,7 @@ function BlockContent({ block }: { block: ContentBlock }) {
     case 'table':
       return (
         <div
-          className="[&_td]:border-border [&_th]:border-border [&_th]:bg-[#f5f7fa] overflow-x-auto text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:text-xs [&_th]:border [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold"
+          className="[&_td]:border-border [&_th]:border-border [&_th]:bg-muted/50 overflow-x-auto text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:text-xs [&_th]:border [&_th]:px-2.5 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(block.htmlContent ?? block.content),
           }}
