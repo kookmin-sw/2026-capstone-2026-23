@@ -7,6 +7,10 @@ import {
   getDocuments,
   uploadFiles,
 } from '@/shared/api'
+import {
+  MOCK_DOCUMENT_RESULT,
+  MOCK_DOCUMENT_RESULT_ID,
+} from '@/shared/lib/mock-document-result'
 import type { DocumentItem, DocumentResult, UploadedFile } from '@/shared/types'
 
 export function useDocuments() {
@@ -23,6 +27,9 @@ export function useDocumentResult(documentId: string | undefined) {
   return useQuery({
     queryKey: ['documents', documentId, 'result'],
     queryFn: async () => {
+      if (documentId === MOCK_DOCUMENT_RESULT_ID) {
+        return MOCK_DOCUMENT_RESULT
+      }
       const { data } = await getDocumentResult(documentId!)
       return data as DocumentResult
     },
