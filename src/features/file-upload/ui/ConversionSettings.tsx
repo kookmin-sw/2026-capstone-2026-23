@@ -67,13 +67,13 @@ export function ConversionSettings({
                 {models.length > 0 ? (
                   models.map((model) => (
                     <option key={model.modelId} value={model.modelId}>
-                      {model.displayName} ({model.code})
+                      {model.displayName}
                     </option>
                   ))
                 ) : (
                   <>
-                    <option value="m1">GPT-5 Mini (gpt-5-mini)</option>
-                    <option value="m2">DeepSeek OCR 2 (deepseek-ocr-2)</option>
+                    <option value="m1">GPT-5 Mini</option>
+                    <option value="m2">DeepSeek OCR 2</option>
                   </>
                 )}
               </select>
