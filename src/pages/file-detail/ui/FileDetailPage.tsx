@@ -104,7 +104,7 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
   const StatusIcon = statusDisplay.icon
 
   return (
-    <div className="-m-4 flex h-dvh flex-col">
+    <div className="-m-4 flex h-dvh min-w-0 flex-col">
       {/* Top bar */}
       <div className="border-border bg-background flex flex-shrink-0 items-center justify-between border-b px-6 py-3">
         <button
@@ -150,7 +150,7 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
       </div>
 
       {/* Fixed-height content area under the header */}
-      <div className="min-h-0 flex-1 overflow-hidden p-4">
+      <div className="min-h-0 min-w-0 flex-1 overflow-hidden p-4">
         <DocumentViewer
           documentResult={result}
           isLoading={isLoading || isOriginalFileLoading}
