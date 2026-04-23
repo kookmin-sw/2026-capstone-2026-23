@@ -47,6 +47,7 @@ type FormatTab = (typeof FORMAT_TABS)[number]['key']
 const ORIGINAL_PREVIEW_MIN_ZOOM = 0.5
 const ORIGINAL_PREVIEW_MAX_ZOOM = 3
 const ORIGINAL_PREVIEW_ZOOM_STEP = 0.25
+const ORIGINAL_PREVIEW_WHEEL_ZOOM_STEP = 0.05
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -122,7 +123,9 @@ function clampZoom(value: number) {
 
 function getWheelZoomDelta(deltaY: number) {
   if (deltaY === 0) return 0
-  return deltaY < 0 ? ORIGINAL_PREVIEW_ZOOM_STEP : -ORIGINAL_PREVIEW_ZOOM_STEP
+  return deltaY < 0
+    ? ORIGINAL_PREVIEW_WHEEL_ZOOM_STEP
+    : -ORIGINAL_PREVIEW_WHEEL_ZOOM_STEP
 }
 
 function hideMetadataDivider(text: string): string {
