@@ -10,14 +10,14 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
+  Scan,
 } from 'lucide-react'
 import { Document as PdfDocument, Page as PdfPage, pdfjs } from 'react-pdf'
-import {
-  TransformComponent,
-  TransformWrapper,
-  type ReactZoomPanPinchContentRef,
-} from 'react-zoom-pan-pinch'
 import { toast } from 'sonner'
+import type {
+  MouseEvent as ReactMouseEvent,
+  WheelEvent as ReactWheelEvent,
+} from 'react'
 import type { DocumentResult } from '@/shared/types'
 import {
   parseDocumentContent,
@@ -44,14 +44,89 @@ const FORMAT_TABS = [
 ] as const
 
 type FormatTab = (typeof FORMAT_TABS)[number]['key']
-const ORIGINAL_PREVIEW_MIN_ZOOM = 1
+const ORIGINAL_PREVIEW_MIN_ZOOM = 0.5
 const ORIGINAL_PREVIEW_MAX_ZOOM = 3
 const ORIGINAL_PREVIEW_ZOOM_STEP = 0.25
+const ORIGINAL_PREVIEW_WHEEL_ZOOM_STEP = 0.05
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
   import.meta.url,
 ).toString()
+
+function useDragScroll<T extends HTMLDivElement>() {
+  const ref = useRef<T | null>(null)
+  const dragStateRef = useRef<{
+    isDragging: boolean
+    startX: number
+    startY: number
+    scrollLeft: number
+    scrollTop: number
+  }>({
+    isDragging: false,
+    startX: 0,
+    startY: 0,
+    scrollLeft: 0,
+    scrollTop: 0,
+  })
+  const [isDragging, setIsDragging] = useState(false)
+
+  const handleMouseDown = (event: ReactMouseEvent<T>) => {
+    const element = ref.current
+    if (!element) return
+
+    dragStateRef.current = {
+      isDragging: true,
+      startX: event.clientX,
+      startY: event.clientY,
+      scrollLeft: element.scrollLeft,
+      scrollTop: element.scrollTop,
+    }
+    setIsDragging(true)
+  }
+
+  const handleMouseMove = (event: ReactMouseEvent<T>) => {
+    const element = ref.current
+    const dragState = dragStateRef.current
+    if (!element || !dragState.isDragging) return
+
+    event.preventDefault()
+    element.scrollLeft =
+      dragState.scrollLeft - (event.clientX - dragState.startX)
+    element.scrollTop = dragState.scrollTop - (event.clientY - dragState.startY)
+  }
+
+  const stopDragging = () => {
+    if (!dragStateRef.current.isDragging) return
+    dragStateRef.current.isDragging = false
+    setIsDragging(false)
+  }
+
+  return {
+    ref,
+    isDragging,
+    dragHandlers: {
+      onMouseDown: handleMouseDown,
+      onMouseMove: handleMouseMove,
+      onMouseUp: stopDragging,
+      onMouseLeave: stopDragging,
+    },
+  }
+}
+
+function clampZoom(value: number) {
+  return Math.min(
+    ORIGINAL_PREVIEW_MAX_ZOOM,
+    Math.max(ORIGINAL_PREVIEW_MIN_ZOOM, value),
+  )
+}
+
+function getWheelZoomDelta(deltaY: number) {
+  if (deltaY === 0) return 0
+  return deltaY < 0
+    ? ORIGINAL_PREVIEW_WHEEL_ZOOM_STEP
+    : -ORIGINAL_PREVIEW_WHEEL_ZOOM_STEP
+}
 
 function hideMetadataDivider(text: string): string {
   const pageHeaderIndex = text.search(/^##\s*Page\b/m)
@@ -217,10 +292,10 @@ export function DocumentViewer({
 
   return (
     <div
-      className={`border-border flex h-full min-h-0 overflow-hidden rounded-2xl border bg-[#eef1f5] shadow-sm ${className}`}
+      className={`border-border flex h-full min-h-0 min-w-0 overflow-hidden rounded-2xl border bg-[#eef1f5] shadow-sm ${className}`}
     >
       {/* ── Left: Original Document Viewer (화면 높이에 고정) ── */}
-      <div className="flex h-full min-h-0 w-1/2 flex-shrink-0 flex-col overflow-hidden bg-white">
+      <div className="flex h-full min-h-0 w-1/2 min-w-0 flex-shrink-0 flex-col overflow-hidden bg-white">
         <div className="border-border flex items-center justify-between border-b bg-[#f7f8fa] px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Eye className="text-muted-foreground h-3.5 w-3.5" />
@@ -243,7 +318,7 @@ export function DocumentViewer({
 
       {/* ── Right: Parsed Document (스크롤 가능) ── */}
       <div
-        className="border-border relative flex h-full min-h-0 w-1/2 flex-col overflow-hidden border-l bg-[#fcfcfd]"
+        className="border-border relative flex h-full min-h-0 w-1/2 min-w-0 flex-col overflow-hidden border-l bg-[#fcfcfd]"
         onMouseEnter={() => setIsParsedPanelHovered(true)}
         onMouseLeave={() => {
           setIsParsedPanelHovered(false)
@@ -371,6 +446,7 @@ function OriginalFilePreview({
 function OriginalPreviewToolbar({
   zoom,
   onFitWidth,
+  onFitPage,
   onZoomOut,
   onZoomIn,
   disableZoomOut,
@@ -378,6 +454,7 @@ function OriginalPreviewToolbar({
 }: {
   zoom: number
   onFitWidth: () => void
+  onFitPage: () => void
   onZoomOut: () => void
   onZoomIn: () => void
   disableZoomOut: boolean
@@ -397,6 +474,14 @@ function OriginalPreviewToolbar({
         >
           <Maximize2 className="h-3.5 w-3.5" />
           Fit width
+        </button>
+        <button
+          type="button"
+          onClick={onFitPage}
+          className="border-border text-muted-foreground hover:text-foreground inline-flex h-8 items-center gap-1 rounded-md border bg-white px-2.5 text-[11px] font-medium"
+        >
+          <Scan className="h-3.5 w-3.5" />
+          Fit page
         </button>
         <button
           type="button"
@@ -424,139 +509,285 @@ function OriginalPreviewToolbar({
 
 function ImageOriginalPreview({ fileUrl }: { fileUrl: string }) {
   const [zoom, setZoom] = useState(1)
-  const transformRef = useRef<ReactZoomPanPinchContentRef | null>(null)
-
-  return (
-    <TransformWrapper
-      key={fileUrl}
-      ref={transformRef}
-      initialScale={1}
-      minScale={ORIGINAL_PREVIEW_MIN_ZOOM}
-      maxScale={ORIGINAL_PREVIEW_MAX_ZOOM}
-      centerOnInit
-      limitToBounds
-      disablePadding
-      doubleClick={{ disabled: true }}
-      wheel={{ step: 0.15 }}
-      pinch={{ step: 5 }}
-      onTransform={(_, state) => setZoom(state.scale)}
-    >
-      {({ zoomIn, zoomOut, resetTransform }) => (
-        <div className="flex h-full min-h-0 flex-col bg-[#f6f7f9]">
-          <OriginalPreviewToolbar
-            zoom={zoom}
-            onFitWidth={() => resetTransform(150)}
-            onZoomOut={() => zoomOut(ORIGINAL_PREVIEW_ZOOM_STEP, 150)}
-            onZoomIn={() => zoomIn(ORIGINAL_PREVIEW_ZOOM_STEP, 150)}
-            disableZoomOut={zoom <= ORIGINAL_PREVIEW_MIN_ZOOM}
-            disableZoomIn={zoom >= ORIGINAL_PREVIEW_MAX_ZOOM}
-          />
-          <div className="min-h-0 flex-1 overflow-hidden">
-            <TransformComponent
-              wrapperClass="!h-full !w-full"
-              contentClass="!flex !min-h-full !w-full !items-start !justify-center"
-              wrapperStyle={{ backgroundColor: '#f6f7f9' }}
-            >
-              <img
-                src={fileUrl}
-                alt="원본 이미지"
-                className="block h-auto w-full max-w-full border border-[#dde1e6] bg-white shadow-sm select-none"
-                draggable={false}
-              />
-            </TransformComponent>
-          </div>
-        </div>
-      )}
-    </TransformWrapper>
-  )
-}
-
-function PdfOriginalPreview({ fileUrl }: { fileUrl: string }) {
-  const [zoom, setZoom] = useState(1)
-  const [numPages, setNumPages] = useState(0)
-  const [containerWidth, setContainerWidth] = useState(0)
+  const [fitMode, setFitMode] = useState<'width' | 'page' | 'custom'>('width')
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 })
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const {
+    ref: scrollRef,
+    isDragging,
+    dragHandlers,
+  } = useDragScroll<HTMLDivElement>()
 
   useEffect(() => {
     const element = containerRef.current
     if (!element) return
 
-    const updateWidth = () => {
-      setContainerWidth(element.clientWidth)
+    const updateSize = () => {
+      setContainerSize({
+        width: element.clientWidth,
+        height: element.clientHeight,
+      })
     }
 
-    updateWidth()
+    updateSize()
 
-    const observer = new ResizeObserver(updateWidth)
+    const observer = new ResizeObserver(updateSize)
     observer.observe(element)
     return () => observer.disconnect()
   }, [])
 
-  const pageWidth = Math.max(1, Math.floor(containerWidth * zoom))
+  const fitPageZoom = useMemo(() => {
+    if (
+      containerSize.width <= 0 ||
+      containerSize.height <= 0 ||
+      imageSize.width <= 0 ||
+      imageSize.height <= 0
+    ) {
+      return 1
+    }
+
+    const fitWidthHeight =
+      containerSize.width * (imageSize.height / imageSize.width)
+    const scale = Math.min(1, containerSize.height / fitWidthHeight)
+    return Math.max(ORIGINAL_PREVIEW_MIN_ZOOM, scale)
+  }, [containerSize, imageSize])
+
+  const effectiveZoom =
+    fitMode === 'width' ? 1 : fitMode === 'page' ? fitPageZoom : zoom
+
+  const handleWheelZoom = (event: ReactWheelEvent<HTMLDivElement>) => {
+    if (!event.ctrlKey && !event.metaKey) return
+
+    event.preventDefault()
+    const nextZoom = clampZoom(effectiveZoom + getWheelZoomDelta(event.deltaY))
+    setFitMode('custom')
+    setZoom(nextZoom)
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#f6f7f9]">
       <OriginalPreviewToolbar
-        zoom={zoom}
-        onFitWidth={() => setZoom(1)}
-        onZoomOut={() =>
-          setZoom((prev) =>
+        zoom={effectiveZoom}
+        onFitWidth={() => setFitMode('width')}
+        onFitPage={() => setFitMode('page')}
+        onZoomOut={() => {
+          setFitMode('custom')
+          setZoom(
             Math.max(
               ORIGINAL_PREVIEW_MIN_ZOOM,
-              prev - ORIGINAL_PREVIEW_ZOOM_STEP,
+              effectiveZoom - ORIGINAL_PREVIEW_ZOOM_STEP,
             ),
           )
-        }
-        onZoomIn={() =>
-          setZoom((prev) =>
+        }}
+        onZoomIn={() => {
+          setFitMode('custom')
+          setZoom(
             Math.min(
               ORIGINAL_PREVIEW_MAX_ZOOM,
-              prev + ORIGINAL_PREVIEW_ZOOM_STEP,
+              effectiveZoom + ORIGINAL_PREVIEW_ZOOM_STEP,
             ),
           )
-        }
-        disableZoomOut={zoom <= ORIGINAL_PREVIEW_MIN_ZOOM}
-        disableZoomIn={zoom >= ORIGINAL_PREVIEW_MAX_ZOOM}
+        }}
+        disableZoomOut={effectiveZoom <= ORIGINAL_PREVIEW_MIN_ZOOM}
+        disableZoomIn={effectiveZoom >= ORIGINAL_PREVIEW_MAX_ZOOM}
       />
-      <div ref={containerRef} className="min-h-0 flex-1 overflow-auto">
-        {containerWidth > 0 ? (
-          <div className="mx-auto flex min-h-full w-full flex-col items-center gap-4 bg-[#f6f7f9] py-4">
-            <PdfDocument
-              file={fileUrl}
-              loading={
-                <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  PDF 불러오는 중...
-                </div>
-              }
-              error={
-                <div className="text-muted-foreground text-sm">
-                  PDF를 불러오지 못했습니다.
-                </div>
-              }
-              onLoadSuccess={({ numPages: loadedPages }) =>
-                setNumPages(loadedPages)
-              }
+      <div ref={containerRef} className="min-h-0 flex-1 overflow-hidden">
+        <div
+          ref={scrollRef}
+          className={`h-full min-w-0 overflow-auto bg-[#f6f7f9] ${
+            isDragging ? 'cursor-grabbing' : 'cursor-grab'
+          }`}
+          onWheel={handleWheelZoom}
+          {...dragHandlers}
+        >
+          <div
+            className="min-h-full"
+            style={{
+              width:
+                containerSize.width > 0
+                  ? `${Math.max(containerSize.width, containerSize.width * effectiveZoom)}px`
+                  : '100%',
+            }}
+          >
+            <div
+              className="mx-auto border border-[#dde1e6] bg-white shadow-sm"
+              style={{
+                width:
+                  containerSize.width > 0
+                    ? `${containerSize.width * effectiveZoom}px`
+                    : `${effectiveZoom * 100}%`,
+              }}
             >
-              {Array.from({ length: numPages }, (_, index) => (
-                <div
-                  key={`${fileUrl}-${index + 1}`}
-                  className="overflow-hidden border border-[#dde1e6] bg-white shadow-sm"
-                >
-                  <PdfPage
-                    pageNumber={index + 1}
-                    width={pageWidth}
-                    renderAnnotationLayer={false}
-                    renderTextLayer={false}
-                    loading={
-                      <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
-                        페이지 렌더링 중...
-                      </div>
-                    }
-                  />
-                </div>
-              ))}
-            </PdfDocument>
+              <img
+                src={fileUrl}
+                alt="원본 이미지"
+                className="block h-auto w-full max-w-none select-none"
+                draggable={false}
+                onLoad={(event) => {
+                  setImageSize({
+                    width: event.currentTarget.naturalWidth,
+                    height: event.currentTarget.naturalHeight,
+                  })
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PdfOriginalPreview({ fileUrl }: { fileUrl: string }) {
+  const [zoom, setZoom] = useState(1)
+  const [fitMode, setFitMode] = useState<'width' | 'page' | 'custom'>('width')
+  const [numPages, setNumPages] = useState(0)
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+  const [firstPageSize, setFirstPageSize] = useState({ width: 0, height: 0 })
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const {
+    ref: scrollRef,
+    isDragging,
+    dragHandlers,
+  } = useDragScroll<HTMLDivElement>()
+
+  useEffect(() => {
+    const element = containerRef.current
+    if (!element) return
+
+    const updateSize = () => {
+      setContainerSize({
+        width: element.clientWidth,
+        height: element.clientHeight,
+      })
+    }
+
+    updateSize()
+
+    const observer = new ResizeObserver(updateSize)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
+  const fitPageZoom = useMemo(() => {
+    if (
+      containerSize.width <= 0 ||
+      containerSize.height <= 0 ||
+      firstPageSize.width <= 0 ||
+      firstPageSize.height <= 0
+    ) {
+      return 1
+    }
+
+    const fitWidthHeight =
+      containerSize.width * (firstPageSize.height / firstPageSize.width)
+    const scale = Math.min(1, containerSize.height / fitWidthHeight)
+    return Math.max(ORIGINAL_PREVIEW_MIN_ZOOM, scale)
+  }, [containerSize, firstPageSize])
+
+  const effectiveZoom =
+    fitMode === 'width' ? 1 : fitMode === 'page' ? fitPageZoom : zoom
+  const pageWidth = Math.max(1, Math.floor(containerSize.width * effectiveZoom))
+
+  const handleWheelZoom = (event: ReactWheelEvent<HTMLDivElement>) => {
+    if (!event.ctrlKey && !event.metaKey) return
+
+    event.preventDefault()
+    const nextZoom = clampZoom(effectiveZoom + getWheelZoomDelta(event.deltaY))
+    setFitMode('custom')
+    setZoom(nextZoom)
+  }
+
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-[#f6f7f9]">
+      <OriginalPreviewToolbar
+        zoom={effectiveZoom}
+        onFitWidth={() => setFitMode('width')}
+        onFitPage={() => setFitMode('page')}
+        onZoomOut={() => {
+          setFitMode('custom')
+          setZoom(
+            Math.max(
+              ORIGINAL_PREVIEW_MIN_ZOOM,
+              effectiveZoom - ORIGINAL_PREVIEW_ZOOM_STEP,
+            ),
+          )
+        }}
+        onZoomIn={() => {
+          setFitMode('custom')
+          setZoom(
+            Math.min(
+              ORIGINAL_PREVIEW_MAX_ZOOM,
+              effectiveZoom + ORIGINAL_PREVIEW_ZOOM_STEP,
+            ),
+          )
+        }}
+        disableZoomOut={effectiveZoom <= ORIGINAL_PREVIEW_MIN_ZOOM}
+        disableZoomIn={effectiveZoom >= ORIGINAL_PREVIEW_MAX_ZOOM}
+      />
+      <div ref={containerRef} className="min-h-0 flex-1 overflow-hidden">
+        {containerSize.width > 0 ? (
+          <div
+            ref={scrollRef}
+            className={`h-full min-w-0 overflow-auto bg-[#f6f7f9] ${
+              isDragging ? 'cursor-grabbing' : 'cursor-grab'
+            }`}
+            onWheel={handleWheelZoom}
+            {...dragHandlers}
+          >
+            <div
+              className="min-h-full py-4"
+              style={{
+                width: `${Math.max(containerSize.width, pageWidth)}px`,
+              }}
+            >
+              <PdfDocument
+                file={fileUrl}
+                loading={
+                  <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    PDF 불러오는 중...
+                  </div>
+                }
+                error={
+                  <div className="text-muted-foreground text-sm">
+                    PDF를 불러오지 못했습니다.
+                  </div>
+                }
+                onLoadSuccess={({ numPages: loadedPages }) =>
+                  setNumPages(loadedPages)
+                }
+              >
+                {Array.from({ length: numPages }, (_, index) => (
+                  <div
+                    key={`${fileUrl}-${index + 1}`}
+                    className="mx-auto mb-4 border border-[#dde1e6] bg-white shadow-sm last:mb-0"
+                    style={{ width: `${pageWidth}px` }}
+                  >
+                    <PdfPage
+                      pageNumber={index + 1}
+                      width={pageWidth}
+                      onLoadSuccess={(page) => {
+                        if (index === 0) {
+                          setFirstPageSize({
+                            width: page.originalWidth,
+                            height: page.originalHeight,
+                          })
+                        }
+                      }}
+                      renderAnnotationLayer={false}
+                      renderTextLayer={false}
+                      loading={
+                        <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
+                          페이지 렌더링 중...
+                        </div>
+                      }
+                    />
+                  </div>
+                ))}
+              </PdfDocument>
+            </div>
           </div>
         ) : null}
       </div>
