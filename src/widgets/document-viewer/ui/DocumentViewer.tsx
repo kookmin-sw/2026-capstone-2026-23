@@ -14,7 +14,10 @@ import {
 } from 'lucide-react'
 import { Document as PdfDocument, Page as PdfPage, pdfjs } from 'react-pdf'
 import { toast } from 'sonner'
-import type { MouseEvent as ReactMouseEvent } from 'react'
+import type {
+  MouseEvent as ReactMouseEvent,
+  WheelEvent as ReactWheelEvent,
+} from 'react'
 import type { DocumentResult } from '@/shared/types'
 import {
   parseDocumentContent,
@@ -108,6 +111,18 @@ function useDragScroll<T extends HTMLDivElement>() {
       onMouseLeave: stopDragging,
     },
   }
+}
+
+function clampZoom(value: number) {
+  return Math.min(
+    ORIGINAL_PREVIEW_MAX_ZOOM,
+    Math.max(ORIGINAL_PREVIEW_MIN_ZOOM, value),
+  )
+}
+
+function getWheelZoomDelta(deltaY: number) {
+  if (deltaY === 0) return 0
+  return deltaY < 0 ? ORIGINAL_PREVIEW_ZOOM_STEP : -ORIGINAL_PREVIEW_ZOOM_STEP
 }
 
 function hideMetadataDivider(text: string): string {
@@ -538,6 +553,15 @@ function ImageOriginalPreview({ fileUrl }: { fileUrl: string }) {
   const effectiveZoom =
     fitMode === 'width' ? 1 : fitMode === 'page' ? fitPageZoom : zoom
 
+  const handleWheelZoom = (event: ReactWheelEvent<HTMLDivElement>) => {
+    if (!event.ctrlKey && !event.metaKey) return
+
+    event.preventDefault()
+    const nextZoom = clampZoom(effectiveZoom + getWheelZoomDelta(event.deltaY))
+    setFitMode('custom')
+    setZoom(nextZoom)
+  }
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#f6f7f9]">
       <OriginalPreviewToolbar
@@ -571,6 +595,7 @@ function ImageOriginalPreview({ fileUrl }: { fileUrl: string }) {
           className={`h-full min-w-0 overflow-auto bg-[#f6f7f9] ${
             isDragging ? 'cursor-grabbing' : 'cursor-grab'
           }`}
+          onWheel={handleWheelZoom}
           {...dragHandlers}
         >
           <div
@@ -662,6 +687,15 @@ function PdfOriginalPreview({ fileUrl }: { fileUrl: string }) {
     fitMode === 'width' ? 1 : fitMode === 'page' ? fitPageZoom : zoom
   const pageWidth = Math.max(1, Math.floor(containerSize.width * effectiveZoom))
 
+  const handleWheelZoom = (event: ReactWheelEvent<HTMLDivElement>) => {
+    if (!event.ctrlKey && !event.metaKey) return
+
+    event.preventDefault()
+    const nextZoom = clampZoom(effectiveZoom + getWheelZoomDelta(event.deltaY))
+    setFitMode('custom')
+    setZoom(nextZoom)
+  }
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#f6f7f9]">
       <OriginalPreviewToolbar
@@ -696,6 +730,7 @@ function PdfOriginalPreview({ fileUrl }: { fileUrl: string }) {
             className={`h-full min-w-0 overflow-auto bg-[#f6f7f9] ${
               isDragging ? 'cursor-grabbing' : 'cursor-grab'
             }`}
+            onWheel={handleWheelZoom}
             {...dragHandlers}
           >
             <div
