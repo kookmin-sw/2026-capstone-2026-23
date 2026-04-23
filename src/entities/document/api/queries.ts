@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   deleteDocument,
   downloadFile,
+  downloadDocumentOriginal,
   getDocumentResult,
   getDocuments,
   uploadFiles,
@@ -32,6 +33,22 @@ export function useDocumentResult(documentId: string | undefined) {
       }
       const { data } = await getDocumentResult(documentId!)
       return data as DocumentResult
+    },
+    enabled: !!documentId,
+  })
+}
+
+export function useDocumentOriginalFile(
+  documentId: string | undefined,
+  fileName: string | undefined,
+) {
+  return useQuery({
+    queryKey: ['documents', documentId, 'original-file'],
+    queryFn: async () => {
+      const { data } = await downloadDocumentOriginal(documentId!)
+      return new File([data], fileName ?? 'original', {
+        type: data.type || undefined,
+      })
     },
     enabled: !!documentId,
   })
