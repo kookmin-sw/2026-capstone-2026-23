@@ -1,4 +1,5 @@
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   LayoutDashboard,
   Upload,
@@ -42,6 +43,7 @@ const menuItems = [
 
 export function AppSidebar() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
   const { state, toggleSidebar } = useSidebar()
@@ -51,6 +53,7 @@ export function AppSidebar() {
   const isCollapsed = state === 'collapsed'
 
   const handleLogout = () => {
+    queryClient.clear()
     clearSession()
     navigate({ to: '/login' })
   }

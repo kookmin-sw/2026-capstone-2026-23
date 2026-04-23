@@ -1,6 +1,7 @@
 export {
   useDocuments,
   useDocumentResult,
+  useDocumentOriginalFile,
   useUploadFiles,
   useDownloadFile,
   useDeleteDocuments,

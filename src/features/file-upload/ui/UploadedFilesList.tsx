@@ -7,7 +7,6 @@ import {
   Loader2,
   Eye,
   Plus,
-  RotateCcw,
 } from 'lucide-react'
 import { FileTypeIcon } from '@/shared/ui/file-type-icon'
 import type { UploadFileItem } from '../model/store'
@@ -19,7 +18,6 @@ interface UploadedFilesListProps {
   onFilesAdded: (files: File[]) => void
   selectedFileId?: string
   overallProgress: number
-  onReset?: () => void
 }
 
 const ACCEPTED_EXTENSIONS = [
@@ -40,7 +38,6 @@ export function UploadedFilesList({
   onFilesAdded,
   selectedFileId,
   overallProgress,
-  onReset,
 }: UploadedFilesListProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
@@ -143,8 +140,6 @@ export function UploadedFilesList({
     }
   }
 
-  const completedCount = files.filter((f) => f.status === 'completed').length
-  const failedCount = files.filter((f) => f.status === 'failed').length
   const convertingCount = files.filter((f) => f.status === 'converting').length
 
   return (
@@ -154,65 +149,31 @@ export function UploadedFilesList({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
-      {/* Header with counts + add button */}
-      <div className="mb-3 flex items-center justify-between">
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-foreground text-sm font-semibold">
-            {files.length}개 파일
-          </h3>
-          <div className="flex items-center gap-2 text-xs">
-            {convertingCount > 0 && (
-              <span className="text-primary font-medium">
-                {convertingCount} 변환 중
-              </span>
-            )}
-            {completedCount > 0 && (
-              <span className="font-medium text-[#198038]">
-                {completedCount} 완료
-              </span>
-            )}
-            {failedCount > 0 && (
-              <span className="text-destructive font-medium">
-                {failedCount} 실패
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-1">
-          {onReset && (
-            <button
-              onClick={onReset}
-              className="text-muted-foreground hover:text-foreground flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors"
-            >
-              <RotateCcw className="h-3 w-3" />새 변환
-            </button>
-          )}
-        </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept={ACCEPTED_EXTENSIONS.join(',')}
-          className="hidden"
-          onChange={(e) => {
-            if (e.target.files) onFilesAdded(Array.from(e.target.files))
-            e.target.value = ''
-          }}
-        />
-        <input
-          ref={folderInputRef}
-          type="file"
-          // @ts-expect-error webkitdirectory is valid but not in TS types
-          webkitdirectory=""
-          directory=""
-          multiple
-          className="hidden"
-          onChange={(e) => {
-            if (e.target.files) onFilesAdded(Array.from(e.target.files))
-            e.target.value = ''
-          }}
-        />
-      </div>
+      {/* Hidden file inputs */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept={ACCEPTED_EXTENSIONS.join(',')}
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files) onFilesAdded(Array.from(e.target.files))
+          e.target.value = ''
+        }}
+      />
+      <input
+        ref={folderInputRef}
+        type="file"
+        // @ts-expect-error webkitdirectory is valid but not in TS types
+        webkitdirectory=""
+        directory=""
+        multiple
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files) onFilesAdded(Array.from(e.target.files))
+          e.target.value = ''
+        }}
+      />
 
       {/* Overall progress */}
       {convertingCount > 0 && (
@@ -309,55 +270,55 @@ export function UploadedFilesList({
           </div>
         ))}
 
-        {/* Add files drop zone */}
+        {/* 파일 추가 영역 */}
         {files.length === 0 ? (
           <div
-            className={`flex h-full flex-1 flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed transition-all ${
+            className={`flex flex-col items-center gap-3 rounded-lg border-2 border-dashed px-4 py-6 text-center transition-all ${
               isDragging
                 ? 'border-primary bg-primary/5 text-primary'
                 : 'border-border text-muted-foreground'
             }`}
           >
             <Plus
-              className={`h-6 w-6 ${isDragging ? 'text-primary' : 'text-muted-foreground/50'}`}
+              className={`h-5 w-5 ${isDragging ? 'text-primary' : 'text-muted-foreground/40'}`}
             />
-            <p className="text-sm">
+            <p className="text-xs leading-relaxed">
               {isDragging
                 ? '여기에 놓으세요'
-                : '파일을 드래그하거나 선택하세요'}
+                : '파일을 드래그하거나 버튼으로 선택하세요'}
             </p>
-            <div className="flex gap-2">
+            <div className="flex w-full flex-col gap-1.5">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="border-border hover:border-primary/40 hover:text-primary rounded-md border px-3 py-1.5 text-xs transition-colors"
+                className="border-border hover:border-primary/40 hover:text-primary w-full rounded-lg border py-2 text-xs font-medium transition-colors"
               >
                 파일 선택
               </button>
               <button
                 type="button"
                 onClick={() => folderInputRef.current?.click()}
-                className="border-border hover:border-primary/40 hover:text-primary rounded-md border px-3 py-1.5 text-xs transition-colors"
+                className="border-border hover:border-primary/40 hover:text-primary w-full rounded-lg border py-2 text-xs font-medium transition-colors"
               >
                 폴더 선택
               </button>
             </div>
-            <p className="text-muted-foreground/60 text-[10px]">
-              HWP, HWPX, PDF, PNG, JPG, BMP, TIFF
+            <p className="text-muted-foreground/50 text-[10px]">
+              HWP · HWPX · PDF · PNG · JPG · BMP · TIFF
             </p>
           </div>
         ) : (
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className={`flex w-full items-center justify-center gap-1.5 rounded-lg border-2 border-dashed py-3 text-xs transition-all ${
+            className={`flex w-full items-center justify-center gap-1.5 rounded-lg border-2 border-dashed py-2.5 text-xs transition-all ${
               isDragging
                 ? 'border-primary bg-primary/5 text-primary'
                 : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary'
             }`}
           >
             <Plus className="h-3.5 w-3.5" />
-            {isDragging ? '여기에 놓으세요' : '파일 추가 또는 드래그'}
+            {isDragging ? '여기에 놓으세요' : '파일 추가'}
           </button>
         )}
       </div>

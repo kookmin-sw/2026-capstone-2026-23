@@ -161,7 +161,7 @@ export function ErrorLogPage() {
 
   return (
     <MockIndicator label="에러 로그">
-      <div className="space-y-3">
+      <div className="flex h-full flex-col gap-3">
         <div>
           <h2 className="text-foreground flex items-center gap-2 text-2xl font-bold">
             <AlertTriangle className="text-destructive h-6 w-6" />
@@ -173,7 +173,7 @@ export function ErrorLogPage() {
         </div>
 
         {allErrors.length === 0 ? (
-          <div className="bg-card border-border flex flex-col items-center justify-center rounded-xl border py-16">
+          <div className="bg-card border-border flex flex-1 flex-col items-center justify-center rounded-xl border">
             <Inbox className="text-muted-foreground/40 mb-3 h-12 w-12" />
             <p className="text-muted-foreground text-sm font-medium">
               에러 로그가 없습니다

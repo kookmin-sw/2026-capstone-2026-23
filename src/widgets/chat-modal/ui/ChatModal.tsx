@@ -127,7 +127,7 @@ export function ChatModal({
 
   if (isMinimized) {
     return (
-      <div className="fixed right-6 bottom-3 z-50">
+      <div className={isEmbedded ? '' : 'fixed right-6 bottom-3 z-50'}>
         <button
           onClick={() => setIsMinimized(false)}
           className="bg-primary hover:bg-primary/85 rounded-full p-4 text-white shadow-2xl transition-all hover:scale-110"
@@ -139,7 +139,11 @@ export function ChatModal({
   }
 
   return (
-    <div className="bg-card border-border fixed right-6 bottom-3 z-50 flex h-[600px] w-[420px] flex-col overflow-hidden rounded-2xl border shadow-2xl">
+    <div
+      className={`bg-card border-border flex h-[600px] w-[420px] flex-col overflow-hidden rounded-2xl border shadow-2xl ${
+        isEmbedded ? 'mb-3' : 'fixed right-6 bottom-3 z-50'
+      }`}
+    >
       {/* Header */}
       <div className="border-border bg-accent flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">

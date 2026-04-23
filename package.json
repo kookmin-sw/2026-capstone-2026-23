@@ -41,6 +41,8 @@
     "radix-ui": "^1.4.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-pdf": "^10.4.1",
+    "react-zoom-pan-pinch": "^4.0.3",
     "recharts": "^2.15.4",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
