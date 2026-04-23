@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { DocumentViewer } from '@/widgets/document-viewer'
-import { useDocumentResult } from '@/entities/document'
+import { useDocumentOriginalFile, useDocumentResult } from '@/entities/document'
 import type { DocumentStatus } from '@/shared/types'
 
 interface FileDetailPageProps {
@@ -22,6 +22,8 @@ interface FileDetailPageProps {
 export function FileDetailPage({ fileId }: FileDetailPageProps) {
   const navigate = useNavigate()
   const { data: result, isLoading } = useDocumentResult(fileId)
+  const { data: originalFile, isLoading: isOriginalFileLoading } =
+    useDocumentOriginalFile(fileId, result?.fileName)
 
   const getStatusDisplay = (status: DocumentStatus) => {
     switch (status) {
@@ -149,7 +151,12 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
 
       {/* Fixed-height content area under the header */}
       <div className="min-h-0 flex-1 overflow-hidden p-4">
-        <DocumentViewer documentResult={result} className="h-full min-h-0" />
+        <DocumentViewer
+          documentResult={result}
+          isLoading={isLoading || isOriginalFileLoading}
+          originalFile={originalFile}
+          className="h-full min-h-0"
+        />
       </div>
     </div>
   )

@@ -1,6 +1,22 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import DOMPurify from 'dompurify'
-import { FileText, Loader2, AlertCircle, Eye, Copy, Check } from 'lucide-react'
+import {
+  FileText,
+  Loader2,
+  AlertCircle,
+  Eye,
+  Copy,
+  Check,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+} from 'lucide-react'
+import { Document as PdfDocument, Page as PdfPage, pdfjs } from 'react-pdf'
+import {
+  TransformComponent,
+  TransformWrapper,
+  type ReactZoomPanPinchContentRef,
+} from 'react-zoom-pan-pinch'
 import { toast } from 'sonner'
 import type { DocumentResult } from '@/shared/types'
 import {
@@ -28,6 +44,14 @@ const FORMAT_TABS = [
 ] as const
 
 type FormatTab = (typeof FORMAT_TABS)[number]['key']
+const ORIGINAL_PREVIEW_MIN_ZOOM = 1
+const ORIGINAL_PREVIEW_MAX_ZOOM = 3
+const ORIGINAL_PREVIEW_ZOOM_STEP = 0.25
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString()
 
 function hideMetadataDivider(text: string): string {
   const pageHeaderIndex = text.search(/^##\s*Page\b/m)
@@ -125,6 +149,11 @@ export function DocumentViewer({
     return URL.createObjectURL(originalFile)
   }, [originalFile])
 
+  useEffect(() => {
+    if (!originalFileUrl) return
+    return () => URL.revokeObjectURL(originalFileUrl)
+  }, [originalFileUrl])
+
   const handleCopy = async () => {
     if (!copyText) return
 
@@ -203,7 +232,7 @@ export function DocumentViewer({
             {documentResult?.fileName}
           </span>
         </div>
-        <div className="min-h-0 flex-1 overflow-auto bg-white">
+        <div className="min-h-0 flex-1 overflow-hidden bg-white">
           <OriginalFilePreview
             file={originalFile}
             fileUrl={originalFileUrl}
@@ -304,34 +333,20 @@ function OriginalFilePreview({
   fileName?: string
 }) {
   const ext = (fileName ?? file?.name ?? '').split('.').pop()?.toLowerCase()
-
-  // PDF
-  if (ext === 'pdf' && fileUrl) {
-    return (
-      <iframe
-        src={fileUrl}
-        className="h-full w-full border-0"
-        title="원본 PDF"
-      />
-    )
-  }
-
-  // Image formats
-  if (
-    fileUrl &&
-    ext &&
+  const mimeType = file?.type?.toLowerCase() ?? ''
+  const isImageByMime = mimeType.startsWith('image/')
+  const isPdfByMime = mimeType === 'application/pdf'
+  const isImageByExt =
+    !!ext &&
     ['png', 'jpg', 'jpeg', 'bmp', 'tiff', 'tif', 'gif', 'webp'].includes(ext)
-  ) {
-    return (
-      <div className="flex h-full items-center justify-center overflow-auto p-4">
-        <img
-          src={fileUrl}
-          alt="원본 이미지"
-          className="max-h-full max-w-full object-contain"
-        />
-      </div>
-    )
-  }
+  const isPdfByExt = ext === 'pdf'
+
+  const isImage = !!fileUrl && (isImageByMime || (!mimeType && isImageByExt))
+  const isPdf =
+    !!fileUrl && !isImage && (isPdfByMime || (!mimeType && isPdfByExt))
+
+  if (isPdf) return <PdfOriginalPreview key={fileUrl} fileUrl={fileUrl} />
+  if (isImage) return <ImageOriginalPreview key={fileUrl} fileUrl={fileUrl} />
 
   // Fallback: unsupported or no file
   return (
@@ -348,6 +363,202 @@ function OriginalFilePreview({
             ? '이 파일 형식은 미리보기를 지원하지 않습니다'
             : '원본 파일이 없습니다'}
         </p>
+      </div>
+    </div>
+  )
+}
+
+function OriginalPreviewToolbar({
+  zoom,
+  onFitWidth,
+  onZoomOut,
+  onZoomIn,
+  disableZoomOut,
+  disableZoomIn,
+}: {
+  zoom: number
+  onFitWidth: () => void
+  onZoomOut: () => void
+  onZoomIn: () => void
+  disableZoomOut: boolean
+  disableZoomIn: boolean
+}) {
+  return (
+    <div className="border-border flex items-center justify-between border-b bg-[#fbfbfc] px-3 py-2">
+      <span className="text-muted-foreground text-[11px] font-medium">
+        기본 보기: 너비 맞춤
+      </span>
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={onFitWidth}
+          disabled={zoom === 1}
+          className="border-border text-muted-foreground hover:text-foreground disabled:text-muted-foreground/40 inline-flex h-8 items-center gap-1 rounded-md border bg-white px-2.5 text-[11px] font-medium disabled:cursor-not-allowed"
+        >
+          <Maximize2 className="h-3.5 w-3.5" />
+          Fit width
+        </button>
+        <button
+          type="button"
+          onClick={onZoomOut}
+          disabled={disableZoomOut}
+          className="border-border text-muted-foreground hover:text-foreground disabled:text-muted-foreground/40 inline-flex h-8 w-8 items-center justify-center rounded-md border bg-white disabled:cursor-not-allowed"
+        >
+          <ZoomOut className="h-3.5 w-3.5" />
+        </button>
+        <div className="text-foreground min-w-12 text-center text-[11px] font-semibold tabular-nums">
+          {Math.round(zoom * 100)}%
+        </div>
+        <button
+          type="button"
+          onClick={onZoomIn}
+          disabled={disableZoomIn}
+          className="border-border text-muted-foreground hover:text-foreground disabled:text-muted-foreground/40 inline-flex h-8 w-8 items-center justify-center rounded-md border bg-white disabled:cursor-not-allowed"
+        >
+          <ZoomIn className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function ImageOriginalPreview({ fileUrl }: { fileUrl: string }) {
+  const [zoom, setZoom] = useState(1)
+  const transformRef = useRef<ReactZoomPanPinchContentRef | null>(null)
+
+  return (
+    <TransformWrapper
+      key={fileUrl}
+      ref={transformRef}
+      initialScale={1}
+      minScale={ORIGINAL_PREVIEW_MIN_ZOOM}
+      maxScale={ORIGINAL_PREVIEW_MAX_ZOOM}
+      centerOnInit
+      limitToBounds
+      disablePadding
+      doubleClick={{ disabled: true }}
+      wheel={{ step: 0.15 }}
+      pinch={{ step: 5 }}
+      onTransform={(_, state) => setZoom(state.scale)}
+    >
+      {({ zoomIn, zoomOut, resetTransform }) => (
+        <div className="flex h-full min-h-0 flex-col bg-[#f6f7f9]">
+          <OriginalPreviewToolbar
+            zoom={zoom}
+            onFitWidth={() => resetTransform(150)}
+            onZoomOut={() => zoomOut(ORIGINAL_PREVIEW_ZOOM_STEP, 150)}
+            onZoomIn={() => zoomIn(ORIGINAL_PREVIEW_ZOOM_STEP, 150)}
+            disableZoomOut={zoom <= ORIGINAL_PREVIEW_MIN_ZOOM}
+            disableZoomIn={zoom >= ORIGINAL_PREVIEW_MAX_ZOOM}
+          />
+          <div className="min-h-0 flex-1 overflow-hidden">
+            <TransformComponent
+              wrapperClass="!h-full !w-full"
+              contentClass="!flex !min-h-full !w-full !items-start !justify-center"
+              wrapperStyle={{ backgroundColor: '#f6f7f9' }}
+            >
+              <img
+                src={fileUrl}
+                alt="원본 이미지"
+                className="block h-auto w-full max-w-full border border-[#dde1e6] bg-white shadow-sm select-none"
+                draggable={false}
+              />
+            </TransformComponent>
+          </div>
+        </div>
+      )}
+    </TransformWrapper>
+  )
+}
+
+function PdfOriginalPreview({ fileUrl }: { fileUrl: string }) {
+  const [zoom, setZoom] = useState(1)
+  const [numPages, setNumPages] = useState(0)
+  const [containerWidth, setContainerWidth] = useState(0)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const element = containerRef.current
+    if (!element) return
+
+    const updateWidth = () => {
+      setContainerWidth(element.clientWidth)
+    }
+
+    updateWidth()
+
+    const observer = new ResizeObserver(updateWidth)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
+  const pageWidth = Math.max(1, Math.floor(containerWidth * zoom))
+
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-[#f6f7f9]">
+      <OriginalPreviewToolbar
+        zoom={zoom}
+        onFitWidth={() => setZoom(1)}
+        onZoomOut={() =>
+          setZoom((prev) =>
+            Math.max(
+              ORIGINAL_PREVIEW_MIN_ZOOM,
+              prev - ORIGINAL_PREVIEW_ZOOM_STEP,
+            ),
+          )
+        }
+        onZoomIn={() =>
+          setZoom((prev) =>
+            Math.min(
+              ORIGINAL_PREVIEW_MAX_ZOOM,
+              prev + ORIGINAL_PREVIEW_ZOOM_STEP,
+            ),
+          )
+        }
+        disableZoomOut={zoom <= ORIGINAL_PREVIEW_MIN_ZOOM}
+        disableZoomIn={zoom >= ORIGINAL_PREVIEW_MAX_ZOOM}
+      />
+      <div ref={containerRef} className="min-h-0 flex-1 overflow-auto">
+        {containerWidth > 0 ? (
+          <div className="mx-auto flex min-h-full w-full flex-col items-center gap-4 bg-[#f6f7f9] py-4">
+            <PdfDocument
+              file={fileUrl}
+              loading={
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  PDF 불러오는 중...
+                </div>
+              }
+              error={
+                <div className="text-muted-foreground text-sm">
+                  PDF를 불러오지 못했습니다.
+                </div>
+              }
+              onLoadSuccess={({ numPages: loadedPages }) =>
+                setNumPages(loadedPages)
+              }
+            >
+              {Array.from({ length: numPages }, (_, index) => (
+                <div
+                  key={`${fileUrl}-${index + 1}`}
+                  className="overflow-hidden border border-[#dde1e6] bg-white shadow-sm"
+                >
+                  <PdfPage
+                    pageNumber={index + 1}
+                    width={pageWidth}
+                    renderAnnotationLayer={false}
+                    renderTextLayer={false}
+                    loading={
+                      <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
+                        페이지 렌더링 중...
+                      </div>
+                    }
+                  />
+                </div>
+              ))}
+            </PdfDocument>
+          </div>
+        ) : null}
       </div>
     </div>
   )

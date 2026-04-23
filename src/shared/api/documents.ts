@@ -19,6 +19,10 @@ export const uploadFiles = (files: File[]) => {
 export const downloadFile = (fileId: string) =>
   api.get<Blob>(`/files/download/${fileId}`, { responseType: 'blob' })
 
+// 문서 원본 다운로드 (GET /documents/{documentId}/download)
+export const downloadDocumentOriginal = (documentId: string) =>
+  api.get<Blob>(`/documents/${documentId}/download`, { responseType: 'blob' })
+
 // 문서 목록 (GET /documents)
 export const getDocuments = (limit = 50) =>
   api.get<{ items: DocumentItem[]; nextCursor: string | null }>('/documents', {

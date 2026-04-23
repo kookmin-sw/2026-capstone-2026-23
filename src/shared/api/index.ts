@@ -11,6 +11,7 @@ export { getHealth } from './health'
 export {
   uploadFiles,
   downloadFile,
+  downloadDocumentOriginal,
   getDocuments,
   getSupportedFileTypes,
   getDocumentResult,
