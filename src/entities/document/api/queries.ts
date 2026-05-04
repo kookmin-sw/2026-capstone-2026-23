@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
   deleteDocument,
-  downloadFile,
   downloadDocumentOriginal,
   getDocumentResult,
   getDocuments,
@@ -70,8 +69,8 @@ export function useUploadFiles() {
 
 export function useDownloadFile() {
   return useMutation({
-    mutationFn: async (fileId: string) => {
-      const { data } = await downloadFile(fileId)
+    mutationFn: async (documentId: string) => {
+      const { data } = await downloadDocumentOriginal(documentId)
       return data
     },
   })
