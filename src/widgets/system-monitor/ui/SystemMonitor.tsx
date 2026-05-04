@@ -1,12 +1,43 @@
 import { Cpu, HardDrive, Activity, Zap, Inbox } from 'lucide-react'
 import { Card, CardContent } from '@/shared/ui/card'
 import { useUIStore } from '@/app/model/ui-store'
+import { useSystemMonitoring } from '@/entities/system'
 
-const MOCK_SYSTEM_DATA = { cpu: 42, memory: 68, activeWorkers: 3, queueSize: 7 }
+const MOCK_SYSTEM_DATA = {
+  cpuLoadPercent: 42,
+  cpuLoadLabel: '0.42',
+  storagePercent: 68,
+  processingJobs: 3,
+  queueSize: 7,
+}
+
+const formatLoad = (value: number | null) =>
+  value == null ? '-' : value.toFixed(2)
+
+const formatPercent = (value: number) => `${Math.round(value)}%`
 
 export function SystemMonitor() {
   const { isMockMode } = useUIStore()
-  const systemData = isMockMode ? MOCK_SYSTEM_DATA : null
+  const { data, isLoading, isError } = useSystemMonitoring(!isMockMode)
+
+  const cpuCount = data?.cpu.cpuCount ?? 1
+  const loadAverage1m = data?.cpu.loadAverage1m ?? null
+  const cpuLoadPercent =
+    loadAverage1m == null
+      ? 0
+      : Math.min((loadAverage1m / Math.max(cpuCount, 1)) * 100, 100)
+
+  const systemData = isMockMode
+    ? MOCK_SYSTEM_DATA
+    : data
+      ? {
+          cpuLoadPercent,
+          cpuLoadLabel: formatLoad(loadAverage1m),
+          storagePercent: data.storage.output.usagePercent,
+          processingJobs: data.jobs.processing,
+          queueSize: data.jobs.queued,
+        }
+      : null
 
   return (
     <Card>
@@ -25,7 +56,9 @@ export function SystemMonitor() {
           <div className="flex flex-col items-center justify-center py-8">
             <Inbox className="text-muted-foreground/40 mb-2 h-10 w-10" />
             <p className="text-muted-foreground text-sm">
-              시스템 정보를 불러올 수 없습니다
+              {isLoading && !isError
+                ? '시스템 정보를 불러오는 중입니다'
+                : '시스템 정보를 불러올 수 없습니다'}
             </p>
           </div>
         ) : (
@@ -35,56 +68,57 @@ export function SystemMonitor() {
               <div className="mb-2 flex items-center gap-2">
                 <Cpu className="h-4 w-4 text-[#ff7121]" />
                 <span className="text-muted-foreground text-sm font-medium">
-                  CPU 사용률
+                  CPU 부하
                 </span>
               </div>
               <span className="text-foreground typo-stat">
-                {systemData.cpu}%
+                {systemData.cpuLoadLabel}
               </span>
+              <span className="text-muted-foreground ml-2 text-sm">1분</span>
               <div className="bg-muted/50 mt-3 flex h-2 overflow-hidden rounded-full">
                 <div
-                  style={{ width: `${systemData.cpu}%` }}
+                  style={{ width: `${systemData.cpuLoadPercent}%` }}
                   className="rounded-full bg-[#ff7121] transition-all duration-300"
                 />
               </div>
             </div>
-            {/* Memory */}
+            {/* Storage */}
             <div className="bg-muted/30 rounded-xl p-4">
               <div className="mb-2 flex items-center gap-2">
                 <HardDrive className="h-4 w-4 text-[#00b894]" />
                 <span className="text-muted-foreground text-sm font-medium">
-                  메모리 사용률
+                  스토리지
                 </span>
               </div>
               <span className="text-foreground typo-stat">
-                {systemData.memory}%
+                {formatPercent(systemData.storagePercent)}
               </span>
               <div className="bg-muted/50 mt-3 flex h-2 overflow-hidden rounded-full">
                 <div
-                  style={{ width: `${systemData.memory}%` }}
+                  style={{ width: `${systemData.storagePercent}%` }}
                   className="rounded-full bg-[#00b894] transition-all duration-300"
                 />
               </div>
             </div>
-            {/* Workers */}
+            {/* Processing */}
             <div className="bg-muted/30 rounded-xl p-4">
               <div className="mb-2 flex items-center gap-2">
                 <Zap className="h-4 w-4 text-[#fdcb6e]" />
                 <span className="text-muted-foreground text-sm font-medium">
-                  활성 워커
+                  처리 중
                 </span>
               </div>
               <span className="text-foreground typo-stat">
-                {systemData.activeWorkers}
+                {systemData.processingJobs}
               </span>
               <span className="text-muted-foreground ml-2 text-sm">
-                개 실행 중
+                개 작업
               </span>
               <div className="mt-3 flex gap-1.5">
                 {[...Array(4)].map((_, i) => (
                   <div
                     key={i}
-                    className={`h-2 flex-1 rounded-full transition-colors duration-300 ${i < systemData.activeWorkers ? 'bg-[#fdcb6e]' : 'bg-muted/50'}`}
+                    className={`h-2 flex-1 rounded-full transition-colors duration-300 ${i < Math.min(systemData.processingJobs, 4) ? 'bg-[#fdcb6e]' : 'bg-muted/50'}`}
                   />
                 ))}
               </div>
