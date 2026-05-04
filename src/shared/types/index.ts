@@ -16,7 +16,12 @@ export interface ApiResponse<T> {
 
 export type DocumentStatus =
   | 'UPLOADED'
+  | 'QUEUED'
   | 'PROCESSING'
+  | 'PREPROCESSING'
+  | 'GPU_WAITING'
+  | 'GPU_PROCESSING'
+  | 'POSTPROCESSING'
   | 'COMPLETED'
   | 'FAILED'
   | 'CANCELLED'
@@ -29,6 +34,7 @@ export type JobStatus =
   | 'CANCELLING'
   | 'COMPLETED'
   | 'FAILED'
+  | 'CANCELLED'
   | 'CANCELED'
 
 // ── 모델 ──
@@ -203,6 +209,35 @@ export interface SystemStats {
   }
   activeWorkers: number
   queueDepth: number
+}
+
+export interface DiskUsage {
+  path: string
+  exists: boolean
+  totalBytes: number
+  usedBytes: number
+  freeBytes: number
+  usagePercent: number
+}
+
+export interface SystemMonitoring {
+  cpu: {
+    loadAverage1m: number | null
+    loadAverage5m: number | null
+    loadAverage15m: number | null
+    cpuCount: number | null
+  }
+  jobs: {
+    queued: number
+    processing: number
+    completed: number
+    failed: number
+  }
+  storage: {
+    input: DiskUsage
+    output: DiskUsage
+    tmp: DiskUsage
+  }
 }
 
 // ── 에러 로그 ──

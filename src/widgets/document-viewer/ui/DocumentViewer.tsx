@@ -33,7 +33,9 @@ interface DocumentViewerProps {
   documentResult?: DocumentResult
   isLoading?: boolean
   /** Original file for the left preview panel. File object or blob URL string. */
-  originalFile?: File | null
+  originalFile?: File | string | null
+  emptyTitle?: string
+  emptyDescription?: string
   className?: string
 }
 
@@ -196,6 +198,8 @@ export function DocumentViewer({
   documentResult,
   isLoading,
   originalFile,
+  emptyTitle = '변환 결과가 없습니다',
+  emptyDescription = '변환이 완료되면 결과가 여기에 표시됩니다.',
   className = '',
 }: DocumentViewerProps) {
   const [activeTab, setActiveTab] = useState<FormatTab>('preview')
@@ -219,15 +223,16 @@ export function DocumentViewer({
     return null
   }, [activeTab, parsed])
 
-  const originalFileUrl = useMemo(() => {
+  const originalFileUrl = useMemo<string | null>(() => {
     if (!originalFile) return null
+    if (typeof originalFile === 'string') return originalFile
     return URL.createObjectURL(originalFile)
   }, [originalFile])
 
   useEffect(() => {
-    if (!originalFileUrl) return
+    if (!originalFileUrl || typeof originalFile === 'string') return
     return () => URL.revokeObjectURL(originalFileUrl)
-  }, [originalFileUrl])
+  }, [originalFile, originalFileUrl])
 
   const handleCopy = async () => {
     if (!copyText) return
@@ -269,21 +274,6 @@ export function DocumentViewer({
           <p className="text-destructive font-semibold">변환 실패</p>
           <p className="text-muted-foreground mt-1 text-sm">
             {documentResult.error.message}
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!parsed) {
-    return (
-      <div
-        className={`bg-card flex items-center justify-center rounded-2xl ${className}`}
-      >
-        <div className="text-center">
-          <FileText className="text-muted-foreground mx-auto mb-3 h-10 w-10" />
-          <p className="text-muted-foreground text-sm">
-            변환이 완료되면 결과가 여기에 표시됩니다.
           </p>
         </div>
       </div>
@@ -373,19 +363,26 @@ export function DocumentViewer({
 
         {/* Content */}
         <div className="min-h-0 flex-1 overflow-y-auto">
-          {activeTab === 'preview' && (
+          {!parsed && (
+            <PanelEmptyState
+              icon={FileText}
+              title={emptyTitle}
+              description={emptyDescription}
+            />
+          )}
+          {parsed && activeTab === 'preview' && (
             <BlocksPreview
               blocks={parsed.blocks}
               hoveredBlock={hoveredBlock}
               onHoverBlock={setHoveredBlock}
             />
           )}
-          {activeTab === 'html' && (
+          {parsed && activeTab === 'html' && (
             <pre className="text-foreground/80 p-5 pt-12 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {parsed.rawText}
             </pre>
           )}
-          {activeTab === 'json' && (
+          {parsed && activeTab === 'json' && (
             <pre className="text-foreground/80 p-5 pt-12 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {buildJsonView(parsed)}
             </pre>
@@ -403,12 +400,14 @@ function OriginalFilePreview({
   fileUrl,
   fileName,
 }: {
-  file?: File | null
+  file?: File | string | null
   fileUrl: string | null
   fileName?: string
 }) {
-  const ext = (fileName ?? file?.name ?? '').split('.').pop()?.toLowerCase()
-  const mimeType = file?.type?.toLowerCase() ?? ''
+  const localFileName = typeof file === 'string' ? undefined : file?.name
+  const ext = (fileName ?? localFileName ?? '').split('.').pop()?.toLowerCase()
+  const mimeType =
+    typeof file === 'string' ? '' : (file?.type?.toLowerCase() ?? '')
   const isImageByMime = mimeType.startsWith('image/')
   const isPdfByMime = mimeType === 'application/pdf'
   const isImageByExt =
@@ -423,20 +422,48 @@ function OriginalFilePreview({
   if (isPdf) return <PdfOriginalPreview key={fileUrl} fileUrl={fileUrl} />
   if (isImage) return <ImageOriginalPreview key={fileUrl} fileUrl={fileUrl} />
 
+  if (isPdfByExt || isPdfByMime) {
+    return (
+      <PanelEmptyState
+        icon={AlertCircle}
+        title="PDF를 불러오지 못했습니다"
+        description="원본 문서 파일을 찾을 수 없거나 미리보기 URL이 없습니다."
+      />
+    )
+  }
+
   // Fallback: unsupported or no file
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-3">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f3f4f6]">
-        <FileText className="text-muted-foreground h-8 w-8" />
-      </div>
-      <div className="text-center">
-        <p className="text-muted-foreground text-sm font-medium">
-          {fileName ?? '원본 파일'}
-        </p>
-        <p className="text-muted-foreground/60 mt-1 text-xs">
-          {fileUrl
-            ? '이 파일 형식은 미리보기를 지원하지 않습니다'
-            : '원본 파일이 없습니다'}
+    <PanelEmptyState
+      icon={FileText}
+      title={fileName ?? '원본 파일'}
+      description={
+        fileUrl
+          ? '이 파일 형식은 미리보기를 지원하지 않습니다'
+          : '원본 파일이 없습니다'
+      }
+    />
+  )
+}
+
+function PanelEmptyState({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: typeof FileText
+  title: string
+  description: string
+}) {
+  return (
+    <div className="flex h-full min-h-[240px] items-center justify-center p-6">
+      <div className="max-w-xs text-center">
+        <div className="bg-muted mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl">
+          <Icon className="text-muted-foreground h-7 w-7" />
+        </div>
+        <p className="text-foreground text-sm font-semibold">{title}</p>
+        <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
+          {description}
         </p>
       </div>
     </div>
@@ -751,9 +778,11 @@ function PdfOriginalPreview({ fileUrl }: { fileUrl: string }) {
                   </div>
                 }
                 error={
-                  <div className="text-muted-foreground text-sm">
-                    PDF를 불러오지 못했습니다.
-                  </div>
+                  <PanelEmptyState
+                    icon={AlertCircle}
+                    title="PDF를 불러오지 못했습니다"
+                    description="원본 문서 미리보기를 열 수 없습니다."
+                  />
                 }
                 onLoadSuccess={({ numPages: loadedPages }) =>
                   setNumPages(loadedPages)

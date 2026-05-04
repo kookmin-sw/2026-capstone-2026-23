@@ -137,7 +137,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   return (
     <div className="flex h-full flex-col gap-3">
       {/* ── 컨트롤 바 ── */}
-      <div className="bg-card border-border rounded-xl border px-4 py-2.5">
+      <div className="bg-card border-border relative z-30 rounded-xl border px-4 py-2.5">
         <div className="flex items-center gap-3">
           <button
             onClick={() => refetch()}
@@ -182,7 +182,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                 <Trash2 className="h-4 w-4" />
               </button>
               {showDeleteDropdown && selectedCount > 0 && (
-                <div className="bg-card border-border absolute right-0 z-10 mt-1 w-44 overflow-hidden rounded-xl border shadow-xl">
+                <div className="bg-card border-border absolute right-0 z-50 mt-1 w-44 overflow-hidden rounded-xl border shadow-xl">
                   <button
                     onClick={() => {
                       const ids = documents

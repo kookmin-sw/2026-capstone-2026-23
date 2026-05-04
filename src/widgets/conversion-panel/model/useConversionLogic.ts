@@ -77,6 +77,7 @@ export function useConversionLogic() {
     if (
       status === 'COMPLETED' ||
       status === 'FAILED' ||
+      status === 'CANCELLED' ||
       status === 'CANCELED'
     ) {
       setIsConverting(false)
@@ -101,7 +102,7 @@ export function useConversionLogic() {
         if (firstCompleted?.documentId) {
           setSelectedResultPath(firstCompleted.documentId)
         }
-      } else if (status === 'CANCELED') {
+      } else if (status === 'CANCELLED' || status === 'CANCELED') {
         setBatchStatus('변환이 취소되었습니다.')
       } else {
         setBatchStatus(`변환 실패: ${failedDocuments}건 실패`)
