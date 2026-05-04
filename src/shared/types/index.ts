@@ -211,6 +211,35 @@ export interface SystemStats {
   queueDepth: number
 }
 
+export interface DiskUsage {
+  path: string
+  exists: boolean
+  totalBytes: number
+  usedBytes: number
+  freeBytes: number
+  usagePercent: number
+}
+
+export interface SystemMonitoring {
+  cpu: {
+    loadAverage1m: number | null
+    loadAverage5m: number | null
+    loadAverage15m: number | null
+    cpuCount: number | null
+  }
+  jobs: {
+    queued: number
+    processing: number
+    completed: number
+    failed: number
+  }
+  storage: {
+    input: DiskUsage
+    output: DiskUsage
+    tmp: DiskUsage
+  }
+}
+
 // ── 에러 로그 ──
 
 export interface ErrorDetail {
