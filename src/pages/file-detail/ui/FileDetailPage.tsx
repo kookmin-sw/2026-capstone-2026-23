@@ -90,21 +90,28 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
 
   if (!result) {
     return (
-      <div className="flex h-full flex-col">
-        <div className="border-border border-b px-6 py-3">
+      <div className="flex h-[calc(100dvh-2.5rem)] flex-col">
+        <div className="border-border flex items-center justify-between border-b px-6 py-3">
           <button
             onClick={() => navigate({ to: '/files' })}
             className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span className="text-sm font-medium">파일 관리로 돌아가기</span>
+            <span className="text-sm font-medium">파일 관리</span>
           </button>
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="text-muted-foreground text-center">
-            <AlertCircle className="mx-auto mb-3 h-12 w-12 opacity-50" />
-            <p className="text-lg font-medium">문서를 찾을 수 없습니다</p>
+          <div className="flex items-center gap-4">
+            <h2 className="text-muted-foreground text-sm font-semibold">
+              문서를 찾을 수 없습니다
+            </h2>
           </div>
+          <div className="w-[120px]" />
+        </div>
+        <div className="flex-1 overflow-hidden p-4">
+          <DocumentViewer
+            className="h-full"
+            emptyTitle="문서를 찾을 수 없습니다"
+            emptyDescription="삭제되었거나 접근할 수 없는 문서입니다."
+          />
         </div>
       </div>
     )

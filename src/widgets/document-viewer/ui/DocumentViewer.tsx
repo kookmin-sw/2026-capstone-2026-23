@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import DOMPurify from 'dompurify'
 import { FileText, Loader2, AlertCircle, Eye } from 'lucide-react'
 import type { DocumentResult } from '@/shared/types'
@@ -16,7 +16,9 @@ interface DocumentViewerProps {
   documentResult?: DocumentResult
   isLoading?: boolean
   /** Original file for the left preview panel. File object or blob URL string. */
-  originalFile?: File | null
+  originalFile?: File | string | null
+  emptyTitle?: string
+  emptyDescription?: string
   className?: string
 }
 
@@ -72,6 +74,8 @@ export function DocumentViewer({
   documentResult,
   isLoading,
   originalFile,
+  emptyTitle = '변환 결과가 없습니다',
+  emptyDescription = '변환이 완료되면 결과가 여기에 표시됩니다.',
   className = '',
 }: DocumentViewerProps) {
   const [activeTab, setActiveTab] = useState<FormatTab>('preview')
@@ -84,10 +88,19 @@ export function DocumentViewer({
     return null
   }, [documentResult])
 
-  const originalFileUrl = useMemo(() => {
+  const originalFileUrl = useMemo<string | null>(() => {
     if (!originalFile) return null
+    if (typeof originalFile === 'string') return originalFile
     return URL.createObjectURL(originalFile)
   }, [originalFile])
+
+  useEffect(() => {
+    return () => {
+      if (originalFile && typeof originalFile !== 'string' && originalFileUrl) {
+        URL.revokeObjectURL(originalFileUrl)
+      }
+    }
+  }, [originalFile, originalFileUrl])
 
   if (isLoading) {
     return (
@@ -114,21 +127,6 @@ export function DocumentViewer({
           <p className="text-destructive font-semibold">변환 실패</p>
           <p className="text-muted-foreground mt-1 text-sm">
             {documentResult.error.message}
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!parsed) {
-    return (
-      <div
-        className={`bg-card flex items-center justify-center rounded-2xl ${className}`}
-      >
-        <div className="text-center">
-          <FileText className="text-muted-foreground mx-auto mb-3 h-10 w-10" />
-          <p className="text-muted-foreground text-sm">
-            변환이 완료되면 결과가 여기에 표시됩니다.
           </p>
         </div>
       </div>
@@ -192,19 +190,26 @@ export function DocumentViewer({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          {activeTab === 'preview' && (
+          {!parsed && (
+            <PanelEmptyState
+              icon={FileText}
+              title={emptyTitle}
+              description={emptyDescription}
+            />
+          )}
+          {parsed && activeTab === 'preview' && (
             <BlocksPreview
               blocks={parsed.blocks}
               hoveredBlock={hoveredBlock}
               onHoverBlock={setHoveredBlock}
             />
           )}
-          {activeTab === 'html' && (
+          {parsed && activeTab === 'html' && (
             <pre className="text-foreground/80 p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {parsed.rawText}
             </pre>
           )}
-          {activeTab === 'json' && (
+          {parsed && activeTab === 'json' && (
             <pre className="text-foreground/80 p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap">
               {buildJsonView(parsed)}
             </pre>
@@ -222,19 +227,42 @@ function OriginalFilePreview({
   fileUrl,
   fileName,
 }: {
-  file?: File | null
+  file?: File | string | null
   fileUrl: string | null
   fileName?: string
 }) {
-  const ext = (fileName ?? file?.name ?? '').split('.').pop()?.toLowerCase()
+  const [failedPdfUrl, setFailedPdfUrl] = useState<string | null>(null)
+  const localFileName = typeof file === 'string' ? undefined : file?.name
+  const ext = (fileName ?? localFileName ?? '').split('.').pop()?.toLowerCase()
+  const pdfFailed = fileUrl != null && failedPdfUrl === fileUrl
 
   // PDF
   if (ext === 'pdf' && fileUrl) {
+    if (pdfFailed) {
+      return (
+        <PanelEmptyState
+          icon={AlertCircle}
+          title="PDF를 불러오지 못했습니다"
+          description="원본 문서 미리보기를 열 수 없습니다."
+        />
+      )
+    }
     return (
       <iframe
         src={fileUrl}
         className="h-full w-full border-0"
         title="원본 PDF"
+        onError={() => setFailedPdfUrl(fileUrl)}
+      />
+    )
+  }
+
+  if (ext === 'pdf') {
+    return (
+      <PanelEmptyState
+        icon={AlertCircle}
+        title="PDF를 불러오지 못했습니다"
+        description="원본 문서 파일을 찾을 수 없거나 미리보기 URL이 없습니다."
       />
     )
   }
@@ -258,18 +286,36 @@ function OriginalFilePreview({
 
   // Fallback: unsupported or no file
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-3">
-      <div className="bg-muted flex h-16 w-16 items-center justify-center rounded-2xl">
-        <FileText className="text-muted-foreground h-8 w-8" />
-      </div>
-      <div className="text-center">
-        <p className="text-muted-foreground text-sm font-medium">
-          {fileName ?? '원본 파일'}
-        </p>
-        <p className="text-muted-foreground/60 mt-1 text-xs">
-          {fileUrl
-            ? '이 파일 형식은 미리보기를 지원하지 않습니다'
-            : '원본 파일이 없습니다'}
+    <PanelEmptyState
+      icon={FileText}
+      title={fileName ?? '원본 파일'}
+      description={
+        fileUrl
+          ? '이 파일 형식은 미리보기를 지원하지 않습니다'
+          : '원본 파일이 없습니다'
+      }
+    />
+  )
+}
+
+function PanelEmptyState({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: typeof FileText
+  title: string
+  description: string
+}) {
+  return (
+    <div className="flex h-full min-h-[240px] items-center justify-center p-6">
+      <div className="max-w-xs text-center">
+        <div className="bg-muted mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl">
+          <Icon className="text-muted-foreground h-7 w-7" />
+        </div>
+        <p className="text-foreground text-sm font-semibold">{title}</p>
+        <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
+          {description}
         </p>
       </div>
     </div>
