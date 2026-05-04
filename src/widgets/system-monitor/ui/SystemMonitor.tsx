@@ -93,6 +93,7 @@ export function SystemMonitor() {
               <span className="text-foreground typo-stat">
                 {formatPercent(systemData.storagePercent)}
               </span>
+              <span className="text-muted-foreground ml-2 text-sm">사용중</span>
               <div className="bg-muted/50 mt-3 flex h-2 overflow-hidden rounded-full">
                 <div
                   style={{ width: `${systemData.storagePercent}%` }}
