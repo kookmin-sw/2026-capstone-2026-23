@@ -16,7 +16,12 @@ export interface ApiResponse<T> {
 
 export type DocumentStatus =
   | 'UPLOADED'
+  | 'QUEUED'
   | 'PROCESSING'
+  | 'PREPROCESSING'
+  | 'GPU_WAITING'
+  | 'GPU_PROCESSING'
+  | 'POSTPROCESSING'
   | 'COMPLETED'
   | 'FAILED'
   | 'CANCELLED'
@@ -29,6 +34,7 @@ export type JobStatus =
   | 'CANCELLING'
   | 'COMPLETED'
   | 'FAILED'
+  | 'CANCELLED'
   | 'CANCELED'
 
 // ── 모델 ──

@@ -33,6 +33,10 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
           bgColor: 'bg-[#defbe6]',
         }
       case 'PROCESSING':
+      case 'PREPROCESSING':
+      case 'GPU_WAITING':
+      case 'GPU_PROCESSING':
+      case 'POSTPROCESSING':
         return {
           icon: Loader2,
           text: '처리 중',
@@ -47,11 +51,19 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
           bgColor: 'bg-[#fff1f1]',
         }
       case 'UPLOADED':
+      case 'QUEUED':
         return {
           icon: Upload,
           text: '업로드됨',
           color: 'text-[#684e00]',
           bgColor: 'bg-[#fddc69]/30',
+        }
+      case 'CANCELLED':
+        return {
+          icon: XCircle,
+          text: '취소',
+          color: 'text-muted-foreground',
+          bgColor: 'bg-muted',
         }
       default:
         return {
