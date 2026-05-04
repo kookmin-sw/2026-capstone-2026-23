@@ -3,10 +3,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   deleteDocument,
   downloadFile,
+  downloadDocumentOriginal,
   getDocumentResult,
   getDocuments,
   uploadFiles,
 } from '@/shared/api'
+import {
+  MOCK_DOCUMENT_RESULT,
+  MOCK_DOCUMENT_RESULT_ID,
+} from '@/shared/lib/mock-document-result'
 import type { DocumentItem, DocumentResult, UploadedFile } from '@/shared/types'
 
 export function useDocuments() {
@@ -23,8 +28,27 @@ export function useDocumentResult(documentId: string | undefined) {
   return useQuery({
     queryKey: ['documents', documentId, 'result'],
     queryFn: async () => {
+      if (documentId === MOCK_DOCUMENT_RESULT_ID) {
+        return MOCK_DOCUMENT_RESULT
+      }
       const { data } = await getDocumentResult(documentId!)
       return data as DocumentResult
+    },
+    enabled: !!documentId,
+  })
+}
+
+export function useDocumentOriginalFile(
+  documentId: string | undefined,
+  fileName: string | undefined,
+) {
+  return useQuery({
+    queryKey: ['documents', documentId, 'original-file'],
+    queryFn: async () => {
+      const { data } = await downloadDocumentOriginal(documentId!)
+      return new File([data], fileName ?? 'original', {
+        type: data.type || undefined,
+      })
     },
     enabled: !!documentId,
   })

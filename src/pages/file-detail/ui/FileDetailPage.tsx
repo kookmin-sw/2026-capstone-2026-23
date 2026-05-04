@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { DocumentViewer } from '@/widgets/document-viewer'
-import { useDocumentResult } from '@/entities/document'
+import { useDocumentOriginalFile, useDocumentResult } from '@/entities/document'
 import type { DocumentStatus } from '@/shared/types'
 
 interface FileDetailPageProps {
@@ -22,6 +22,8 @@ interface FileDetailPageProps {
 export function FileDetailPage({ fileId }: FileDetailPageProps) {
   const navigate = useNavigate()
   const { data: result, isLoading } = useDocumentResult(fileId)
+  const { data: originalFile, isLoading: isOriginalFileLoading } =
+    useDocumentOriginalFile(fileId, result?.fileName)
 
   const getStatusDisplay = (status: DocumentStatus) => {
     switch (status) {
@@ -121,9 +123,9 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
   const StatusIcon = statusDisplay.icon
 
   return (
-    <div className="flex h-[calc(100dvh-2.5rem)] flex-col">
+    <div className="-m-4 flex h-dvh min-w-0 flex-col">
       {/* Top bar */}
-      <div className="border-border flex items-center justify-between border-b px-6 py-3">
+      <div className="border-border bg-background flex flex-shrink-0 items-center justify-between border-b px-6 py-3">
         <button
           onClick={() => navigate({ to: '/files' })}
           className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
@@ -166,9 +168,14 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
         </div>
       </div>
 
-      {/* Document viewer — reused split panel */}
-      <div className="flex-1 overflow-hidden p-4">
-        <DocumentViewer documentResult={result} className="h-full" />
+      {/* Fixed-height content area under the header */}
+      <div className="min-h-0 min-w-0 flex-1 overflow-hidden p-4">
+        <DocumentViewer
+          documentResult={result}
+          isLoading={isLoading || isOriginalFileLoading}
+          originalFile={originalFile}
+          className="h-full min-h-0"
+        />
       </div>
     </div>
   )
