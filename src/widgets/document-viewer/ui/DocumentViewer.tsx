@@ -51,10 +51,9 @@ const ORIGINAL_PREVIEW_MAX_ZOOM = 3
 const ORIGINAL_PREVIEW_ZOOM_STEP = 0.25
 const ORIGINAL_PREVIEW_WHEEL_ZOOM_STEP = 0.05
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString() + '?worker_v=20260504_mjs_mime'
+pdfjs.GlobalWorkerOptions.workerSrc =
+  new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString() +
+  '?worker_v=20260504_mjs_mime'
 
 function useDragScroll<T extends HTMLDivElement>() {
   const ref = useRef<T | null>(null)
