@@ -21,6 +21,7 @@ import type {
 import type { DocumentResult } from '@/shared/types'
 import {
   parseDocumentContent,
+  buildDocumentContentText,
   buildJsonView,
   type ParsedDocument,
   type ContentBlock,
@@ -207,12 +208,9 @@ export function DocumentViewer({
   const [isCopied, setIsCopied] = useState(false)
 
   const parsed = useMemo<ParsedDocument | null>(() => {
-    if (documentResult?.txt?.preview) {
-      return parseDocumentContent(
-        hideMetadataDivider(documentResult.txt.preview),
-      )
-    }
-    return null
+    const contentText = buildDocumentContentText(documentResult)
+    if (!contentText) return null
+    return parseDocumentContent(hideMetadataDivider(contentText))
   }, [documentResult])
 
   const copyText = useMemo(() => {

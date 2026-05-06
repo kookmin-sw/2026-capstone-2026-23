@@ -14,6 +14,65 @@ export interface ParsedDocument {
   rawText: string
 }
 
+interface DocumentContentSource {
+  txt?: {
+    preview?: string | null
+  } | null
+  markdown?: unknown
+}
+
+const TABLE_MARKDOWN_START = '[[TABLE_MARKDOWN]]'
+const TABLE_MARKDOWN_END = '[[/TABLE_MARKDOWN]]'
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function normalizeMarkdownValue(value: unknown): string {
+  if (typeof value === 'string') return value.trim()
+  if (Array.isArray(value)) {
+    return value.map(normalizeMarkdownValue).filter(Boolean).join('\n\n')
+  }
+  if (!isRecord(value)) return ''
+
+  const preferredKeys = [
+    'markdown',
+    'markdownSection',
+    'contentMarkdown',
+    'content_markdown',
+    'text',
+    'content',
+  ]
+
+  const directValues = preferredKeys
+    .map((key) => normalizeMarkdownValue(value[key]))
+    .filter(Boolean)
+
+  if (directValues.length > 0) return directValues.join('\n\n')
+
+  return Object.values(value)
+    .map(normalizeMarkdownValue)
+    .filter(Boolean)
+    .join('\n\n')
+}
+
+function toMarkdownBlock(markdown: string): string {
+  if (markdown.includes(TABLE_MARKDOWN_START)) return markdown
+  return `${TABLE_MARKDOWN_START}\n${markdown}\n${TABLE_MARKDOWN_END}`
+}
+
+export function buildDocumentContentText(
+  documentResult: DocumentContentSource | undefined,
+): string {
+  const preview = documentResult?.txt?.preview?.trim() ?? ''
+  const markdown = normalizeMarkdownValue(documentResult?.markdown)
+  if (!markdown) return preview
+
+  if (preview.includes(markdown)) return preview
+
+  return [preview, toMarkdownBlock(markdown)].filter(Boolean).join('\n\n')
+}
+
 /**
  * Parse converted document text into sequential blocks.
  * Preserves the linear order of content as it appears in the document.
