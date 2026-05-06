@@ -1,4 +1,5 @@
 import { api } from './client'
+import { DEFAULT_MODEL_ID } from '@/shared/config/models'
 
 import type {
   ConvertResult,
@@ -20,7 +21,7 @@ export interface ConvertParams {
 export const convertDocuments = ({
   files,
   userId = 'u-demo',
-  modelId = 'm1',
+  modelId = DEFAULT_MODEL_ID,
   parallelism = 1,
   language = '한국어',
 }: ConvertParams) => {

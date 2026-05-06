@@ -11,7 +11,7 @@ vi.mock('@/widgets/conversion-panel', () => ({
   ConversionPanel: () => <div data-testid="conversion-panel" />,
   useConversionLogic: () => ({
     files: [],
-    modelId: 'm1',
+    modelId: 'm4',
     parallelCount: 1,
     isConverting: false,
     batchStatus: '',

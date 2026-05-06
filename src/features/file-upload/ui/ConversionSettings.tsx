@@ -72,8 +72,8 @@ export function ConversionSettings({
                   ))
                 ) : (
                   <>
-                    <option value="m1">GPT-5 Mini</option>
-                    <option value="m2">DeepSeek OCR 2</option>
+                    <option value="m4">Qwen2.5-VL 32B (OpenRouter)</option>
+                    <option value="m2">GPT-5 Mini</option>
                   </>
                 )}
               </select>
