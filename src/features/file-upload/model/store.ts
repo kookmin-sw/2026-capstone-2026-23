@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { DEFAULT_MODEL_ID } from '@/shared/config/models'
 
 export interface UploadFileItem {
   file: File
@@ -39,7 +40,7 @@ interface UploadState {
 
 export const useUploadStore = create<UploadState>((set) => ({
   files: [],
-  modelId: 'm1',
+  modelId: DEFAULT_MODEL_ID,
   parallelCount: 1,
   isConverting: false,
   batchStatus: '',

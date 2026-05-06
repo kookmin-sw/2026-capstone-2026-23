@@ -15,6 +15,10 @@ export function StatusBadge({ status }: StatusBadgeProps) {
         </span>
       )
     case 'PROCESSING':
+    case 'PREPROCESSING':
+    case 'GPU_WAITING':
+    case 'GPU_PROCESSING':
+    case 'POSTPROCESSING':
       return (
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[#edf5ff] px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-[#0f62fe]">
           <Loader2 className="h-3 w-3 animate-spin" />
@@ -29,6 +33,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
         </span>
       )
     case 'UPLOADED':
+    case 'QUEUED':
       return (
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f4f4f4] px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-[#525252]">
           <Upload className="h-3 w-3" />

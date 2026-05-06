@@ -32,6 +32,7 @@ export {
   getDashboardFileTypes,
   getDashboardRecentItems,
 } from './dashboard'
+export { getSystemMonitoring } from './monitoring'
 export {
   createRagSession,
   getRagSessions,

@@ -4,8 +4,13 @@ import {
   getDashboardFileTypes,
   getDashboardRecentItems,
   getDashboardSummary,
+  getSystemMonitoring,
 } from '@/shared/api'
-import type { DashboardSummary, DocumentItem } from '@/shared/types'
+import type {
+  DashboardSummary,
+  DocumentItem,
+  SystemMonitoring,
+} from '@/shared/types'
 
 export function useDashboardSummary() {
   return useQuery({
@@ -33,6 +38,18 @@ export function useDashboardRecentItems(limit = 10) {
     queryFn: async () => {
       const { data } = await getDashboardRecentItems(limit)
       return data as { items: DocumentItem[]; nextCursor: string | null }
+    },
+  })
+}
+
+export function useSystemMonitoring(enabled = true) {
+  return useQuery({
+    queryKey: ['monitoring', 'system'],
+    enabled,
+    refetchInterval: 5000,
+    queryFn: async () => {
+      const { data } = await getSystemMonitoring()
+      return data as SystemMonitoring
     },
   })
 }

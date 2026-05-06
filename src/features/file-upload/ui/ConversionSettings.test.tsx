@@ -13,7 +13,7 @@ function createWrapper() {
 }
 
 const defaultProps = {
-  modelId: 'm1',
+  modelId: 'm4',
   onModelIdChange: vi.fn(),
   parallelCount: 1,
   onParallelCountChange: vi.fn(),
