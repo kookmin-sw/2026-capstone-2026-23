@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest'
+import { DEFAULT_MODEL_ID } from '@/shared/config/models'
 import { useUploadStore } from './store'
 
 function resetStore() {
   useUploadStore.setState({
     files: [],
-    modelId: 'm1',
+    modelId: DEFAULT_MODEL_ID,
     parallelCount: 1,
     isConverting: false,
     batchStatus: '',
