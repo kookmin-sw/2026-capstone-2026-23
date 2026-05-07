@@ -2,7 +2,7 @@
 export interface ContentBlock {
   id: string
   index: number
-  type: 'header' | 'paragraph' | 'table' | 'markdown-table' | 'image'
+  type: 'header' | 'paragraph' | 'list' | 'table' | 'markdown-table' | 'image'
   label: string
   content: string
   htmlContent?: string
@@ -161,36 +161,74 @@ export function parseDocumentContent(text: string): ParsedDocument {
     const trimmed = rawText.trim()
     if (!trimmed) return
 
-    // Split into paragraphs by double newlines or page markers
-    const paragraphs = trimmed.split(/\n{2,}|(?=---\s*페이지)/)
+    const paragraphLines: string[] = []
+    const listLines: string[] = []
 
-    for (const para of paragraphs) {
-      const cleaned = para.trim()
-      if (!cleaned) continue
+    const flushParagraph = () => {
+      if (paragraphLines.length === 0) return
 
-      // Detect if it's a header/heading line (short, no period, possibly starts with page marker)
+      blocks.push({
+        id: `block-${blockIdx}`,
+        index: blockIdx++,
+        type: 'paragraph',
+        label: 'Paragraph',
+        content: paragraphLines.join(' '),
+      })
+      paragraphLines.length = 0
+    }
+
+    const flushList = () => {
+      if (listLines.length === 0) return
+
+      blocks.push({
+        id: `block-${blockIdx}`,
+        index: blockIdx++,
+        type: 'list',
+        label: 'List',
+        content: listLines.join('\n'),
+      })
+      listLines.length = 0
+    }
+
+    const flushInlineContent = () => {
+      flushParagraph()
+      flushList()
+    }
+
+    for (const line of trimmed.split('\n')) {
+      const cleaned = line.trim()
+      if (!cleaned) {
+        flushInlineContent()
+        continue
+      }
+
       const isPageMarker = /^---\s*페이지/.test(cleaned)
-      if (isPageMarker) {
+      const headingMatch = /^(#{1,6})\s+(.+)$/.exec(cleaned)
+      const listMatch = /^[-*]\s+(.+)$/.exec(cleaned)
+
+      if (isPageMarker || headingMatch) {
+        flushInlineContent()
         blocks.push({
           id: `block-${blockIdx}`,
           index: blockIdx++,
           type: 'header',
-          label: 'Page',
-          content: cleaned,
+          label: isPageMarker ? 'Page' : 'Heading',
+          content: headingMatch?.[2].trim() ?? cleaned,
         })
         continue
       }
 
-      // Short lines without punctuation are likely headings
-      const isHeading = cleaned.length < 80 && !cleaned.includes('.')
-      blocks.push({
-        id: `block-${blockIdx}`,
-        index: blockIdx++,
-        type: isHeading ? 'header' : 'paragraph',
-        label: isHeading ? 'Heading' : 'Paragraph',
-        content: cleaned,
-      })
+      if (listMatch) {
+        flushParagraph()
+        listLines.push(listMatch[1].trim())
+        continue
+      }
+
+      flushList()
+      paragraphLines.push(cleaned)
     }
+
+    flushInlineContent()
   }
 
   for (const marker of markers) {

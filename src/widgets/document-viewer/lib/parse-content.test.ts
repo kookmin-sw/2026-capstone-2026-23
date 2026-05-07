@@ -88,4 +88,31 @@ describe('parseDocumentContent', () => {
     expect(parsed.blocks[0].htmlContent).toContain('<table>')
     expect(parsed.blocks[0].content).not.toContain('TableTitle')
   })
+
+  it('일반 preview 텍스트의 markdown heading과 list를 구조화한다', () => {
+    const parsed = parseDocumentContent(`## Page 1
+분기별 운영 현황 검토
+실제 업무 문서에서는 표 주변에 설명 문장이 함께 포함되는 경우가 많다.
+
+- 첫 번째 항목
+- 두 번째 항목`)
+
+    expect(parsed.blocks).toHaveLength(3)
+    expect(parsed.blocks[0]).toMatchObject({
+      type: 'header',
+      content: 'Page 1',
+    })
+    expect(parsed.blocks[1]).toMatchObject({
+      type: 'paragraph',
+      content:
+        '분기별 운영 현황 검토 실제 업무 문서에서는 표 주변에 설명 문장이 함께 포함되는 경우가 많다.',
+    })
+    expect(parsed.blocks[2]).toMatchObject({
+      type: 'list',
+      content: '첫 번째 항목\n두 번째 항목',
+    })
+    expect(
+      parsed.blocks.map((block) => block.content).join('\n'),
+    ).not.toContain('##')
+  })
 })

@@ -172,6 +172,12 @@ const BLOCK_STYLES: Record<
     hoverBorder: 'border-[#198038]/40',
     hoverBg: 'bg-[#198038]/5',
   },
+  list: {
+    color: 'text-[#198038]',
+    bg: 'bg-[#198038]/8',
+    hoverBorder: 'border-[#198038]/40',
+    hoverBg: 'bg-[#198038]/5',
+  },
   table: {
     color: 'text-[#8a3ffc]',
     bg: 'bg-[#8a3ffc]/8',
@@ -882,6 +888,15 @@ function BlockContent({ block }: { block: ContentBlock }) {
         <p className="text-foreground/85 text-sm leading-[1.7]">
           {block.content}
         </p>
+      )
+
+    case 'list':
+      return (
+        <ul className="text-foreground/85 list-disc space-y-1.5 pl-5 text-sm leading-[1.7]">
+          {block.content.split('\n').map((item, index) => (
+            <li key={`${block.id}-${index}`}>{item}</li>
+          ))}
+        </ul>
       )
 
     case 'table':
