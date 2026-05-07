@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/shared/ui/card'
 import { ErrorTypeBadge } from '@/shared/ui/error-type-badge'
 import { ErrorDetailModal } from '@/shared/ui/error-detail-modal'
 import { useUIStore } from '@/app/model/ui-store'
+import { useErrorSummary } from '@/entities/error-log'
 import type { ErrorDetail } from '@/shared/types'
 
 interface ErrorLogWidgetProps {
@@ -46,12 +47,26 @@ const MOCK_ERROR_STATS = [
   { type: '파일 형식 오류', count: 1, color: '#0984e3' },
 ]
 
+const ERROR_STAT_COLORS = ['#e17055', '#fdcb6e', '#ff7121', '#0984e3']
+
 export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
   const { isMockMode } = useUIStore()
   const [selectedError, setSelectedError] = useState<ErrorDetail | null>(null)
+  const errorSummary = useErrorSummary(!isMockMode)
 
-  const errors = isMockMode ? MOCK_ERRORS : []
-  const errorStats = isMockMode ? MOCK_ERROR_STATS : []
+  const errors = isMockMode ? MOCK_ERRORS : (errorSummary.data?.recent ?? [])
+  const errorStats = isMockMode
+    ? MOCK_ERROR_STATS
+    : Object.entries(errorSummary.data?.byType ?? {}).map(
+        ([type, count], index) => ({
+          type,
+          count,
+          color: ERROR_STAT_COLORS[index % ERROR_STAT_COLORS.length],
+        }),
+      )
+  const totalErrors = isMockMode
+    ? MOCK_ERROR_STATS.reduce((sum, stat) => sum + stat.count, 0)
+    : (errorSummary.data?.totalErrors ?? 0)
 
   return (
     <Card>
@@ -63,7 +78,14 @@ export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
           <h3 className="text-foreground typo-h3">에러 로그 모니터링</h3>
         </div>
 
-        {errors.length === 0 ? (
+        {errorSummary.isLoading && !isMockMode ? (
+          <div className="flex flex-col items-center justify-center py-8">
+            <Inbox className="text-muted-foreground/40 mb-2 h-10 w-10" />
+            <p className="text-muted-foreground text-sm">
+              에러 로그를 불러오는 중입니다
+            </p>
+          </div>
+        ) : errors.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8">
             <Inbox className="text-muted-foreground/40 mb-2 h-10 w-10" />
             <p className="text-muted-foreground text-sm">에러가 없습니다</p>
@@ -90,7 +112,7 @@ export function ErrorLogWidget({ onViewAll }: ErrorLogWidgetProps) {
                       <div
                         className="h-2 rounded-full transition-all duration-500"
                         style={{
-                          width: `${(stat.count / 11) * 100}%`,
+                          width: `${totalErrors > 0 ? (stat.count / totalErrors) * 100 : 0}%`,
                           backgroundColor: stat.color,
                         }}
                       />

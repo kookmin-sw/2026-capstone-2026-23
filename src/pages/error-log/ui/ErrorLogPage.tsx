@@ -7,11 +7,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Inbox,
+  Loader2,
 } from 'lucide-react'
 import { ErrorTypeBadge } from '@/shared/ui/error-type-badge'
 import { ErrorDetailModal } from '@/shared/ui/error-detail-modal'
 import { MockIndicator } from '@/shared/ui/mock-indicator'
 import { useUIStore } from '@/app/model/ui-store'
+import { useErrorSummary, useErrors } from '@/entities/error-log'
 import type { ErrorDetail } from '@/shared/types'
 
 const MOCK_ERRORS: ErrorDetail[] = [
@@ -134,9 +136,18 @@ export function ErrorLogPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
-  const allErrors = isMockMode ? MOCK_ERRORS : []
+  const apiErrors = useErrors(
+    {
+      q: searchQuery || undefined,
+      type: filterType === 'all' ? undefined : filterType,
+      limit: itemsPerPage,
+      offset: (currentPage - 1) * itemsPerPage,
+    },
+    !isMockMode,
+  )
+  const errorSummary = useErrorSummary(!isMockMode)
 
-  const filteredErrors = allErrors.filter((error) => {
+  const filteredMockErrors = MOCK_ERRORS.filter((error) => {
     const matchesSearch =
       error.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
       error.fileName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -144,20 +155,32 @@ export function ErrorLogPage() {
     return matchesSearch && matchesFilter
   })
 
-  const totalPages = Math.ceil(filteredErrors.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedErrors = filteredErrors.slice(
+  const paginatedMockErrors = filteredMockErrors.slice(
     startIndex,
     startIndex + itemsPerPage,
   )
+  const totalErrors = isMockMode
+    ? filteredMockErrors.length
+    : (apiErrors.data?.total ?? 0)
+  const totalPages = Math.max(1, Math.ceil(totalErrors / itemsPerPage))
+  const visibleErrors = isMockMode
+    ? paginatedMockErrors
+    : (apiErrors.data?.items ?? [])
+  const isInitialLoading = !isMockMode && apiErrors.isLoading
+  const isError = !isMockMode && apiErrors.isError
 
-  const errorTypes = [
+  const mockErrorTypes = [
     'all',
     'VLM 타임아웃',
     '메모리 부족',
     '변환 실패',
     '파일 형식 오류',
   ]
+  const errorTypes = isMockMode
+    ? mockErrorTypes
+    : ['all', ...Object.keys(errorSummary.data?.byType ?? {})]
+  const paginationStart = totalErrors === 0 ? 0 : startIndex + 1
 
   return (
     <MockIndicator label="에러 로그">
@@ -172,7 +195,23 @@ export function ErrorLogPage() {
           </p>
         </div>
 
-        {allErrors.length === 0 ? (
+        {isInitialLoading ? (
+          <div className="bg-card border-border flex flex-1 flex-col items-center justify-center rounded-xl border">
+            <Loader2 className="text-primary mb-3 h-8 w-8 animate-spin" />
+            <p className="text-muted-foreground text-sm font-medium">
+              에러 로그를 불러오는 중입니다
+            </p>
+          </div>
+        ) : isError ? (
+          <div className="bg-card border-border flex flex-1 flex-col items-center justify-center rounded-xl border">
+            <AlertTriangle className="text-destructive mb-3 h-10 w-10" />
+            <p className="text-destructive text-sm font-medium">
+              에러 로그를 불러오지 못했습니다
+            </p>
+          </div>
+        ) : visibleErrors.length === 0 &&
+          !searchQuery &&
+          filterType === 'all' ? (
           <div className="bg-card border-border flex flex-1 flex-col items-center justify-center rounded-xl border">
             <Inbox className="text-muted-foreground/40 mb-3 h-12 w-12" />
             <p className="text-muted-foreground text-sm font-medium">
@@ -223,7 +262,7 @@ export function ErrorLogPage() {
                 </button>
               </div>
               <div className="text-muted-foreground mt-3 flex items-center justify-between text-sm">
-                <span>총 {filteredErrors.length}개의 에러</span>
+                <span>총 {totalErrors}개의 에러</span>
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
@@ -268,7 +307,7 @@ export function ErrorLogPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-border divide-y">
-                    {paginatedErrors.map((error) => (
+                    {visibleErrors.map((error) => (
                       <tr
                         key={error.id}
                         className="hover:bg-muted/30 transition-colors"
@@ -325,9 +364,9 @@ export function ErrorLogPage() {
               {/* Pagination */}
               <div className="border-border bg-muted/30 flex items-center justify-between border-t px-4 py-3">
                 <div className="text-muted-foreground text-sm">
-                  {startIndex + 1}-
-                  {Math.min(startIndex + itemsPerPage, filteredErrors.length)} /{' '}
-                  {filteredErrors.length}
+                  {paginationStart}-
+                  {Math.min(startIndex + itemsPerPage, totalErrors)} /{' '}
+                  {totalErrors}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
