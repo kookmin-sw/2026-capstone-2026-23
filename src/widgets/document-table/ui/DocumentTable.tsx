@@ -271,10 +271,11 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                       <td className="border-border border-b px-4 py-3.5 align-top">
                         <button
                           onClick={() => onFileSelect(doc.documentId)}
-                          className="text-foreground group-hover:text-primary block w-full text-left text-sm font-medium break-all transition-colors"
+                          title={doc.originalFilename}
+                          className="text-foreground group-hover:text-primary block w-full text-left text-sm font-medium transition-colors"
                           style={{
                             display: '-webkit-box',
-                            WebkitLineClamp: 2,
+                            WebkitLineClamp: 1,
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
