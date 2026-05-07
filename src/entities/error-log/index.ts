@@ -1,1 +1,1 @@
-export { useErrors } from './api/queries'
+export { useErrors, useErrorSummary } from './api/queries'
