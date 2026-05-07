@@ -101,6 +101,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
     end: number
     type: 'table' | 'markdown-table' | 'image'
     content: string
+    visibleInPreview: boolean
   }
 
   const markers: Marker[] = []
@@ -113,6 +114,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
       end: match.index + match[0].length,
       type: 'table',
       content: match[1].trim(),
+      visibleInPreview: true,
     })
   }
 
@@ -124,6 +126,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
       end: match.index + match[0].length,
       type: 'markdown-table',
       content: match[1].trim(),
+      visibleInPreview: false,
     })
   }
 
@@ -134,6 +137,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
       end: match.index + match[0].length,
       type: 'image',
       content: match[1].trim(),
+      visibleInPreview: true,
     })
   }
 
@@ -195,20 +199,22 @@ export function parseDocumentContent(text: string): ParsedDocument {
       addTextBlocks(text.slice(cursor, marker.start))
     }
 
-    const typeLabels: Record<string, string> = {
-      table: 'Table',
-      'markdown-table': 'Table',
-      image: 'Image',
-    }
+    if (marker.visibleInPreview) {
+      const typeLabels: Record<string, string> = {
+        table: 'Table',
+        'markdown-table': 'Table',
+        image: 'Image',
+      }
 
-    blocks.push({
-      id: `block-${blockIdx}`,
-      index: blockIdx++,
-      type: marker.type,
-      label: typeLabels[marker.type],
-      content: marker.content,
-      htmlContent: marker.type === 'table' ? marker.content : undefined,
-    })
+      blocks.push({
+        id: `block-${blockIdx}`,
+        index: blockIdx++,
+        type: marker.type,
+        label: typeLabels[marker.type],
+        content: marker.content,
+        htmlContent: marker.type === 'table' ? marker.content : undefined,
+      })
+    }
 
     cursor = marker.end
   }
