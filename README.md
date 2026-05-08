@@ -110,7 +110,8 @@ Document Understanding & Representation Model Of Next Technology 의 줄임말�
 
 
 
-## 🔗 👥 팀 두르몽트 소개
+
+## 🔗 👥 팀 DURMONT 소개
 
 <table>
   <tr>
