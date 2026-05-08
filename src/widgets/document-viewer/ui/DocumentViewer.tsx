@@ -665,10 +665,12 @@ function ImageOriginalPreview({ fileUrl }: { fileUrl: string }) {
 }
 
 function PdfOriginalPreview({ fileUrl }: { fileUrl: string }) {
+  const viewerUrl = `${fileUrl}#navpanes=0&view=FitH`
+
   return (
     <div className="h-full min-h-0 bg-[#f6f7f9]">
       <iframe
-        src={fileUrl}
+        src={viewerUrl}
         title="원본 PDF 미리보기"
         className="h-full w-full border-0 bg-white"
       />
