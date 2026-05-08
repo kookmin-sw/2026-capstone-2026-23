@@ -134,13 +134,18 @@ export interface JobStatusData {
   jobId: string
   status: JobStatus
   cancelRequested: boolean
-  cancelledAt: string | null
-  totalDocuments: number
-  completedDocuments: number
-  failedDocuments: number
-  processingDocuments: number
-  pendingDocuments: number
-  completedDocumentIds: string[]
+  cancelledAt?: string | null
+  totalItems?: number
+  queuedItems?: number
+  processingItems?: number
+  completedItems?: number
+  failedItems?: number
+  totalDocuments?: number
+  completedDocuments?: number
+  failedDocuments?: number
+  processingDocuments?: number
+  pendingDocuments?: number
+  completedDocumentIds?: string[]
   updatedAt: string
 }
 
