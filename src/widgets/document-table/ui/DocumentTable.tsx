@@ -42,7 +42,15 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   useEffect(() => {
     if (data?.items) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing API data to local selection state
-      setDocuments(data.items.map((d) => ({ ...d, selected: false })))
+      setDocuments((previousDocuments) => {
+        const selectedById = new Map(
+          previousDocuments.map((doc) => [doc.documentId, doc.selected]),
+        )
+        return data.items.map((doc) => ({
+          ...doc,
+          selected: selectedById.get(doc.documentId) ?? false,
+        }))
+      })
     }
   }, [data])
 

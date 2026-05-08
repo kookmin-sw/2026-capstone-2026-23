@@ -25,6 +25,7 @@ export type DocumentStatus =
   | 'COMPLETED'
   | 'FAILED'
   | 'CANCELLED'
+  | 'CANCELED'
 
 // ── Job 상태 ──
 
