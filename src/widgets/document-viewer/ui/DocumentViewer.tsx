@@ -11,6 +11,7 @@ import {
   ZoomOut,
   Maximize2,
   Scan,
+  Download,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import type {
@@ -34,6 +35,7 @@ interface DocumentViewerProps {
   isLoading?: boolean
   /** Original file for the left preview panel. File object or blob URL string. */
   originalFile?: File | string | null
+  originalDownloadUrl?: string
   emptyTitle?: string
   emptyDescription?: string
   className?: string
@@ -199,6 +201,7 @@ export function DocumentViewer({
   documentResult,
   isLoading,
   originalFile,
+  originalDownloadUrl,
   emptyTitle = '변환 결과가 없습니다',
   emptyDescription = '변환이 완료되면 결과가 여기에 표시됩니다.',
   className = '',
@@ -300,6 +303,7 @@ export function DocumentViewer({
             file={originalFile}
             fileUrl={originalFileUrl}
             fileName={documentResult?.fileName}
+            downloadUrl={originalDownloadUrl}
           />
         </div>
       </div>
@@ -397,10 +401,12 @@ function OriginalFilePreview({
   file,
   fileUrl,
   fileName,
+  downloadUrl,
 }: {
   file?: File | string | null
   fileUrl: string | null
   fileName?: string
+  downloadUrl?: string
 }) {
   const localFileName = typeof file === 'string' ? undefined : file?.name
   const ext = (fileName ?? localFileName ?? '').split('.').pop()?.toLowerCase()
@@ -408,17 +414,33 @@ function OriginalFilePreview({
     typeof file === 'string' ? '' : (file?.type?.toLowerCase() ?? '')
   const isImageByMime = mimeType.startsWith('image/')
   const isPdfByMime = mimeType === 'application/pdf'
+  const isHtmlByMime = mimeType.startsWith('text/html')
   const isImageByExt =
     !!ext &&
     ['png', 'jpg', 'jpeg', 'bmp', 'tiff', 'tif', 'gif', 'webp'].includes(ext)
   const isPdfByExt = ext === 'pdf'
+  const isHtmlByExt = ext === 'html' || ext === 'htm'
 
   const isImage = !!fileUrl && (isImageByMime || (!mimeType && isImageByExt))
   const isPdf =
     !!fileUrl && !isImage && (isPdfByMime || (!mimeType && isPdfByExt))
+  const isHtml =
+    !!fileUrl &&
+    !isImage &&
+    !isPdf &&
+    (isHtmlByMime || (!mimeType && isHtmlByExt))
 
   if (isPdf) return <PdfOriginalPreview key={fileUrl} fileUrl={fileUrl} />
   if (isImage) return <ImageOriginalPreview key={fileUrl} fileUrl={fileUrl} />
+  if (isHtml) {
+    return (
+      <HtmlOriginalPreview
+        key={fileUrl}
+        fileUrl={fileUrl}
+        downloadUrl={downloadUrl}
+      />
+    )
+  }
 
   if (isPdfByExt || isPdfByMime) {
     return (
@@ -673,6 +695,39 @@ function PdfOriginalPreview({ fileUrl }: { fileUrl: string }) {
         src={viewerUrl}
         title="원본 PDF 미리보기"
         className="h-full w-full border-0 bg-white"
+      />
+    </div>
+  )
+}
+
+function HtmlOriginalPreview({
+  fileUrl,
+  downloadUrl,
+}: {
+  fileUrl: string
+  downloadUrl?: string
+}) {
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-[#f6f7f9]">
+      <div className="border-border flex items-center justify-between border-b bg-[#fbfbfc] px-3 py-2">
+        <span className="text-muted-foreground text-[11px] font-medium">
+          HTML preview
+        </span>
+        {downloadUrl ? (
+          <a
+            href={downloadUrl}
+            download
+            className="border-border text-muted-foreground hover:text-foreground inline-flex h-8 items-center gap-1 rounded-md border bg-white px-2.5 text-[11px] font-medium"
+          >
+            <Download className="h-3.5 w-3.5" />
+            원본 다운로드
+          </a>
+        ) : null}
+      </div>
+      <iframe
+        src={fileUrl}
+        title="원본 HTML 미리보기"
+        className="min-h-0 flex-1 border-0 bg-white"
       />
     </div>
   )
