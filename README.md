@@ -3,7 +3,7 @@
 
 안녕하세요 여기는 2026년도 캡스톤 23조의 github 입니다 (^ ̥> ̫ < ̥^)
 
-‪# ᕱ‬ DOURMONT ‪ᕱ‬
+‪## ᕱ‬ DOURMONT ‪ᕱ‬
 
 ## Luminar Document Parser
 
