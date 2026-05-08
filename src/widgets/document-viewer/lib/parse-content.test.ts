@@ -105,7 +105,7 @@ describe('parseDocumentContent', () => {
     expect(parsed.blocks[1]).toMatchObject({
       type: 'paragraph',
       content:
-        '분기별 운영 현황 검토 실제 업무 문서에서는 표 주변에 설명 문장이 함께 포함되는 경우가 많다.',
+        '분기별 운영 현황 검토\n실제 업무 문서에서는 표 주변에 설명 문장이 함께 포함되는 경우가 많다.',
     })
     expect(parsed.blocks[2]).toMatchObject({
       type: 'list',
@@ -114,5 +114,23 @@ describe('parseDocumentContent', () => {
     expect(
       parsed.blocks.map((block) => block.content).join('\n'),
     ).not.toContain('##')
+  })
+
+  it('IMAGE 블록 안의 줄바꿈을 보존한다', () => {
+    const parsed = parseDocumentContent(`## Page 1
+[[IMAGE]]
+PDF 구조 파싱에서 VLM 파이프라인의 효과 분석
+강아영, 김동연, 김동진
+요 약
+본문 첫 문장입니다.
+본문 둘째 문장입니다.
+[[/IMAGE]]`)
+
+    expect(parsed.blocks).toHaveLength(2)
+    expect(parsed.blocks[1]).toMatchObject({
+      type: 'image',
+      content:
+        'PDF 구조 파싱에서 VLM 파이프라인의 효과 분석\n강아영, 김동연, 김동진\n요 약\n본문 첫 문장입니다.\n본문 둘째 문장입니다.',
+    })
   })
 })

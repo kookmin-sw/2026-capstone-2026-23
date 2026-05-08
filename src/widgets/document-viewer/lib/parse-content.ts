@@ -172,7 +172,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
         index: blockIdx++,
         type: 'paragraph',
         label: 'Paragraph',
-        content: paragraphLines.join(' '),
+        content: paragraphLines.join('\n'),
       })
       paragraphLines.length = 0
     }

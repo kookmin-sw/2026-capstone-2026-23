@@ -885,7 +885,7 @@ function BlockContent({ block }: { block: ContentBlock }) {
 
     case 'paragraph':
       return (
-        <p className="text-foreground/85 text-sm leading-[1.7]">
+        <p className="text-foreground/85 text-sm leading-[1.7] whitespace-pre-line">
           {block.content}
         </p>
       )
@@ -918,7 +918,7 @@ function BlockContent({ block }: { block: ContentBlock }) {
 
     case 'image':
       return (
-        <div className="text-foreground/80 text-sm leading-relaxed italic">
+        <div className="text-foreground/80 text-sm leading-relaxed whitespace-pre-line">
           {block.content}
         </div>
       )
