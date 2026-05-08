@@ -16,6 +16,7 @@ import {
   useDocumentOriginalPreviewFile,
   useDocumentResult,
 } from '@/entities/document'
+import { getDocumentOriginalDownloadUrl } from '@/shared/api'
 import type { DocumentStatus } from '@/shared/types'
 
 interface FileDetailPageProps {
@@ -177,6 +178,7 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
           documentResult={result}
           isLoading={isLoading || isOriginalFileLoading}
           originalFile={originalFile}
+          originalDownloadUrl={getDocumentOriginalDownloadUrl(fileId)}
           className="h-full min-h-0"
         />
       </div>

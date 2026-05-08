@@ -19,6 +19,7 @@ import {
   useDocumentOriginalPreviewFile,
   useDocumentResult,
 } from '@/entities/document'
+import { getDocumentOriginalDownloadUrl } from '@/shared/api'
 import { MOCK_DOCUMENT_RESULT } from '@/shared/lib/mock-document-result'
 
 // ── Batch Status Banner ──
@@ -213,6 +214,9 @@ export function ConvertPage() {
   const useMock = isMockMode && !selectedResultPath
   const displayFile = useMock ? 'mock' : selectedResultPath
   const displayResult = useMock ? MOCK_DOCUMENT_RESULT : documentResult
+  const originalDownloadUrl = selectedFile?.documentId
+    ? getDocumentOriginalDownloadUrl(selectedFile.documentId)
+    : undefined
   const displayLoading = useMock
     ? false
     : isResultLoading && !!selectedFile?.documentId
@@ -326,6 +330,7 @@ export function ConvertPage() {
                 documentResult={displayResult}
                 isLoading={displayLoading}
                 originalFile={originalPreviewFile ?? selectedFile?.file ?? null}
+                originalDownloadUrl={originalDownloadUrl}
                 className="h-full"
               />
             ) : (
