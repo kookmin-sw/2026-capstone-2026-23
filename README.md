@@ -1,13 +1,88 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Lvs6kcL8)
 # Welcome to GitHub
 
-캡스톤 팀 생성을 축하합니다.
+안녕하세요 여기는 2026년도 캡스톤 23조의 github 입니다 (^ ̥> ̫ < ̥^)
 
-## 팀소개 및 페이지를 꾸며주세요.
 
-- 프로젝트 소개
-  - 프로젝트 설치방법 및 데모, 사용방법, 프리뷰등을 readme.md에 작성.
-  - Api나 사용방법등 내용이 많을경우 wiki에 꾸미고 링크 추가.
+# Luminar Document Parser
+
+AI 기반 문서 분석 및 질의응답 시스템입니다.  
+HWP, PDF, 이미지 문서를 업로드하면 텍스트, 표, 이미지 정보를 추출하고, 추출된 문서를 기반으로 검색 및 RAG 질의응답을 제공합니다.
+
+## 프로젝트 소개
+
+Luminar Document Parser는 사내 문서나 업무 문서를 효율적으로 분석하기 위한 문서 파싱 플랫폼입니다.
+
+주요 목표는 다음과 같습니다.
+
+- HWP, PDF, 이미지 문서의 자동 분석
+- 문서 내 텍스트, 표, 이미지 정보 추출
+- AI 모델을 활용한 문서 구조 이해
+- 변환 결과 미리보기 및 다운로드
+- 문서 기반 RAG 질의응답 제공
+- 대용량 문서 처리를 위한 비동기 작업 큐 지원
+
+## 주요 기능
+
+- 문서 업로드 및 변환
+- HWP / HWPX / PDF / 이미지 파일 지원
+- AI 기반 표, 차트, 이미지 인식
+- 변환 결과 미리보기
+- 작업 상태 실시간 확인
+- 변환 결과 다운로드
+- 문서 기반 검색 및 질의응답
+- FastAPI 기반 REST API 제공
+- React 기반 웹 UI 제공
+- Redis / RabbitMQ 기반 비동기 작업 처리
+- OpenAI API 또는 로컬 VLM 모델 연동 지원
+
+## 기술 스택
+
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- TanStack Router
+- TanStack Query
+- Zustand
+- Axios
+- Playwright
+- Vitest
+
+### Backend
+
+- Python 3.12+
+- FastAPI
+- Uvicorn
+- Redis
+- RabbitMQ
+- SQLite
+- Docker
+- OpenAI API
+- Qwen2.5-VL
+- DeepSeek OCR
+
+## 프로젝트 구조
+.
+├── frontend/
+│   ├── src/
+│   ├── docs/
+│   ├── package.json
+│   └── README.md
+│
+├── backend/
+│   ├── api/
+│   ├── worker/
+│   ├── docs/
+│   ├── data/
+│   ├── docker-compose.yml
+│   ├── requirements.txt
+│   └── README.md
+│
+└── README.md
+
 
 - 팀페이지 꾸미기
   - 프로젝트 소개 및 팀원 소개
