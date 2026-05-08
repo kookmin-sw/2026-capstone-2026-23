@@ -50,7 +50,6 @@ title: Luminir - AI 기반 문서 분석 시스템
 **AI / 문서 처리**
 
 ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
-![DeepSeek OCR](https://img.shields.io/badge/DeepSeek_OCR-4D6BFF?style=for-the-badge&logoColor=white)
 ![HWP/HWPX](https://img.shields.io/badge/HWP/HWPX-005BAC?style=for-the-badge&logoColor=white)
 
 ---
