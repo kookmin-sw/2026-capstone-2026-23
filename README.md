@@ -3,8 +3,10 @@
 
 안녕하세요 여기는 2026년도 캡스톤 23조의 github 입니다 (^ ̥> ̫ < ̥^)
 
+#DURMONT
 
-# Luminar Document Parser
+
+## Luminar Document Parser
 
 AI 기반 문서 분석 및 질의응답 시스템입니다.  
 HWP, PDF, 이미지 문서를 업로드하면 텍스트, 표, 이미지 정보를 추출하고, 추출된 문서를 기반으로 검색 및 RAG 질의응답을 제공합니다.
