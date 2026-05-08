@@ -216,7 +216,7 @@ Frontend Testing Guide
 GitHub Pages
 팀 페이지는 GitHub Pages를 통해 확인할 수 있습니다.
 
-https://kookmin-sw.github.io/capstone-2026-23/
-<br />
+[https://kookmin-sw.github.io/capstone-2026-23/
+](https://kookmin-sw.github.io/2026-capstone-23/) <br />
 기타
 본 프로젝트는 국민대학교 소프트웨어융합대학 2026 캡스톤디자인 산학협력 프로젝트로 진행되었습니다.
