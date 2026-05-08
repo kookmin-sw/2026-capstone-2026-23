@@ -117,7 +117,7 @@ Document Understanding & Representation Model Of Next Technology 의 줄임말�
   <tr>
     <td align="center" width="180px">
       <img src="이미지_URL_또는_경로" width="120px" height="120px" style="object-fit: cover;" />
-      <strong>박가현</strong>
+      <strong>김동연</strong>
       <br />
       PM & FULL STACK
       <br />
