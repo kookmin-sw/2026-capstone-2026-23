@@ -52,7 +52,7 @@ export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
         </div>
 
         {/* File Information */}
-        <div className="mb-4 grid grid-cols-2 gap-4">
+        <div className="mb-4 flex flex-col gap-4">
           <div>
             <h4 className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
               <FileText className="h-4 w-4" />
@@ -60,38 +60,36 @@ export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
             </h4>
             <div className="bg-muted space-y-2 p-3">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">파일명:</span>
-                <span className="text-foreground font-mono">
-                  {error.fileName}
+                <span className="text-muted-foreground">
+                  파일명: <b>{error.fileName}</b>
                 </span>
               </div>
               {error.filePath && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">경로:</span>
-                  <span className="text-foreground font-mono text-xs">
-                    {error.filePath}
+                  <span className="text-muted-foreground">
+                    경로:<br></br>
+                    <b>{error.filePath}</b>
                   </span>
                 </div>
               )}
               {error.pageNumber && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">페이지:</span>
-                  <span className="text-foreground font-mono">
-                    {error.pageNumber}
+                  <span className="text-muted-foreground">
+                    페이지: <b>{error.pageNumber}</b>
                   </span>
                 </div>
               )}
               {error.model && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">모델:</span>
-                  <span className="text-foreground font-mono">
-                    {error.model}
+                  <span className="text-muted-foreground">
+                    모델: <b>{error.model}</b>
                   </span>
                 </div>
               )}
             </div>
           </div>
 
+          {/* Error Time */}
           <div>
             <h4 className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
               <Clock className="h-4 w-4" />
@@ -99,7 +97,7 @@ export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
             </h4>
             <div className="bg-muted p-3">
               <p className="text-foreground font-mono text-sm">
-                {error.timestamp}
+                {new Date(error.timestamp).toLocaleString('ko-KR')}
               </p>
             </div>
           </div>
@@ -158,7 +156,7 @@ export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
           <Button variant="outline" onClick={onClose}>
             닫기
           </Button>
-          <Button>재시도</Button>
+          {/* <Button>재시도</Button> */}
         </DialogFooter>
       </DialogContent>
     </Dialog>
