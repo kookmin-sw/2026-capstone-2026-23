@@ -14,6 +14,7 @@ import { DocumentViewer } from '@/widgets/document-viewer'
 import { ChatModal } from '@/widgets/chat-modal'
 import { FloatingControlPanel } from '@/widgets/floating-control-panel'
 import { useUploadStore } from '@/features/file-upload'
+import { collectDroppedFiles } from '@/features/file-upload/lib/drop-files'
 import { useUIStore } from '@/app/model/ui-store'
 import {
   useDocumentOriginalPreviewFile,
@@ -227,46 +228,14 @@ export function ConvertPage() {
     e.preventDefault()
     setIsDragging(false)
 
-    const items = Array.from(e.dataTransfer.items)
-    const droppedFiles: File[] = []
-
-    const processEntry = async (entry: FileSystemEntry): Promise<void> => {
-      return new Promise((resolve) => {
-        if (entry.isFile) {
-          ;(entry as FileSystemFileEntry).file((file: File) => {
-            droppedFiles.push(file)
-            resolve()
-          })
-        } else if (entry.isDirectory) {
-          const dirReader = (entry as FileSystemDirectoryEntry).createReader()
-          dirReader.readEntries(async (entries) => {
-            for (const childEntry of entries) {
-              await processEntry(childEntry)
-            }
-            resolve()
-          })
-        } else {
-          resolve()
-        }
-      })
-    }
-
-    const processItems = async () => {
-      for (const item of items) {
-        const entry = item.webkitGetAsEntry?.()
-        if (entry) {
-          await processEntry(entry)
-        } else if (item.kind === 'file') {
-          const file = item.getAsFile()
-          if (file) droppedFiles.push(file)
-        }
-      }
+    const processFiles = async () => {
+      const droppedFiles = await collectDroppedFiles(e.dataTransfer)
       if (droppedFiles.length > 0) {
         addFiles(droppedFiles)
       }
     }
 
-    processItems()
+    void processFiles()
   }
 
   return (

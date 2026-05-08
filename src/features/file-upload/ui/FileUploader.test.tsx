@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { FileUploader } from './FileUploader'
 
 describe('FileUploader', () => {
@@ -38,5 +38,29 @@ describe('FileUploader', () => {
       .closest('div[class*="border-dashed"]')!
 
     expect(dropZone.className).toContain('rounded-2xl')
+  })
+
+  it('dataTransfer.files로 전달된 여러 파일을 한 번에 추가한다', async () => {
+    const onFilesAdded = vi.fn()
+    const files = [
+      new File(['a'], 'a.pdf', { type: 'application/pdf' }),
+      new File(['b'], 'b.hwpx', { type: 'application/octet-stream' }),
+    ]
+
+    render(<FileUploader onFilesAdded={onFilesAdded} />)
+    const dropZone = screen
+      .getByText('파일을 드래그하여 업로드')
+      .closest('div[class*="border-dashed"]')!
+
+    fireEvent.drop(dropZone, {
+      dataTransfer: {
+        items: [],
+        files,
+      },
+    })
+
+    await waitFor(() => {
+      expect(onFilesAdded).toHaveBeenCalledWith(files)
+    })
   })
 })

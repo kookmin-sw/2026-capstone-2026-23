@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Upload, FolderOpen } from 'lucide-react'
+import { collectDroppedFiles } from '../lib/drop-files'
 
 interface FileUploaderProps {
   onFilesAdded: (files: File[]) => void
@@ -14,46 +15,14 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
     e.preventDefault()
     setIsDragging(false)
 
-    const items = Array.from(e.dataTransfer.items)
-    const files: File[] = []
-
-    const processEntry = async (entry: FileSystemEntry): Promise<void> => {
-      return new Promise((resolve) => {
-        if (entry.isFile) {
-          ;(entry as FileSystemFileEntry).file((file: File) => {
-            files.push(file)
-            resolve()
-          })
-        } else if (entry.isDirectory) {
-          const dirReader = (entry as FileSystemDirectoryEntry).createReader()
-          dirReader.readEntries(async (entries) => {
-            for (const childEntry of entries) {
-              await processEntry(childEntry)
-            }
-            resolve()
-          })
-        } else {
-          resolve()
-        }
-      })
-    }
-
-    const processItems = async () => {
-      for (const item of items) {
-        const entry = item.webkitGetAsEntry?.()
-        if (entry) {
-          await processEntry(entry)
-        } else if (item.kind === 'file') {
-          const file = item.getAsFile()
-          if (file) files.push(file)
-        }
-      }
+    const processFiles = async () => {
+      const files = await collectDroppedFiles(e.dataTransfer)
       if (files.length > 0) {
         onFilesAdded(files)
       }
     }
 
-    processItems()
+    void processFiles()
   }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
