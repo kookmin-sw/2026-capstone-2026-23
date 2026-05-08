@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { FileTypeIcon } from '@/shared/ui/file-type-icon'
 import type { UploadFileItem } from '../model/store'
+import { collectDroppedFiles } from '../lib/drop-files'
 
 interface UploadedFilesListProps {
   files: UploadFileItem[]
@@ -56,46 +57,14 @@ export function UploadedFilesList({
     e.preventDefault()
     setIsDragging(false)
 
-    const items = Array.from(e.dataTransfer.items)
-    const droppedFiles: File[] = []
-
-    const processEntry = async (entry: FileSystemEntry): Promise<void> => {
-      return new Promise((resolve) => {
-        if (entry.isFile) {
-          ;(entry as FileSystemFileEntry).file((file: File) => {
-            droppedFiles.push(file)
-            resolve()
-          })
-        } else if (entry.isDirectory) {
-          const dirReader = (entry as FileSystemDirectoryEntry).createReader()
-          dirReader.readEntries(async (entries) => {
-            for (const childEntry of entries) {
-              await processEntry(childEntry)
-            }
-            resolve()
-          })
-        } else {
-          resolve()
-        }
-      })
-    }
-
-    const processItems = async () => {
-      for (const item of items) {
-        const entry = item.webkitGetAsEntry?.()
-        if (entry) {
-          await processEntry(entry)
-        } else if (item.kind === 'file') {
-          const file = item.getAsFile()
-          if (file) droppedFiles.push(file)
-        }
-      }
+    const processFiles = async () => {
+      const droppedFiles = await collectDroppedFiles(e.dataTransfer)
       if (droppedFiles.length > 0) {
         onFilesAdded(droppedFiles)
       }
     }
 
-    processItems()
+    void processFiles()
   }
 
   const handleDragOver = (e: React.DragEvent) => {
