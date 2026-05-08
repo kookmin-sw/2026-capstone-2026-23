@@ -84,7 +84,7 @@ Luminar Document Parser는 사내 문서나 업무 문서를 효율적으로 분
 │   └── README.md
 │
 └── README.md
-
+```
 
 - 팀페이지 꾸미기
   - 프로젝트 소개 및 팀원 소개
