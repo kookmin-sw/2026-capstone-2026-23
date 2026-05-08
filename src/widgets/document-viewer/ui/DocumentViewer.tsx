@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner'
 import type {
   MouseEvent as ReactMouseEvent,
+  ReactNode,
   WheelEvent as ReactWheelEvent,
 } from 'react'
 import type { DocumentResult } from '@/shared/types'
@@ -778,11 +779,131 @@ function BlocksPreview({
   )
 }
 
+function renderMarkdownInline(text: string): ReactNode[] {
+  return text.split(/(\*\*.+?\*\*)/g).map((part, index) => {
+    const strongMatch = /^\*\*(.+)\*\*$/.exec(part)
+    if (!strongMatch) return <span key={index}>{part}</span>
+
+    return <strong key={index}>{strongMatch[1]}</strong>
+  })
+}
+
+function ImageMarkdownContent({ content }: { content: string }) {
+  const elements: ReactNode[] = []
+  const paragraphLines: string[] = []
+  const listItems: { content: string; level: number; ordered: boolean }[] = []
+
+  const flushParagraph = () => {
+    if (paragraphLines.length === 0) return
+
+    elements.push(
+      <p
+        key={`paragraph-${elements.length}`}
+        className="text-foreground/85 text-sm leading-[1.7]"
+      >
+        {renderMarkdownInline(paragraphLines.join(' '))}
+      </p>,
+    )
+    paragraphLines.length = 0
+  }
+
+  const flushList = () => {
+    if (listItems.length === 0) return
+
+    const ListTag = listItems.every((item) => item.ordered) ? 'ol' : 'ul'
+    elements.push(
+      <ListTag
+        key={`list-${elements.length}`}
+        className={`text-foreground/85 space-y-1.5 pl-5 text-sm leading-[1.7] ${
+          ListTag === 'ol' ? 'list-decimal' : 'list-disc'
+        }`}
+      >
+        {listItems.map((item, index) => (
+          <li
+            key={`${elements.length}-${index}`}
+            style={{ marginLeft: `${item.level * 1}rem` }}
+          >
+            {renderMarkdownInline(item.content)}
+          </li>
+        ))}
+      </ListTag>,
+    )
+    listItems.length = 0
+  }
+
+  const flushInlineContent = () => {
+    flushParagraph()
+    flushList()
+  }
+
+  content.split('\n').forEach((line) => {
+    const cleaned = line.trim()
+    if (!cleaned) {
+      flushInlineContent()
+      return
+    }
+
+    const headingMatch = /^(#{1,6})\s+(.+)$/.exec(cleaned)
+    if (headingMatch) {
+      flushInlineContent()
+      const depth = headingMatch[1].length
+      const HeadingTag = (depth === 1 ? 'h2' : depth === 2 ? 'h3' : 'h4') as
+        | 'h2'
+        | 'h3'
+        | 'h4'
+
+      elements.push(
+        <HeadingTag
+          key={`heading-${elements.length}`}
+          className={`text-foreground font-semibold ${
+            depth === 1
+              ? 'text-base leading-7'
+              : depth === 2
+                ? 'text-sm leading-6'
+                : 'text-sm leading-[1.7]'
+          }`}
+        >
+          {renderMarkdownInline(headingMatch[2].trim())}
+        </HeadingTag>,
+      )
+      return
+    }
+
+    const listMatch = /^(\s*)([-*]|\d+[.)])\s+(.+)$/.exec(line)
+    if (listMatch) {
+      flushParagraph()
+      listItems.push({
+        content: listMatch[3].trim(),
+        level: Math.floor(listMatch[1].replace(/\t/g, '  ').length / 2),
+        ordered: /^\d+[.)]$/.test(listMatch[2]),
+      })
+      return
+    }
+
+    flushList()
+    paragraphLines.push(cleaned)
+  })
+
+  flushInlineContent()
+
+  return <div className="space-y-2">{elements}</div>
+}
+
 // ── Block Content Renderer ──
 
 function BlockContent({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case 'header':
+      if (block.label === 'Page') {
+        return (
+          <div className="border-border/70 flex items-center gap-3 border-b pb-2">
+            <span className="text-foreground text-lg leading-7 font-semibold">
+              {block.content}
+            </span>
+          </div>
+        )
+      }
+
       return (
         <p className="text-foreground text-base leading-relaxed font-semibold">
           {block.content}
@@ -823,10 +944,6 @@ function BlockContent({ block }: { block: ContentBlock }) {
       )
 
     case 'image':
-      return (
-        <div className="text-foreground/80 text-sm leading-relaxed whitespace-pre-line">
-          {block.content}
-        </div>
-      )
+      return <ImageMarkdownContent content={block.content} />
   }
 }
