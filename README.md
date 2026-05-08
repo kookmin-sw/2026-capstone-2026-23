@@ -152,20 +152,20 @@ Document Understanding & Representation Model Of Next Technology 의 줄임말�
     <td align="center" width="180px">
       <img src="이미지_URL_또는_경로" width="120px" height="120px" style="object-fit: cover;" />
       <br />
+      <strong>하승준</strong>
+      <br />
+      Backend & AI
+      <br />
+      <a href="https://github.com/seunG-Zzun">GitHub</a>
+    </td>
+    <td align="center" width="180px">
+      <img src="이미지_URL_또는_경로" width="120px" height="120px" style="object-fit: cover;" />
+      <br />
       <strong>강아영</strong>
       <br />
       AI
       <br />
       <a href="https://github.com/kaye0ng">GitHub</a>
-    </td>
-    <td align="center" width="180px">
-      <img src="이미지_URL_또는_경로" width="120px" height="120px" style="object-fit: cover;" />
-      <br />
-      <strong>하승준</strong>
-      <br />
-      AI
-      <br />
-      <a href="https://github.com/seunG-Zzun">GitHub</a>
     </td>
   </tr>
 </table>
