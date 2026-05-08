@@ -12,7 +12,6 @@ import {
   Maximize2,
   Scan,
 } from 'lucide-react'
-import { Document as PdfDocument, Page as PdfPage, pdfjs } from 'react-pdf'
 import { toast } from 'sonner'
 import type {
   MouseEvent as ReactMouseEvent,
@@ -51,10 +50,6 @@ const ORIGINAL_PREVIEW_MIN_ZOOM = 0.5
 const ORIGINAL_PREVIEW_MAX_ZOOM = 3
 const ORIGINAL_PREVIEW_ZOOM_STEP = 0.25
 const ORIGINAL_PREVIEW_WHEEL_ZOOM_STEP = 0.05
-
-pdfjs.GlobalWorkerOptions.workerSrc =
-  new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString() +
-  '?worker_v=20260504_mjs_mime'
 
 function useDragScroll<T extends HTMLDivElement>() {
   const ref = useRef<T | null>(null)
@@ -670,159 +665,13 @@ function ImageOriginalPreview({ fileUrl }: { fileUrl: string }) {
 }
 
 function PdfOriginalPreview({ fileUrl }: { fileUrl: string }) {
-  const [zoom, setZoom] = useState(1)
-  const [fitMode, setFitMode] = useState<'width' | 'page' | 'custom'>('width')
-  const [numPages, setNumPages] = useState(0)
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
-  const [firstPageSize, setFirstPageSize] = useState({ width: 0, height: 0 })
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const {
-    ref: scrollRef,
-    isDragging,
-    dragHandlers,
-  } = useDragScroll<HTMLDivElement>()
-
-  useEffect(() => {
-    const element = containerRef.current
-    if (!element) return
-
-    const updateSize = () => {
-      setContainerSize({
-        width: element.clientWidth,
-        height: element.clientHeight,
-      })
-    }
-
-    updateSize()
-
-    const observer = new ResizeObserver(updateSize)
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
-
-  const fitPageZoom = useMemo(() => {
-    if (
-      containerSize.width <= 0 ||
-      containerSize.height <= 0 ||
-      firstPageSize.width <= 0 ||
-      firstPageSize.height <= 0
-    ) {
-      return 1
-    }
-
-    const fitWidthHeight =
-      containerSize.width * (firstPageSize.height / firstPageSize.width)
-    const scale = Math.min(1, containerSize.height / fitWidthHeight)
-    return Math.max(ORIGINAL_PREVIEW_MIN_ZOOM, scale)
-  }, [containerSize, firstPageSize])
-
-  const effectiveZoom =
-    fitMode === 'width' ? 1 : fitMode === 'page' ? fitPageZoom : zoom
-  const pageWidth = Math.max(1, Math.floor(containerSize.width * effectiveZoom))
-
-  const handleWheelZoom = (event: ReactWheelEvent<HTMLDivElement>) => {
-    if (!event.ctrlKey && !event.metaKey) return
-
-    event.preventDefault()
-    const nextZoom = clampZoom(effectiveZoom + getWheelZoomDelta(event.deltaY))
-    setFitMode('custom')
-    setZoom(nextZoom)
-  }
-
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#f6f7f9]">
-      <OriginalPreviewToolbar
-        zoom={effectiveZoom}
-        onFitWidth={() => setFitMode('width')}
-        onFitPage={() => setFitMode('page')}
-        onZoomOut={() => {
-          setFitMode('custom')
-          setZoom(
-            Math.max(
-              ORIGINAL_PREVIEW_MIN_ZOOM,
-              effectiveZoom - ORIGINAL_PREVIEW_ZOOM_STEP,
-            ),
-          )
-        }}
-        onZoomIn={() => {
-          setFitMode('custom')
-          setZoom(
-            Math.min(
-              ORIGINAL_PREVIEW_MAX_ZOOM,
-              effectiveZoom + ORIGINAL_PREVIEW_ZOOM_STEP,
-            ),
-          )
-        }}
-        disableZoomOut={effectiveZoom <= ORIGINAL_PREVIEW_MIN_ZOOM}
-        disableZoomIn={effectiveZoom >= ORIGINAL_PREVIEW_MAX_ZOOM}
+    <div className="h-full min-h-0 bg-[#f6f7f9]">
+      <iframe
+        src={fileUrl}
+        title="원본 PDF 미리보기"
+        className="h-full w-full border-0 bg-white"
       />
-      <div ref={containerRef} className="min-h-0 flex-1 overflow-hidden">
-        {containerSize.width > 0 ? (
-          <div
-            ref={scrollRef}
-            className={`h-full min-w-0 overflow-auto bg-[#f6f7f9] ${
-              isDragging ? 'cursor-grabbing' : 'cursor-grab'
-            }`}
-            onWheel={handleWheelZoom}
-            {...dragHandlers}
-          >
-            <div
-              className="min-h-full py-4"
-              style={{
-                width: `${Math.max(containerSize.width, pageWidth)}px`,
-              }}
-            >
-              <PdfDocument
-                file={fileUrl}
-                loading={
-                  <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    PDF 불러오는 중...
-                  </div>
-                }
-                error={
-                  <PanelEmptyState
-                    icon={AlertCircle}
-                    title="PDF를 불러오지 못했습니다"
-                    description="원본 문서 미리보기를 열 수 없습니다."
-                  />
-                }
-                onLoadSuccess={({ numPages: loadedPages }) =>
-                  setNumPages(loadedPages)
-                }
-              >
-                {Array.from({ length: numPages }, (_, index) => (
-                  <div
-                    key={`${fileUrl}-${index + 1}`}
-                    className="mx-auto mb-4 border border-[#dde1e6] bg-white shadow-sm last:mb-0"
-                    style={{ width: `${pageWidth}px` }}
-                  >
-                    <PdfPage
-                      pageNumber={index + 1}
-                      width={pageWidth}
-                      onLoadSuccess={(page) => {
-                        if (index === 0) {
-                          setFirstPageSize({
-                            width: page.originalWidth,
-                            height: page.originalHeight,
-                          })
-                        }
-                      }}
-                      renderAnnotationLayer={false}
-                      renderTextLayer={false}
-                      loading={
-                        <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
-                          페이지 렌더링 중...
-                        </div>
-                      }
-                    />
-                  </div>
-                ))}
-              </PdfDocument>
-            </div>
-          </div>
-        ) : null}
-      </div>
     </div>
   )
 }
