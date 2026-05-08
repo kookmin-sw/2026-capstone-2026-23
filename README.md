@@ -124,8 +124,7 @@ Document Understanding & Representation Model Of Next Technology 의 줄임말�
       <a href="https://github.com/0yeonnnn0">GitHub</a>
     </td>
     <td align="center" width="180px">
-      <img src="이미지_URL_또는_경로" width="120px" height="120px" style="object-fit: cover;" />
-      <br />
+    <img width="472" height="630" alt="Image" src="https://github.com/user-attachments/assets/b5a45b34-3ec2-49d6-827b-bd9e812a026c" /> <br />
       <strong>김동진</strong>
       <br />
       Frontend
