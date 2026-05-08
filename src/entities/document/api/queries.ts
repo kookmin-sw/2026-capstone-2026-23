@@ -5,6 +5,7 @@ import {
   downloadDocumentOriginal,
   getDocumentResult,
   getDocuments,
+  previewDocumentOriginal,
   uploadFiles,
 } from '@/shared/api'
 import {
@@ -64,6 +65,22 @@ export function useDocumentOriginalFile(
     queryKey: ['documents', documentId, 'original-file'],
     queryFn: async () => {
       const { data } = await downloadDocumentOriginal(documentId!)
+      return new File([data], fileName ?? 'original', {
+        type: data.type || undefined,
+      })
+    },
+    enabled: !!documentId,
+  })
+}
+
+export function useDocumentOriginalPreviewFile(
+  documentId: string | undefined,
+  fileName: string | undefined,
+) {
+  return useQuery({
+    queryKey: ['documents', documentId, 'original-preview-file'],
+    queryFn: async () => {
+      const { data } = await previewDocumentOriginal(documentId!)
       return new File([data], fileName ?? 'original', {
         type: data.type || undefined,
       })
