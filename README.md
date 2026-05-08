@@ -115,8 +115,7 @@ Document Understanding & Representation Model Of Next Technology 의 줄임말�
 <table>
   <tr>
     <td align="center" width="180px">
-      <img src="이미지_URL_또는_경로" width="120px" height="120px" style="object-fit: cover;" />
-      <br />
+    <img width="787" height="787" alt="Image" src="https://github.com/user-attachments/assets/0d5d836d-065b-4968-a330-9833bb8dacac" />      <br />
       <strong>김동연</strong>
       <br />
       PM & Frontend
