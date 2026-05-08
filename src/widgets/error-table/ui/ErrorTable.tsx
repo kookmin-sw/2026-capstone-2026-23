@@ -327,7 +327,7 @@ export function ErrorTable() {
                       </td>
                       <td className="border-border border-b px-4 py-3.5">
                         <span className="text-muted-foreground text-sm tabular-nums">
-                          {error.timestamp}
+                          {new Date(error.timestamp).toLocaleString('ko-KR')}
                         </span>
                       </td>
                       <td className="border-border border-b px-4 py-3.5 text-center">
