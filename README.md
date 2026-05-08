@@ -107,7 +107,7 @@ DURMONT는 **Document Understanding & Representation Model Of Next Technology**�
 │   └── README.md
 │
 └── README.md
-```
+
 <br />
 설치 방법
 1. Repository Clone
