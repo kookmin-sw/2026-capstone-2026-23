@@ -70,6 +70,10 @@ vi.mock('@/app/model/ui-store', () => ({
 
 vi.mock('@/entities/document', () => ({
   useDocumentResult: () => ({ data: undefined, isLoading: false }),
+  useDocumentOriginalPreviewFile: () => ({
+    data: undefined,
+    isLoading: false,
+  }),
 }))
 
 vi.mock('@/shared/lib/mock-document-result', () => ({
