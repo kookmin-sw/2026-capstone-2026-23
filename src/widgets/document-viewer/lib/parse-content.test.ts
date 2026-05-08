@@ -116,6 +116,23 @@ describe('parseDocumentContent', () => {
     ).not.toContain('##')
   })
 
+  it('markdown Page heading을 페이지 헤더로 분류한다', () => {
+    const parsed = parseDocumentContent(`## Page 1
+
+## 문서 제목`)
+
+    expect(parsed.blocks[0]).toMatchObject({
+      type: 'header',
+      label: 'Page',
+      content: 'Page 1',
+    })
+    expect(parsed.blocks[1]).toMatchObject({
+      type: 'header',
+      label: 'Heading',
+      content: '문서 제목',
+    })
+  })
+
   it('IMAGE 블록 안의 줄바꿈을 보존한다', () => {
     const parsed = parseDocumentContent(`## Page 1
 [[IMAGE]]

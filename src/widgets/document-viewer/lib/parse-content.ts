@@ -202,8 +202,11 @@ export function parseDocumentContent(text: string): ParsedDocument {
         continue
       }
 
-      const isPageMarker = /^---\s*페이지/.test(cleaned)
       const headingMatch = /^(#{1,6})\s+(.+)$/.exec(cleaned)
+      const headingContent = headingMatch?.[2].trim()
+      const isPageMarker =
+        /^---\s*페이지/.test(cleaned) ||
+        /^page\s+\d+/i.test(headingContent ?? '')
       const listMatch = /^[-*]\s+(.+)$/.exec(cleaned)
 
       if (isPageMarker || headingMatch) {
@@ -213,7 +216,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
           index: blockIdx++,
           type: 'header',
           label: isPageMarker ? 'Page' : 'Heading',
-          content: headingMatch?.[2].trim() ?? cleaned,
+          content: headingContent ?? cleaned,
         })
         continue
       }
