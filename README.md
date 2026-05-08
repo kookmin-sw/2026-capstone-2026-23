@@ -119,7 +119,7 @@ Document Understanding & Representation Model Of Next Technology 의 줄임말�
       <img src="이미지_URL_또는_경로" width="120px" height="120px" style="object-fit: cover;" />
       <strong>김동연</strong>
       <br />
-      PM & Frontend
+      PM & FULL STACK
       <br />
       <a href="https://github.com/0yeonnnn0">GitHub</a>
     </td>
