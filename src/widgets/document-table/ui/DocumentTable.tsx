@@ -31,7 +31,6 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   const downloadMutation = useDownloadFile()
   const deleteMutation = useDeleteDocuments()
   const [documents, setDocuments] = useState<DocumentWithSelection[]>([])
-  const [selectAll, setSelectAll] = useState(false)
   const [showDeleteDropdown, setShowDeleteDropdown] = useState(false)
   const [activeRowDropdown, setActiveRowDropdown] = useState<string | null>(
     null,
@@ -43,7 +42,15 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   useEffect(() => {
     if (data?.items) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing API data to local selection state
-      setDocuments(data.items.map((d) => ({ ...d, selected: false })))
+      setDocuments((previousDocuments) => {
+        const selectedById = new Map(
+          previousDocuments.map((doc) => [doc.documentId, doc.selected]),
+        )
+        return data.items.map((doc) => ({
+          ...doc,
+          selected: selectedById.get(doc.documentId) ?? false,
+        }))
+      })
     }
   }, [data])
 
@@ -75,11 +82,27 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
   }
 
   const toggleSelectAll = () => {
-    const newSelectAll = !selectAll
-    setSelectAll(newSelectAll)
-    setDocuments((docs) =>
-      docs.map((doc) => ({ ...doc, selected: newSelectAll })),
+    const currentPageDocumentIds = new Set(
+      paginatedDocuments.map((doc) => doc.documentId),
     )
+    const newSelectAll = !isCurrentPageAllSelected
+
+    setDocuments((docs) =>
+      docs.map((doc) =>
+        currentPageDocumentIds.has(doc.documentId)
+          ? { ...doc, selected: newSelectAll }
+          : doc,
+      ),
+    )
+  }
+
+  const clearSelection = () => {
+    setDocuments((docs) => docs.map((doc) => ({ ...doc, selected: false })))
+  }
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page)
+    clearSelection()
   }
 
   const handleDownload = async (documentId: string) => {
@@ -105,6 +128,10 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
     startIndex,
     startIndex + itemsPerPage,
   )
+
+  const isCurrentPageAllSelected =
+    paginatedDocuments.length > 0 &&
+    paginatedDocuments.every((doc) => doc.selected)
 
   if (isLoading) {
     return (
@@ -190,7 +217,6 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                         .map((d) => d.documentId)
                       deleteMutation.mutate(ids)
                       setShowDeleteDropdown(false)
-                      setSelectAll(false)
                     }}
                     disabled={deleteMutation.isPending}
                     className="text-destructive hover:bg-destructive/5 w-full px-4 py-2.5 text-left text-sm font-medium transition-colors disabled:opacity-50"
@@ -216,7 +242,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                 <th className="w-12 px-5 py-3 text-left">
                   <input
                     type="checkbox"
-                    checked={selectAll}
+                    checked={isCurrentPageAllSelected}
                     onChange={toggleSelectAll}
                     className="h-4 w-4"
                   />
@@ -271,10 +297,11 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                       <td className="border-border border-b px-4 py-3.5 align-top">
                         <button
                           onClick={() => onFileSelect(doc.documentId)}
-                          className="text-foreground group-hover:text-primary block w-full text-left text-sm font-medium break-all transition-colors"
+                          title={doc.originalFilename}
+                          className="text-foreground group-hover:text-primary block w-full text-left text-sm font-medium transition-colors"
                           style={{
                             display: '-webkit-box',
-                            WebkitLineClamp: 2,
+                            WebkitLineClamp: 1,
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
@@ -325,7 +352,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
           </span>
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              onClick={() => goToPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
               className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg p-1.5 transition-colors disabled:pointer-events-none disabled:opacity-30"
             >
@@ -335,9 +362,7 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
               {currentPage} / {totalPages}
             </span>
             <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-              }
+              onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
               className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg p-1.5 transition-colors disabled:pointer-events-none disabled:opacity-30"
             >

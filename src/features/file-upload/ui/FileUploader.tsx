@@ -93,7 +93,7 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
         {isDragging ? '여기에 놓으세요' : '파일을 드래그하여 업로드'}
       </p>
       <p className="text-muted-foreground mt-1 mb-4 text-xs">
-        HWP, HWPX, PDF, PNG, JPG, BMP, TIFF
+        HWP, HWPX, PDF, Excel, CSV, PNG, JPG, BMP, TIFF
       </p>
 
       {/* Two action buttons side by side */}
@@ -120,7 +120,7 @@ export function FileUploader({ onFilesAdded }: FileUploaderProps) {
         ref={fileInputRef}
         type="file"
         multiple
-        accept=".hwp,.hwpx,.pdf,.png,.jpg,.jpeg,.bmp,.tiff"
+        accept=".hwp,.hwpx,.pdf,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.bmp,.tiff"
         className="hidden"
         onChange={handleFileSelect}
       />

@@ -2,7 +2,7 @@
 export interface ContentBlock {
   id: string
   index: number
-  type: 'header' | 'paragraph' | 'table' | 'markdown-table' | 'image'
+  type: 'header' | 'paragraph' | 'list' | 'table' | 'markdown-table' | 'image'
   label: string
   content: string
   htmlContent?: string
@@ -12,6 +12,65 @@ export interface ParsedDocument {
   metadata: { originalPath?: string; pageCount?: number }
   blocks: ContentBlock[]
   rawText: string
+}
+
+interface DocumentContentSource {
+  txt?: {
+    preview?: string | null
+  } | null
+  markdown?: unknown
+}
+
+const TABLE_MARKDOWN_START = '[[TABLE_MARKDOWN]]'
+const TABLE_MARKDOWN_END = '[[/TABLE_MARKDOWN]]'
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function normalizeMarkdownValue(value: unknown): string {
+  if (typeof value === 'string') return value.trim()
+  if (Array.isArray(value)) {
+    return value.map(normalizeMarkdownValue).filter(Boolean).join('\n\n')
+  }
+  if (!isRecord(value)) return ''
+
+  const preferredKeys = [
+    'markdown',
+    'markdownSection',
+    'contentMarkdown',
+    'content_markdown',
+    'text',
+    'content',
+  ]
+
+  const directValues = preferredKeys
+    .map((key) => normalizeMarkdownValue(value[key]))
+    .filter(Boolean)
+
+  if (directValues.length > 0) return directValues.join('\n\n')
+
+  return Object.values(value)
+    .map(normalizeMarkdownValue)
+    .filter(Boolean)
+    .join('\n\n')
+}
+
+function toMarkdownBlock(markdown: string): string {
+  if (markdown.includes(TABLE_MARKDOWN_START)) return markdown
+  return `${TABLE_MARKDOWN_START}\n${markdown}\n${TABLE_MARKDOWN_END}`
+}
+
+export function buildDocumentContentText(
+  documentResult: DocumentContentSource | undefined,
+): string {
+  const preview = documentResult?.txt?.preview?.trim() ?? ''
+  const markdown = normalizeMarkdownValue(documentResult?.markdown)
+  if (!markdown) return preview
+
+  if (preview.includes(markdown)) return preview
+
+  return [preview, toMarkdownBlock(markdown)].filter(Boolean).join('\n\n')
 }
 
 /**
@@ -42,6 +101,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
     end: number
     type: 'table' | 'markdown-table' | 'image'
     content: string
+    visibleInPreview: boolean
   }
 
   const markers: Marker[] = []
@@ -54,6 +114,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
       end: match.index + match[0].length,
       type: 'table',
       content: match[1].trim(),
+      visibleInPreview: true,
     })
   }
 
@@ -65,6 +126,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
       end: match.index + match[0].length,
       type: 'markdown-table',
       content: match[1].trim(),
+      visibleInPreview: false,
     })
   }
 
@@ -75,6 +137,7 @@ export function parseDocumentContent(text: string): ParsedDocument {
       end: match.index + match[0].length,
       type: 'image',
       content: match[1].trim(),
+      visibleInPreview: true,
     })
   }
 
@@ -98,36 +161,74 @@ export function parseDocumentContent(text: string): ParsedDocument {
     const trimmed = rawText.trim()
     if (!trimmed) return
 
-    // Split into paragraphs by double newlines or page markers
-    const paragraphs = trimmed.split(/\n{2,}|(?=---\s*페이지)/)
+    const paragraphLines: string[] = []
+    const listLines: string[] = []
 
-    for (const para of paragraphs) {
-      const cleaned = para.trim()
-      if (!cleaned) continue
+    const flushParagraph = () => {
+      if (paragraphLines.length === 0) return
 
-      // Detect if it's a header/heading line (short, no period, possibly starts with page marker)
+      blocks.push({
+        id: `block-${blockIdx}`,
+        index: blockIdx++,
+        type: 'paragraph',
+        label: 'Paragraph',
+        content: paragraphLines.join('\n'),
+      })
+      paragraphLines.length = 0
+    }
+
+    const flushList = () => {
+      if (listLines.length === 0) return
+
+      blocks.push({
+        id: `block-${blockIdx}`,
+        index: blockIdx++,
+        type: 'list',
+        label: 'List',
+        content: listLines.join('\n'),
+      })
+      listLines.length = 0
+    }
+
+    const flushInlineContent = () => {
+      flushParagraph()
+      flushList()
+    }
+
+    for (const line of trimmed.split('\n')) {
+      const cleaned = line.trim()
+      if (!cleaned) {
+        flushInlineContent()
+        continue
+      }
+
       const isPageMarker = /^---\s*페이지/.test(cleaned)
-      if (isPageMarker) {
+      const headingMatch = /^(#{1,6})\s+(.+)$/.exec(cleaned)
+      const listMatch = /^[-*]\s+(.+)$/.exec(cleaned)
+
+      if (isPageMarker || headingMatch) {
+        flushInlineContent()
         blocks.push({
           id: `block-${blockIdx}`,
           index: blockIdx++,
           type: 'header',
-          label: 'Page',
-          content: cleaned,
+          label: isPageMarker ? 'Page' : 'Heading',
+          content: headingMatch?.[2].trim() ?? cleaned,
         })
         continue
       }
 
-      // Short lines without punctuation are likely headings
-      const isHeading = cleaned.length < 80 && !cleaned.includes('.')
-      blocks.push({
-        id: `block-${blockIdx}`,
-        index: blockIdx++,
-        type: isHeading ? 'header' : 'paragraph',
-        label: isHeading ? 'Heading' : 'Paragraph',
-        content: cleaned,
-      })
+      if (listMatch) {
+        flushParagraph()
+        listLines.push(listMatch[1].trim())
+        continue
+      }
+
+      flushList()
+      paragraphLines.push(cleaned)
     }
+
+    flushInlineContent()
   }
 
   for (const marker of markers) {
@@ -136,20 +237,22 @@ export function parseDocumentContent(text: string): ParsedDocument {
       addTextBlocks(text.slice(cursor, marker.start))
     }
 
-    const typeLabels: Record<string, string> = {
-      table: 'Table',
-      'markdown-table': 'Table',
-      image: 'Image',
-    }
+    if (marker.visibleInPreview) {
+      const typeLabels: Record<string, string> = {
+        table: 'Table',
+        'markdown-table': 'Table',
+        image: 'Image',
+      }
 
-    blocks.push({
-      id: `block-${blockIdx}`,
-      index: blockIdx++,
-      type: marker.type,
-      label: typeLabels[marker.type],
-      content: marker.content,
-      htmlContent: marker.type === 'table' ? marker.content : undefined,
-    })
+      blocks.push({
+        id: `block-${blockIdx}`,
+        index: blockIdx++,
+        type: marker.type,
+        label: typeLabels[marker.type],
+        content: marker.content,
+        htmlContent: marker.type === 'table' ? marker.content : undefined,
+      })
+    }
 
     cursor = marker.end
   }

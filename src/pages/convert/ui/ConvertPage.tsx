@@ -15,7 +15,10 @@ import { ChatModal } from '@/widgets/chat-modal'
 import { FloatingControlPanel } from '@/widgets/floating-control-panel'
 import { useUploadStore } from '@/features/file-upload'
 import { useUIStore } from '@/app/model/ui-store'
-import { useDocumentResult } from '@/entities/document'
+import {
+  useDocumentOriginalPreviewFile,
+  useDocumentResult,
+} from '@/entities/document'
 import { MOCK_DOCUMENT_RESULT } from '@/shared/lib/mock-document-result'
 
 // ── Batch Status Banner ──
@@ -74,7 +77,8 @@ function BatchStatusBanner({
 
 // ── Empty State ──
 
-const ACCEPTED_EXTENSIONS = '.hwp,.hwpx,.pdf,.png,.jpg,.jpeg,.bmp,.tiff'
+const ACCEPTED_EXTENSIONS =
+  '.hwp,.hwpx,.pdf,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.bmp,.tiff'
 
 const WORKFLOW_STEPS = [
   {
@@ -201,6 +205,10 @@ export function ConvertPage() {
   const selectedFile = files.find((f) => f.resultPath === selectedResultPath)
   const { data: documentResult, isLoading: isResultLoading } =
     useDocumentResult(selectedFile?.documentId)
+  const { data: originalPreviewFile } = useDocumentOriginalPreviewFile(
+    selectedFile?.documentId,
+    documentResult?.fileName ?? selectedFile?.file.name,
+  )
 
   const useMock = isMockMode && !selectedResultPath
   const displayFile = useMock ? 'mock' : selectedResultPath
@@ -307,7 +315,7 @@ export function ConvertPage() {
                     여기에 파일을 놓으세요
                   </p>
                   <p className="text-primary/60 mt-1 text-xs">
-                    HWP, HWPX, PDF, PNG, JPG, BMP, TIFF
+                    HWP, HWPX, PDF, Excel, CSV, PNG, JPG, BMP, TIFF
                   </p>
                 </div>
               </div>
@@ -317,7 +325,7 @@ export function ConvertPage() {
               <DocumentViewer
                 documentResult={displayResult}
                 isLoading={displayLoading}
-                originalFile={selectedFile?.file ?? null}
+                originalFile={originalPreviewFile ?? selectedFile?.file ?? null}
                 className="h-full"
               />
             ) : (
