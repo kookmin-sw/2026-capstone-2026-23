@@ -1,5 +1,4 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Lvs6kcL8)
-# Welcome to GitHub
 
 안녕하세요 여기는 2026년도 캡스톤 23조의 github 입니다 (^ ̥> ̫ < ̥^)
 
@@ -59,32 +58,6 @@ Luminar Document Parser는 사내 문서나 업무 문서를 효율적으로 분
 
 <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"> <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white"> <img src="https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white"> <img src="https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white"> <img src="https://img.shields.io/badge/pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white">
 
-
-### Frontend
-
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- TanStack Router
-- TanStack Query
-- Zustand
-- Axios
-- Playwright
-- Vitest
-
-### Backend
-
-- Python 3.12+
-- FastAPI
-- Uvicorn
-- Redis
-- RabbitMQ
-- SQLite
-- Docker
-- OpenAI API
-- Qwen2.5-VL
-- DeepSeek OCR
 
 ## 프로젝트 구조
 ```bash
