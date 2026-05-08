@@ -12,7 +12,10 @@ import {
 } from 'lucide-react'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { DocumentViewer } from '@/widgets/document-viewer'
-import { useDocumentOriginalFile, useDocumentResult } from '@/entities/document'
+import {
+  useDocumentOriginalPreviewFile,
+  useDocumentResult,
+} from '@/entities/document'
 import type { DocumentStatus } from '@/shared/types'
 
 interface FileDetailPageProps {
@@ -23,7 +26,7 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
   const navigate = useNavigate()
   const { data: result, isLoading } = useDocumentResult(fileId)
   const { data: originalFile, isLoading: isOriginalFileLoading } =
-    useDocumentOriginalFile(fileId, result?.fileName)
+    useDocumentOriginalPreviewFile(fileId, result?.fileName)
 
   const getStatusDisplay = (status: DocumentStatus) => {
     switch (status) {

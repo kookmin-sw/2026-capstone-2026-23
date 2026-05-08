@@ -293,7 +293,8 @@ export function ResultsPanel({
   )
 }
 
-const ACCEPTED_EXTENSIONS = '.hwp,.hwpx,.pdf,.png,.jpg,.jpeg,.bmp,.tiff'
+const ACCEPTED_EXTENSIONS =
+  '.hwp,.hwpx,.pdf,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.bmp,.tiff'
 
 const WORKFLOW_STEPS = [
   {
