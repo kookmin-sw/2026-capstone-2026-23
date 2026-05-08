@@ -74,7 +74,8 @@ function BatchStatusBanner({
 
 // ── Empty State ──
 
-const ACCEPTED_EXTENSIONS = '.hwp,.hwpx,.pdf,.png,.jpg,.jpeg,.bmp,.tiff'
+const ACCEPTED_EXTENSIONS =
+  '.hwp,.hwpx,.pdf,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.bmp,.tiff'
 
 const WORKFLOW_STEPS = [
   {
@@ -307,7 +308,7 @@ export function ConvertPage() {
                     여기에 파일을 놓으세요
                   </p>
                   <p className="text-primary/60 mt-1 text-xs">
-                    HWP, HWPX, PDF, PNG, JPG, BMP, TIFF
+                    HWP, HWPX, PDF, Excel, CSV, PNG, JPG, BMP, TIFF
                   </p>
                 </div>
               </div>

@@ -11,7 +11,7 @@ describe('FileUploader', () => {
   it('지원 파일 형식이 표시된다', () => {
     render(<FileUploader onFilesAdded={vi.fn()} />)
     expect(
-      screen.getByText('HWP, HWPX, PDF, PNG, JPG, BMP, TIFF'),
+      screen.getByText('HWP, HWPX, PDF, Excel, CSV, PNG, JPG, BMP, TIFF'),
     ).toBeInTheDocument()
   })
 

@@ -12,6 +12,7 @@ export {
   uploadFiles,
   downloadFile,
   downloadDocumentOriginal,
+  previewDocumentOriginal,
   getDocuments,
   getSupportedFileTypes,
   getDocumentResult,
