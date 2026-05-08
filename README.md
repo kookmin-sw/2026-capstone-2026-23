@@ -65,6 +65,8 @@ Luminar Document Parser는 사내 문서나 업무 문서를 효율적으로 분
 - DeepSeek OCR
 
 ## 프로젝트 구조
+```bash
+
 .
 ├── frontend/
 │   ├── src/
