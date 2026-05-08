@@ -55,7 +55,7 @@ export function useJobItems(jobId: string | undefined, enabled = true) {
       return data as JobItemsData
     },
     enabled: !!jobId && enabled,
-    staleTime: 5000,
+    refetchInterval: 2000,
   })
 }
 

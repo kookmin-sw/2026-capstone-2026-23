@@ -59,14 +59,17 @@ export function useConversionLogic() {
   useEffect(() => {
     if (!jobData) return
 
-    const { status, completedDocuments, totalDocuments, failedDocuments } =
-      jobData
-    if (totalDocuments == null || completedDocuments == null) return
+    const { status } = jobData
+    const totalDocuments = jobData.totalItems ?? jobData.totalDocuments ?? 0
+    const completedDocuments =
+      jobData.completedItems ?? jobData.completedDocuments ?? 0
+    const failedDocuments = jobData.failedItems ?? jobData.failedDocuments ?? 0
+    if (totalDocuments <= 0) return
+
+    const finishedDocuments = completedDocuments + failedDocuments
     const progress =
       totalDocuments > 0
-        ? Math.floor(
-            ((completedDocuments + failedDocuments) / totalDocuments) * 100,
-          )
+        ? Math.floor((finishedDocuments / totalDocuments) * 100)
         : 0
 
     setBatchStatus(
