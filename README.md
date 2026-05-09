@@ -44,22 +44,22 @@ DURMONT는 **Document Understanding & Representation Model Of Next Technology**�
 
 1. 파서란 무엇인가?
 
-<img width="1786" height="1172" alt="Image" src="https://github.com/user-attachments/assets/57da5d0a-9b77-4216-b000-141b7df93ca7" />
+<img width="893" height="586" alt="Image" src="https://github.com/user-attachments/assets/57da5d0a-9b77-4216-b000-141b7df93ca7" />
 
 문서 구조 추출 / 분석
 
-<img width="1724" height="1172" alt="Image" src="https://github.com/user-attachments/assets/164b3a71-c405-4a11-a811-fac658c508a6" />
+<img width="862" height="586" alt="Image" src="https://github.com/user-attachments/assets/164b3a71-c405-4a11-a811-fac658c508a6" />
 
 표, 이미지 등 구조 인식
 
 2. 서비스 개발 배경
 
-<img width="1554" height="832" alt="Image" src="https://github.com/user-attachments/assets/622f58f2-1866-4083-9eb8-3e12f65a1ed2" /><img width="1554" height="318" alt="Image" src="https://github.com/user-attachments/assets/78b47fb9-58f4-4ada-bffe-bd067067d5e9" />
+<img width="777" height="416" alt="Image" src="https://github.com/user-attachments/assets/622f58f2-1866-4083-9eb8-3e12f65a1ed2" /><img width="1554" height="318" alt="Image" src="https://github.com/user-attachments/assets/78b47fb9-58f4-4ada-bffe-bd067067d5e9" />
 대한민국의 포부는 'AI' 3대 강국
-<img width="1768" height="966" alt="Image" src="https://github.com/user-attachments/assets/f5efe3c5-1596-4f7f-9057-5dff7f204814" />
+<img width="884" height="483" alt="Image" src="https://github.com/user-attachments/assets/f5efe3c5-1596-4f7f-9057-5dff7f204814" />
 부처 별 문서를 정확하게 읽고, 안전하게 연결하는 RAG 인프라 필요
 
-<img width="1534" height="374" alt="Image" src="https://github.com/user-attachments/assets/c23e153b-1564-47d6-b7a9-1ffde415f5b4" />
+<img width="767" height="187" alt="Image" src="https://github.com/user-attachments/assets/c23e153b-1564-47d6-b7a9-1ffde415f5b4" />
 HWP, HWXP 등 한국형 문서를 인식하는 paser의 필요성 대두
                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 
