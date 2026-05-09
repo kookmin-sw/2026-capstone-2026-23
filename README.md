@@ -141,9 +141,23 @@ HWP, HWXP 등 한국형 문서를 인식하는 paser의 필요성 대두
 
 <br />
 
-## 개발환경
->>개발환경에 대한 소개
->>
+## 🖥 개발 환경
+
+| 분류 | 기술 |
+| --- | --- |
+| OS | Windows 11 / macOS / Ubuntu Linux |
+| Frontend | React, TypeScript, Vite |
+| Styling | Tailwind CSS, shadcn/ui |
+| State / Data | Zustand, TanStack Query |
+| Backend | Python 3.12+, FastAPI, Uvicorn |
+| AI / VLM | OpenAI API, Qwen2.5-VL, DeepSeek OCR |
+| Queue | RabbitMQ |
+| Cache | Redis |
+| Database / Storage | SQLite |
+| API 통신 | RESTful API, WebSocket |
+| DevOps | Docker, Docker Compose |
+| Package Manager | npm, pip |
+
 >><br/>
 
 
