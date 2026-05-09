@@ -121,7 +121,16 @@ HWP, HWXP 등 한국형 문서를 인식하는 paser의 필요성 대두
 >> 약간의 설명이랑 같이
 <img width="3732" height="1140" alt="Image" src="https://github.com/user-attachments/assets/c6e0ba30-a9a6-44f7-8a55-241ff24bbfe3" />
 
-<br/>
+<br />
+데모 및 프리뷰
+문서 업로드
+<p align="center"> <img width="80%" alt="문서 업로드 화면" src="./docs/images/upload-preview.png" /> </p>
+변환 결과 미리보기
+<p align="center"> <img width="80%" alt="변환 결과 미리보기" src="./docs/images/result-preview.png" /> </p>
+RAG 질의응답
+<p align="center"> <img width="80%" alt="RAG 질의응답 화면" src="./docs/images/rag-preview.png" /> </p> <br />
+
+
 ## 🛠 기술 스택
 
 ### Frontend
@@ -241,14 +250,7 @@ print(result)
 자세한 API 명세는 Swagger 문서에서 확인할 수 있습니다.
 
 http://localhost:8000/docs
-<br />
-데모 및 프리뷰
-문서 업로드
-<p align="center"> <img width="80%" alt="문서 업로드 화면" src="./docs/images/upload-preview.png" /> </p>
-변환 결과 미리보기
-<p align="center"> <img width="80%" alt="변환 결과 미리보기" src="./docs/images/result-preview.png" /> </p>
-RAG 질의응답
-<p align="center"> <img width="80%" alt="RAG 질의응답 화면" src="./docs/images/rag-preview.png" /> </p> <br />
+
 
 ## 🤝 협업 방식
 
