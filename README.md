@@ -143,7 +143,7 @@ RAG 질의응답
 
 ### AI / Document Processing
 
-<img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white"> <img src="https://img.shields.io/badge/Qwen2.5--VL-1A73E8?style=for-the-badge&logo=alibabacloud&logoColor=white"> <img src="https://img.shields.io/badge/DeepSeek_OCR-4D6BFF?style=for-the-badge&logoColor=white"> <img src="https://img.shields.io/badge/HWP/HWPX_Document-005BAC?style=for-the-badge&logoColor=white"> <img src="https://img.shields.io/badge/PDF_Parsing-B30B00?style=for-the-badge&logo=adobeacrobatreader&logoColor=white">
+<img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white"> <img src="https://img.shields.io/badge/Qwen2.5--VL-1A73E8?style=for-the-badge&logo=alibabacloud&logoColor=white"> <img src="https://img.shields.io/badge/HWP/HWPX_Document-005BAC?style=for-the-badge&logoColor=white"> <img src="https://img.shields.io/badge/PDF_Parsing-B30B00?style=for-the-badge&logo=adobeacrobatreader&logoColor=white">
 
 ### DevOps & Testing
 
@@ -160,7 +160,7 @@ RAG 질의응답
 | Styling | Tailwind CSS, shadcn/ui |
 | State / Data | Zustand, TanStack Query |
 | Backend | Python 3.12+, FastAPI, Uvicorn |
-| AI / VLM | OpenAI API, Qwen2.5-VL, DeepSeek OCR |
+| AI / VLM | OpenAI API, Qwen2.5-VL |
 | Queue | RabbitMQ |
 | Cache | Redis |
 | Database / Storage | SQLite |
