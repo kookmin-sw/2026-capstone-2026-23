@@ -161,6 +161,10 @@ HWP, HWXP 등 한국형 문서를 인식하는 paser의 필요성 대두
 
 <br/>
 
+## 시스템 아키텍처
+<br/>
+<img width="3560" height="1764" alt="Image" src="https://github.com/user-attachments/assets/3a9a7bc5-8463-4e6f-a71a-5b5206f35a2f" />
+<br/>
 
 ## 설치방법
 
