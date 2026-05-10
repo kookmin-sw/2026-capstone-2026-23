@@ -36,23 +36,30 @@ async function collectEntryFiles(entry: FileSystemEntry): Promise<File[]> {
 export async function collectDroppedFiles(
   dataTransfer: DataTransfer,
 ): Promise<File[]> {
-  const files: File[] = []
   const items = Array.from(dataTransfer.items ?? [])
+  const directFiles = Array.from(dataTransfer.files ?? [])
+  const entries: FileSystemEntry[] = []
+  const files: File[] = []
 
   for (const item of items) {
     const entry = item.webkitGetAsEntry?.()
 
     if (entry) {
-      files.push(...(await collectEntryFiles(entry)))
+      entries.push(entry)
     } else if (item.kind === 'file') {
       const file = item.getAsFile()
       if (file) files.push(file)
     }
   }
 
+  if (entries.length > 0) {
+    const entryFiles = await Promise.all(entries.map(collectEntryFiles))
+    files.push(...entryFiles.flat())
+  }
+
   if (files.length > 0) {
     return files
   }
 
-  return Array.from(dataTransfer.files ?? [])
+  return directFiles
 }
