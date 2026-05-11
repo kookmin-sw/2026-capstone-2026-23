@@ -152,6 +152,37 @@ function hideMetadataDivider(text: string): string {
   return `${cleanedMetadataLines.join('\n')}${contentSection}`
 }
 
+async function copyToClipboard(text: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(text)
+    return
+  } catch {
+    // Some browsers reject Clipboard API calls outside secure contexts or
+    // restrictive permission policies. Keep a user-gesture fallback.
+  }
+
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.setAttribute('readonly', '')
+  textarea.style.position = 'fixed'
+  textarea.style.top = '0'
+  textarea.style.left = '-9999px'
+  textarea.style.opacity = '0'
+
+  document.body.appendChild(textarea)
+  textarea.focus()
+  textarea.select()
+
+  try {
+    const didCopy = document.execCommand('copy')
+    if (!didCopy) {
+      throw new Error('copy command was not accepted')
+    }
+  } finally {
+    document.body.removeChild(textarea)
+  }
+}
+
 // ── Block type styling ──
 
 const BLOCK_STYLES: Record<
@@ -240,7 +271,7 @@ export function DocumentViewer({
     if (!copyText) return
 
     try {
-      await navigator.clipboard.writeText(copyText)
+      await copyToClipboard(copyText)
       setIsCopied(true)
       toast.success(
         activeTab === 'json' ? 'JSON을 복사했습니다.' : 'HTML을 복사했습니다.',
