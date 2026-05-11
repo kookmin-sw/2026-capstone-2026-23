@@ -167,10 +167,20 @@ export function useConversionLogic() {
   const handleStop = async () => {
     if (!jobId) return
     try {
-      await cancelMutation.mutateAsync(jobId)
+      await cancelMutation.mutateAsync({ jobId })
       setBatchStatus('중지 요청이 반영되었습니다.')
     } catch {
       setBatchStatus('중지 요청 실패')
+    }
+  }
+
+  const handleForceStop = async () => {
+    if (!jobId) return
+    try {
+      await cancelMutation.mutateAsync({ jobId, force: true })
+      setBatchStatus('강제 취소 요청이 반영되었습니다.')
+    } catch {
+      setBatchStatus('강제 취소 요청 실패')
     }
   }
 
@@ -215,6 +225,7 @@ export function useConversionLogic() {
     handleFileSelect,
     handleConvert,
     handleStop,
+    handleForceStop,
     handleResume,
     setModelId,
     setParallelCount,

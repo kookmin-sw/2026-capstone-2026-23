@@ -26,11 +26,11 @@ function hasActiveDocuments(
   )
 }
 
-export function useDocuments() {
+export function useDocuments(limit = 50) {
   return useQuery({
-    queryKey: ['documents'],
+    queryKey: ['documents', { limit }],
     queryFn: async () => {
-      const { data } = await getDocuments()
+      const { data } = await getDocuments(limit)
       return data as { items: DocumentItem[]; nextCursor: string | null }
     },
     refetchInterval: (query) =>

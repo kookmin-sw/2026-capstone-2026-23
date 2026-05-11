@@ -9,13 +9,17 @@ import {
   Loader2,
   XCircle,
   Upload,
+  OctagonX,
+  Square,
 } from 'lucide-react'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { DocumentViewer } from '@/widgets/document-viewer'
 import {
+  useDocuments,
   useDocumentOriginalPreviewFile,
   useDocumentResult,
 } from '@/entities/document'
+import { useCancelJob } from '@/entities/parser'
 import { getDocumentOriginalDownloadUrl } from '@/shared/api'
 import type { DocumentStatus } from '@/shared/types'
 
@@ -25,9 +29,38 @@ interface FileDetailPageProps {
 
 export function FileDetailPage({ fileId }: FileDetailPageProps) {
   const navigate = useNavigate()
-  const { data: result, isLoading } = useDocumentResult(fileId)
+  const {
+    data: result,
+    isLoading,
+    refetch: refetchDocumentResult,
+  } = useDocumentResult(fileId)
+  const { data: documentsData } = useDocuments(10000)
   const { data: originalFile, isLoading: isOriginalFileLoading } =
     useDocumentOriginalPreviewFile(fileId, result?.fileName)
+  const cancelMutation = useCancelJob()
+
+  const documentItem = documentsData?.items.find(
+    (item) => item.documentId === fileId,
+  )
+  const currentStatus = documentItem?.latestStatus ?? result?.status
+  const activeStatuses = new Set<DocumentStatus>([
+    'UPLOADED',
+    'QUEUED',
+    'PROCESSING',
+    'PREPROCESSING',
+    'GPU_WAITING',
+    'GPU_PROCESSING',
+    'POSTPROCESSING',
+  ])
+  const jobId = documentItem?.jobId ?? result?.jobId ?? null
+  const canCancelJob =
+    !!jobId && !!currentStatus && activeStatuses.has(currentStatus)
+
+  const handleCancelJob = async (force = false) => {
+    if (!jobId) return
+    await cancelMutation.mutateAsync({ jobId, force })
+    await refetchDocumentResult()
+  }
 
   const getStatusDisplay = (status: DocumentStatus) => {
     switch (status) {
@@ -123,7 +156,7 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
     )
   }
 
-  const statusDisplay = getStatusDisplay(result.status)
+  const statusDisplay = getStatusDisplay(currentStatus ?? result.status)
   const StatusIcon = statusDisplay.icon
 
   return (
@@ -152,7 +185,27 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
           </div>
         </div>
 
-        <div className="text-muted-foreground flex items-center gap-4 text-xs">
+        <div className="text-muted-foreground flex items-center gap-3 text-xs">
+          {canCancelJob && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => void handleCancelJob(false)}
+                disabled={cancelMutation.isPending}
+                className="border-border hover:bg-muted text-muted-foreground flex min-h-8 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium transition-colors disabled:pointer-events-none disabled:opacity-50"
+              >
+                <Square className="h-3.5 w-3.5" />
+                중지
+              </button>
+              <button
+                onClick={() => void handleCancelJob(true)}
+                disabled={cancelMutation.isPending}
+                className="border-destructive/45 text-destructive hover:bg-destructive/10 flex min-h-8 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold transition-colors disabled:pointer-events-none disabled:opacity-50"
+              >
+                <OctagonX className="h-3.5 w-3.5" />
+                강제 취소
+              </button>
+            </div>
+          )}
           <span className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" />
             {result.modelCode}

@@ -27,6 +27,7 @@ export function ConversionPanel() {
     handleFileSelect,
     handleConvert,
     handleStop,
+    handleForceStop,
     handleResume,
     setModelId,
     setParallelCount,
@@ -120,6 +121,7 @@ export function ConversionPanel() {
             <ActionButtons
               onConvert={handleConvert}
               onStop={handleStop}
+              onForceStop={handleForceStop}
               onResume={handleResume}
               isConverting={isConverting}
               hasFiles={hasFiles}

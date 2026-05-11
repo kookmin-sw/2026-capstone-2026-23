@@ -45,8 +45,10 @@ export const getJobItems = (jobId: string) =>
   api.get<JobItemsData>(`/parser/jobs/${jobId}/items`)
 
 // Job 취소 (POST /parser/jobs/{jobId}/cancel)
-export const cancelJob = (jobId: string) =>
-  api.post<JobStatusData>(`/parser/jobs/${jobId}/cancel`)
+export const cancelJob = (jobId: string, force = false) =>
+  api.post<JobStatusData>(`/parser/jobs/${jobId}/cancel`, null, {
+    params: force ? { force: true } : undefined,
+  })
 
 // 문서 처리 진행률 (GET /parser/documents/{documentId}/progress)
 export const getDocumentProgress = (documentId: string) =>

@@ -153,6 +153,7 @@ export interface JobStatusData {
 export interface DocumentResult {
   documentId: string
   status: DocumentStatus
+  jobId?: string | null
   fileName: string
   modelCode: string
   txt: {

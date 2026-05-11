@@ -62,12 +62,19 @@ export function useCancelJob() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (jobId: string) => {
-      const { data } = await cancelJob(jobId)
+    mutationFn: async ({
+      jobId,
+      force = false,
+    }: {
+      jobId: string
+      force?: boolean
+    }) => {
+      const { data } = await cancelJob(jobId, force)
       return data as JobStatusData
     },
-    onSuccess: (_, jobId) => {
+    onSuccess: (_, { jobId }) => {
       void queryClient.invalidateQueries({ queryKey: ['jobs', jobId] })
+      void queryClient.invalidateQueries({ queryKey: ['jobs', jobId, 'items'] })
     },
   })
 }
