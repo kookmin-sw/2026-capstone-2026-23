@@ -37,7 +37,6 @@ export function useJobStatus(jobId: string | undefined, enabled = true) {
       if (
         status === 'COMPLETED' ||
         status === 'FAILED' ||
-        status === 'CANCELLED' ||
         status === 'CANCELED'
       ) {
         return false
