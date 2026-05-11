@@ -38,6 +38,7 @@ interface FloatingControlPanelProps {
   onMockModeChange: (mock: boolean) => void
   onConvert: () => void
   onStop: () => void
+  onForceStop: () => void
   onResume: () => void
   isConverting: boolean
   hasFiles: boolean
@@ -65,6 +66,7 @@ export function FloatingControlPanel({
   onMockModeChange,
   onConvert,
   onStop,
+  onForceStop,
   onResume,
   isConverting,
   hasFiles,
@@ -257,6 +259,7 @@ export function FloatingControlPanel({
             <ActionButtons
               onConvert={onConvert}
               onStop={onStop}
+              onForceStop={onForceStop}
               onResume={onResume}
               isConverting={isConverting}
               hasFiles={hasFiles}

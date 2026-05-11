@@ -332,6 +332,7 @@ export function ConvertPage() {
           onMockModeChange={logic.setIsMockMode}
           onConvert={logic.handleConvert}
           onStop={logic.handleStop}
+          onForceStop={logic.handleForceStop}
           onResume={logic.handleResume}
           isConverting={logic.isConverting}
           hasFiles={logic.hasFiles}

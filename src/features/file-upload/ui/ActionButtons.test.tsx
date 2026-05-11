@@ -5,6 +5,7 @@ import { ActionButtons } from './ActionButtons'
 const defaultProps = {
   onConvert: vi.fn(),
   onStop: vi.fn(),
+  onForceStop: vi.fn(),
   onResume: vi.fn(),
   isConverting: false,
   hasFiles: true,
@@ -40,6 +41,19 @@ describe('ActionButtons', () => {
     )
     fireEvent.click(screen.getByText('중지').closest('button')!)
     expect(onStop).toHaveBeenCalledOnce()
+  })
+
+  it('강제 취소 클릭 시 onForceStop이 호출된다', () => {
+    const onForceStop = vi.fn()
+    render(
+      <ActionButtons
+        {...defaultProps}
+        isConverting={true}
+        onForceStop={onForceStop}
+      />,
+    )
+    fireEvent.click(screen.getByText('강제 취소').closest('button')!)
+    expect(onForceStop).toHaveBeenCalledOnce()
   })
 
   it('이어서 클릭 시 onResume이 호출된다', () => {
