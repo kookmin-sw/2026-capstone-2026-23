@@ -14,12 +14,7 @@ import {
 } from '@/shared/lib/mock-document-result'
 import type { DocumentItem, DocumentResult, UploadedFile } from '@/shared/types'
 
-const TERMINAL_DOCUMENT_STATUSES = new Set([
-  'COMPLETED',
-  'FAILED',
-  'CANCELLED',
-  'CANCELED',
-])
+const TERMINAL_DOCUMENT_STATUSES = new Set(['COMPLETED', 'FAILED', 'CANCELED'])
 
 function hasActiveDocuments(
   data: { items: DocumentItem[]; nextCursor: string | null } | undefined,

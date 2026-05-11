@@ -24,7 +24,6 @@ export type DocumentStatus =
   | 'POSTPROCESSING'
   | 'COMPLETED'
   | 'FAILED'
-  | 'CANCELLED'
   | 'CANCELED'
 
 // ── Job 상태 ──
@@ -35,7 +34,6 @@ export type JobStatus =
   | 'CANCELLING'
   | 'COMPLETED'
   | 'FAILED'
-  | 'CANCELLED'
   | 'CANCELED'
 
 // ── 모델 ──
@@ -135,7 +133,7 @@ export interface JobStatusData {
   jobId: string
   status: JobStatus
   cancelRequested: boolean
-  cancelledAt?: string | null
+  canceledAt?: string | null
   totalItems?: number
   queuedItems?: number
   processingItems?: number

@@ -64,7 +64,7 @@ export function FileDetailPage({ fileId }: FileDetailPageProps) {
           color: 'text-[#684e00]',
           bgColor: 'bg-[#fddc69]/30',
         }
-      case 'CANCELLED':
+      case 'CANCELED':
         return {
           icon: XCircle,
           text: '취소',
