@@ -1,2 +1,34 @@
-// 설정 관련 API 훅은 백엔드에 설정 엔드포인트가 추가되면 여기에 구현
-// 현재는 parser 엔티티의 useConvertDocuments를 사용
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+
+import { getStorageSettings, updateStorageSettings } from '@/shared/api'
+import type { StorageSettings } from '@/shared/types'
+
+const storageSettingsKey = ['admin', 'storage'] as const
+
+export function useStorageSettings(enabled = true) {
+  return useQuery({
+    queryKey: storageSettingsKey,
+    enabled,
+    refetchInterval: 30_000,
+    queryFn: async () => {
+      const { data } = await getStorageSettings()
+      return data as StorageSettings
+    },
+  })
+}
+
+export function useUpdateStorageSettings() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ storagePath }: { storagePath: string }) => {
+      const { data } = await updateStorageSettings(storagePath)
+      return data as StorageSettings
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(storageSettingsKey, data)
+      queryClient.invalidateQueries({ queryKey: storageSettingsKey })
+      queryClient.invalidateQueries({ queryKey: ['monitoring', 'system'] })
+    },
+  })
+}

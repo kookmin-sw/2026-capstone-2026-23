@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
 import {
   Save,
   Shield,
@@ -18,19 +19,20 @@ import { UnconnectedBadge } from '@/shared/ui/unconnected-badge'
 import { Card, CardContent } from '@/shared/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 import { useUIStore } from '@/app/model/ui-store'
+import { useStorageSettings, useUpdateStorageSettings } from '@/entities/settings'
 import { useCurrentUser } from '@/entities/session'
 import { UserManagement, PasswordChangeDialog } from '@/features/auth'
 
 const inputClass =
   'border-border bg-card text-foreground focus:border-primary focus:ring-primary/20 h-9 w-full rounded-lg border px-3 text-sm transition-colors focus:ring-2 focus:outline-none'
 
+const formatGB = (bytes?: number) =>
+  typeof bytes === 'number' ? `${(bytes / 1024 ** 3).toFixed(1)} GB` : '-'
+
 export function SettingsPage() {
   const { isMockMode, setIsMockMode } = useUIStore()
   const [appTitle, setAppTitle] = useState('Luminir Document Parser')
-  const storageUsedGB = 847.3
-  const storageLimitGB = 1000
-  const storagePercent = (storageUsedGB / storageLimitGB) * 100
-  const [storagePath, setStoragePath] = useState('/var/luminir/data')
+  const [storagePathDraft, setStoragePathDraft] = useState<string | null>(null)
   const [saveQALogs, setSaveQALogs] = useState(true)
   const [duplicateFileHandling, setDuplicateFileHandling] = useState<
     'overwrite' | 'create-new'
@@ -42,6 +44,34 @@ export function SettingsPage() {
     currentUser?.role === 'SUPERUSER' || currentUser?.role === 'ADMIN'
   const fullName = currentUser?.name ?? ''
   const userId = currentUser?.loginId ?? ''
+  const storageSettings = useStorageSettings(isAdmin)
+  const updateStorage = useUpdateStorageSettings()
+  const storageUsage = storageSettings.data?.usage
+  const storagePercent = storageUsage?.usagePercent ?? 0
+  const storageUsedLabel = formatGB(storageUsage?.usedBytes)
+  const storageLimitLabel = formatGB(storageUsage?.totalBytes)
+  const storagePercentLabel = storageUsage
+    ? `${storagePercent.toFixed(1)}%`
+    : '-'
+  const storagePath = storagePathDraft ?? storageSettings.data?.storagePath ?? ''
+
+  const handleStorageSave = () => {
+    const nextStoragePath = storagePath.trim()
+    if (!nextStoragePath) {
+      toast.error('Storage path is required.')
+      return
+    }
+
+    updateStorage.mutate(
+      { storagePath: nextStoragePath },
+      {
+        onSuccess: () => {
+          setStoragePathDraft(nextStoragePath)
+          toast.success('Storage settings saved.')
+        },
+      },
+    )
+  }
 
   const getStorageColor = () => {
     if (storagePercent >= 90)
@@ -373,7 +403,9 @@ export function SettingsPage() {
                           <span
                             className={`text-sm font-semibold ${storageColor.text}`}
                           >
-                            {storageUsedGB.toFixed(1)} GB
+                            {storageSettings.isLoading
+                              ? '-'
+                              : storageUsedLabel}
                           </span>
                         </div>
                         <div className="bg-muted h-2.5 w-full overflow-hidden rounded-full">
@@ -386,12 +418,17 @@ export function SettingsPage() {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-muted-foreground text-xs">
-                            전체 {storageLimitGB} GB
+                            전체{' '}
+                            {storageSettings.isLoading
+                              ? '-'
+                              : storageLimitLabel}
                           </span>
                           <span
                             className={`text-xs font-semibold ${storageColor.text}`}
                           >
-                            {storagePercent.toFixed(1)}%
+                            {storageSettings.isLoading
+                              ? '-'
+                              : storagePercentLabel}
                           </span>
                         </div>
                       </div>
@@ -407,16 +444,20 @@ export function SettingsPage() {
                           <input
                             type="text"
                             value={storagePath}
-                            onChange={(e) => setStoragePath(e.target.value)}
+                            onChange={(e) => setStoragePathDraft(e.target.value)}
                             className={`${inputClass} pl-10`}
                           />
                         </div>
-                        <UnconnectedBadge>
-                          <Button>
-                            <Save className="mr-1.5 h-3.5 w-3.5" />
-                            저장
-                          </Button>
-                        </UnconnectedBadge>
+                        <Button
+                          type="button"
+                          disabled={
+                            storageSettings.isLoading || updateStorage.isPending
+                          }
+                          onClick={handleStorageSave}
+                        >
+                          <Save className="mr-1.5 h-3.5 w-3.5" />
+                          {updateStorage.isPending ? 'Saving...' : '저장'}
+                        </Button>
                       </div>
                     </div>
                   </CardContent>
