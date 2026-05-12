@@ -314,7 +314,12 @@ export function DocumentTable({ onFileSelect }: DocumentTableProps) {
                         </p>
                       </td>
                       <td className="border-border border-b px-4 py-3.5">
-                        <StatusBadge status={doc.latestStatus} />
+                        <StatusBadge
+                          status={doc.latestStatus}
+                          progressPercent={doc.progressPercent}
+                          currentPage={doc.currentPage}
+                          totalPages={doc.totalPages}
+                        />
                       </td>
                       <td className="border-border border-b px-4 py-3.5">
                         <span className="text-muted-foreground text-sm tabular-nums">

@@ -108,7 +108,12 @@ export function RecentJobs({
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <StatusBadge status={item.latestStatus} />
+                      <StatusBadge
+                        status={item.latestStatus}
+                        progressPercent={item.progressPercent}
+                        currentPage={item.currentPage}
+                        totalPages={item.totalPages}
+                      />
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-muted-foreground text-sm">

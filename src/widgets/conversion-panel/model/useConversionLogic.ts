@@ -1,12 +1,21 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useUploadStore } from '@/features/file-upload'
 import {
   useConvertDocuments,
   useJobStatus,
   useJobItems,
   useCancelJob,
+  useJobProgressStream,
 } from '@/entities/parser'
 import { useUIStore } from '@/app/model/ui-store'
+import type { JobProgressEvent } from '@/shared/types'
+
+const TERMINAL_STATUSES = new Set(['COMPLETED', 'FAILED', 'CANCELLED', 'CANCELED'])
+
+function clampPercent(value: number | null | undefined) {
+  if (value == null || Number.isNaN(value)) return 0
+  return Math.min(100, Math.max(0, Math.floor(value)))
+}
 
 export function useConversionLogic() {
   const {
@@ -39,6 +48,80 @@ export function useConversionLogic() {
   const { data: jobData } = useJobStatus(jobId ?? undefined, isConverting)
   const { data: jobItemsData } = useJobItems(jobId ?? undefined, isConverting)
   const itemsMappedRef = useRef(false)
+
+  const handleProgressEvent = useCallback(
+    (event: JobProgressEvent) => {
+      if (!event.documentId) {
+        if (event.jobPercent != null) {
+          setBatchStatus(`처리 중: ${clampPercent(event.jobPercent)}%`)
+        }
+        if (event.status && TERMINAL_STATUSES.has(event.status)) {
+          setIsConverting(false)
+        }
+        return
+      }
+
+      const currentFiles = useUploadStore.getState().files
+      const target = currentFiles.find(
+        (file) => file.documentId === event.documentId,
+      )
+      if (!target) return
+
+      const progress = clampPercent(
+        event.documentPercent ?? event.progressPercent ?? event.percent,
+      )
+      const nextProgress =
+        event.status === 'COMPLETED'
+          ? 100
+          : Math.max(target.progress ?? 0, progress)
+
+      if (event.status === 'COMPLETED') {
+        updateFile(target.id, {
+          status: 'completed',
+          progress: 100,
+          resultPath: event.documentId,
+          currentPage: event.currentPage ?? target.currentPage,
+          totalPages: event.totalPages ?? target.totalPages,
+        })
+        if (!selectedResultPath) {
+          setSelectedResultPath(event.documentId)
+        }
+        return
+      }
+
+      if (event.status === 'FAILED') {
+        updateFile(target.id, {
+          status: 'failed',
+          progress: nextProgress,
+          error: event.error?.message ?? '변환 실패',
+        })
+        return
+      }
+
+      if (event.status === 'CANCELLED' || event.status === 'CANCELED') {
+        updateFile(target.id, {
+          status: 'failed',
+          progress: nextProgress,
+          error: '변환 취소',
+        })
+        return
+      }
+
+      updateFile(target.id, {
+        status: 'converting',
+        progress: nextProgress,
+        currentPage: event.currentPage ?? target.currentPage,
+        totalPages: event.totalPages ?? target.totalPages,
+      })
+
+      if (event.jobPercent != null) {
+        setBatchStatus(`처리 중: ${clampPercent(event.jobPercent)}%`)
+      }
+    },
+    [selectedResultPath, setBatchStatus, setIsConverting, setSelectedResultPath, updateFile],
+  )
+
+  useJobProgressStream(jobId ?? undefined, isConverting, handleProgressEvent)
 
   // Job items에서 documentId 매핑 (한 번만 실행)
   useEffect(() => {
@@ -114,7 +197,10 @@ export function useConversionLogic() {
       // 진행 중 — 각 파일의 progress 업데이트
       files.forEach((f) => {
         if (f.status === 'pending' || f.status === 'converting') {
-          updateFile(f.id, { status: 'converting', progress })
+          updateFile(f.id, {
+            status: 'converting',
+            progress: Math.max(f.progress ?? 0, progress),
+          })
         }
       })
     }
@@ -124,7 +210,15 @@ export function useConversionLogic() {
   const completedCount = files.filter((f) => f.status === 'completed').length
   const totalCount = files.length
   const overallProgress =
-    totalCount > 0 ? Math.floor((completedCount / totalCount) * 100) : 0
+    totalCount > 0
+      ? Math.floor(
+          files.reduce(
+            (sum, file) =>
+              sum + (file.status === 'completed' ? 100 : (file.progress ?? 0)),
+            0,
+          ) / totalCount,
+        )
+      : 0
 
   const selectedFile = files.find((f) => f.resultPath === selectedResultPath)
 
