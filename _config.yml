@@ -1,23 +1,4 @@
-title: "Durmont:T"
-description: "Durmont 프로젝트 github page"
-plugins:
-  - jekyll-remote-theme    
-  - jekyll-redirect-from
-remote_theme: just-the-docs/just-the-docs
-# GitHub Pages URL 설정
+title: "Durmon:T"
+description: "Durmon:T GitHub Pages"
 url: "https://kookmin-sw.github.io"
 baseurl: "/2026-capstone-23"
-
-search_enabled: false
-aux_links:
-  Github: https://github.com/kookmin-sw/2026-capstone-23
-
-# 사이드바 설정
-aux_links_new_tab: true
-heading_anchors: true
-
-# 로고 설정
-logo: "/assets/images/"
-
-# footer
-footer_content: "© 2026 Durmont:T. 국민대학교 캡스톤 2026-23팀"
