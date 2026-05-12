@@ -686,7 +686,7 @@ dashboard.js  439 KB (118 KB gzip)  ← 이 중 ~400KB가 recharts
 
 ```
 일반 환경:
-  브라우저 → fonts.googleapis.com → 폰트 다운로드 ✅
+  브라우저 → fonts.googleapis.com → 폰트 다운로드
 
 폐쇄망 환경 (보안이 중요한 기관/기업 내부):
   브라우저 → fonts.googleapis.com → ❌ 외부 접근 차단
@@ -886,7 +886,7 @@ export function Dashboard() { ... }
 // eslint-plugin-react-refresh: "Fast Refresh only works with component exports"
 // 코드 수정 시 전체 페이지가 리로드되어 상태가 날아감
 
-// ✅ 분리해야 함
+//  분리해야 함
 // config.ts → export const API_URL = '/api'
 // Dashboard.tsx → export function Dashboard() { ... }
 ```
