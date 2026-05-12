@@ -23,6 +23,8 @@ export const downloadFile = (fileId: string) =>
 export const downloadDocumentOriginal = (documentId: string) =>
   api.get<Blob>(`/documents/${documentId}/download`, { responseType: 'blob' })
 
+export const downloadDocument = downloadDocumentOriginal
+
 // 문서 원본 미리보기 (GET /documents/{documentId}/original)
 export const previewDocumentOriginal = (documentId: string) =>
   api.get<Blob>(`/documents/${documentId}/original`, { responseType: 'blob' })
