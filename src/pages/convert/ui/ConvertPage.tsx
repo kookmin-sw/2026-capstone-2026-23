@@ -350,7 +350,7 @@ export function ConvertPage() {
         className="pointer-events-none fixed bottom-0 z-50 transition-[right] duration-300 ease-out"
         style={{ right: 'calc(var(--convert-sidebar-w, 280px) + 0.75rem)' }}
       >
-        {displayFile && !isChatOpen && (
+        {displayFile && !useMock && !isChatOpen && (
           <button
             onClick={() => setIsChatOpen(true)}
             className="bg-primary hover:bg-primary/85 pointer-events-auto mb-3 rounded-full p-4 text-white shadow-2xl transition-all hover:scale-110"
@@ -362,9 +362,12 @@ export function ConvertPage() {
         <div className="pointer-events-auto">
           <ChatModal
             variant="embedded"
-            isOpen={isChatOpen}
+            isOpen={isChatOpen && !useMock}
             onClose={() => setIsChatOpen(false)}
-            selectedFile={selectedResultPath}
+            selectedFile={displayFile}
+            documentId={selectedFile?.documentId ?? selectedResultPath}
+            documentPath={displayResult?.txt.path}
+            fileName={displayResult?.fileName ?? selectedFile?.file.name}
           />
         </div>
       </div>

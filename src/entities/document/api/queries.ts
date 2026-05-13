@@ -8,13 +8,19 @@ import {
   previewDocumentOriginal,
   uploadFiles,
 } from '@/shared/api'
+import { useGlobalJobProgressStream } from '@/entities/parser'
 import {
   MOCK_DOCUMENT_RESULT,
   MOCK_DOCUMENT_RESULT_ID,
 } from '@/shared/lib/mock-document-result'
 import type { DocumentItem, DocumentResult, UploadedFile } from '@/shared/types'
 
-const TERMINAL_DOCUMENT_STATUSES = new Set(['COMPLETED', 'FAILED', 'CANCELED'])
+const TERMINAL_DOCUMENT_STATUSES = new Set([
+  'COMPLETED',
+  'FAILED',
+  'CANCELLED',
+  'CANCELED',
+])
 
 function hasActiveDocuments(
   data: { items: DocumentItem[]; nextCursor: string | null } | undefined,
@@ -27,7 +33,7 @@ function hasActiveDocuments(
 }
 
 export function useDocuments(limit = 50) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['documents', { limit }],
     queryFn: async () => {
       const { data } = await getDocuments(limit)
@@ -36,6 +42,8 @@ export function useDocuments(limit = 50) {
     refetchInterval: (query) =>
       hasActiveDocuments(query.state.data) ? 2000 : false,
   })
+  useGlobalJobProgressStream(true)
+  return query
 }
 
 export function useDocumentResult(documentId: string | undefined) {

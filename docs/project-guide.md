@@ -139,8 +139,8 @@ git commit -m "feat: 로그인 페이지 추가"
 커밋 시도
   → Husky 감지
   → lint-staged 실행
-    → Prettier: 포맷 자동 수정 ✅
-    → ESLint: 에러 없음 ✅ → 커밋 완료
+    → Prettier: 포맷 자동 수정
+    → ESLint: 에러 없음  → 커밋 완료
     → ESLint: 에러 있음 ❌ → 커밋 차단 → 에러 수정 후 재시도
 ```
 
@@ -171,7 +171,7 @@ PR을 만들면 로봇이 자동으로 4가지를 **동시에** 검사합니다:
 ```
 PR 생성
   → 4개 검사 동시 실행
-  → 전부 통과 → CI 게이트 pass ✅ → merge 버튼 활성화
+  → 전부 통과 → CI 게이트 pass  → merge 버튼 활성화
 
   → 하나라도 실패 → CI 게이트 fail ❌ → merge 차단
                → GitHub Actions 로그에서 원인 확인

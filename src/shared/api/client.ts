@@ -11,7 +11,7 @@ export const api = axios.create({
   },
 })
 
-const TOKEN_KEY = 'luminir_token'
+export const TOKEN_KEY = 'luminir_token'
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem(TOKEN_KEY)

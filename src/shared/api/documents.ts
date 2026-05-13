@@ -28,6 +28,8 @@ export const getDocumentOriginalDownloadUrl = (documentId: string) => {
   return `${baseUrl}/documents/${encodeURIComponent(documentId)}/download`
 }
 
+export const downloadDocument = downloadDocumentOriginal
+
 // 문서 원본 미리보기 (GET /documents/{documentId}/original)
 export const previewDocumentOriginal = (documentId: string) =>
   api.get<Blob>(`/documents/${documentId}/original`, { responseType: 'blob' })

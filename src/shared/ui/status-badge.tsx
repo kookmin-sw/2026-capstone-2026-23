@@ -1,11 +1,24 @@
-import { CheckCircle, XCircle, Loader2, Clock, Upload, Ban } from 'lucide-react'
+import { Ban, CheckCircle, Clock, Loader2, Upload, XCircle } from 'lucide-react'
 import type { DocumentStatus } from '@/shared/types'
 
 interface StatusBadgeProps {
   status: DocumentStatus
+  progressPercent?: number | null
+  currentPage?: number | null
+  totalPages?: number | null
 }
 
-export function StatusBadge({ status }: StatusBadgeProps) {
+function clampPercent(value: number | null | undefined) {
+  if (value == null || Number.isNaN(value)) return 0
+  return Math.min(100, Math.max(0, Math.floor(value)))
+}
+
+export function StatusBadge({
+  status,
+  progressPercent,
+  currentPage,
+  totalPages,
+}: StatusBadgeProps) {
   switch (status) {
     case 'COMPLETED':
       return (
@@ -18,13 +31,17 @@ export function StatusBadge({ status }: StatusBadgeProps) {
     case 'PREPROCESSING':
     case 'GPU_WAITING':
     case 'GPU_PROCESSING':
-    case 'POSTPROCESSING':
+    case 'POSTPROCESSING': {
+      const percent = clampPercent(progressPercent)
+      const pageText =
+        currentPage && totalPages ? ` (${currentPage}/${totalPages}p)` : ''
       return (
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[#edf5ff] px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-[#0f62fe]">
           <Loader2 className="h-3 w-3 animate-spin" />
-          변환 중
+          변환 중 {percent}%{pageText}
         </span>
       )
+    }
     case 'FAILED':
       return (
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[#fff1f1] px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-[#da1e28]">
