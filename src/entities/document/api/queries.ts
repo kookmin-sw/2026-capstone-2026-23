@@ -8,6 +8,7 @@ import {
   previewDocumentOriginal,
   uploadFiles,
 } from '@/shared/api'
+import { useGlobalJobProgressStream } from '@/entities/parser'
 import {
   MOCK_DOCUMENT_RESULT,
   MOCK_DOCUMENT_RESULT_ID,
@@ -32,7 +33,7 @@ function hasActiveDocuments(
 }
 
 export function useDocuments() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['documents'],
     queryFn: async () => {
       const { data } = await getDocuments()
@@ -41,6 +42,8 @@ export function useDocuments() {
     refetchInterval: (query) =>
       hasActiveDocuments(query.state.data) ? 2000 : false,
   })
+  useGlobalJobProgressStream(true)
+  return query
 }
 
 export function useDocumentResult(documentId: string | undefined) {

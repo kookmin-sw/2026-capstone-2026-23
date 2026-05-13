@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
+  type CreateRagSessionParams,
   createRagSession,
   deleteRagSession,
   getRagMessages,
@@ -37,11 +38,13 @@ export function useCreateRagSession() {
     mutationFn: async ({
       title,
       documentIds,
-    }: {
-      title: string
-      documentIds?: string[]
-    }) => {
-      const { data } = await createRagSession(title, documentIds)
+      documentPaths,
+    }: CreateRagSessionParams) => {
+      const { data } = await createRagSession({
+        title,
+        documentIds,
+        documentPaths,
+      })
       return data as RagSession
     },
     onSuccess: () => {
@@ -57,11 +60,13 @@ export function useSendRagMessage() {
     mutationFn: async ({
       sessionId,
       content,
+      topK,
     }: {
       sessionId: string
       content: string
+      topK?: number
     }) => {
-      const { data } = await sendRagMessage(sessionId, content)
+      const { data } = await sendRagMessage(sessionId, content, topK)
       return data as RagAnswer
     },
     onSuccess: (_, { sessionId }) => {

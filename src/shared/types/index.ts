@@ -38,6 +38,14 @@ export type JobStatus =
   | 'CANCELLED'
   | 'CANCELED'
 
+export type RequestedExecutionBackend =
+  | 'auto'
+  | 'openai'
+  | 'openrouter'
+  | 'qwen_gpu'
+
+export type ExecutionBackend = Exclude<RequestedExecutionBackend, 'auto'>
+
 // ── 모델 ──
 
 export interface VlmModel {
@@ -45,6 +53,8 @@ export interface VlmModel {
   code: string
   displayName: string
   provider: string
+  defaultExecutionBackend?: ExecutionBackend
+  supportedExecutionBackends?: ExecutionBackend[]
   isActive: boolean
 }
 
@@ -70,6 +80,10 @@ export interface DocumentItem {
   uploadedAt: string
   latestStatus: DocumentStatus
   jobId: string | null
+  jobItemId?: string | null
+  progressPercent?: number
+  currentPage?: number | null
+  totalPages?: number | null
   processingTimeMs: number | null
   modelCode: string | null
   outputPath: string
@@ -109,6 +123,9 @@ export interface ConvertResult {
   status: JobStatus
   modelId: string
   parallelism: number
+  requestedExecutionBackend?: RequestedExecutionBackend
+  executionBackend?: ExecutionBackend
+  queueRoute?: string
   totalItems: number
   timeoutSeconds: number
   maxRetries: number
@@ -120,6 +137,11 @@ export interface JobItemData {
   documentId: string
   status: DocumentStatus
   retryCount: number
+  progressPercent?: number
+  currentPage?: number | null
+  totalPages?: number | null
+  executionBackend?: ExecutionBackend
+  queueRoute?: string
   fileName?: string
   sourcePath?: string
 }
@@ -141,13 +163,48 @@ export interface JobStatusData {
   processingItems?: number
   completedItems?: number
   failedItems?: number
+  canceledItems?: number
+  progressPercent?: number
   totalDocuments?: number
   completedDocuments?: number
   failedDocuments?: number
+  canceledDocuments?: number
   processingDocuments?: number
   pendingDocuments?: number
   completedDocumentIds?: string[]
+  requestedExecutionBackend?: RequestedExecutionBackend
+  executionBackend?: ExecutionBackend
   updatedAt: string
+}
+
+export interface JobProgressEvent {
+  type: 'job.item.progress'
+  jobId: string | null
+  jobItemId?: string | null
+  documentId?: string | null
+  status?: DocumentStatus | JobStatus | 'CONNECTED'
+  eventType?: string
+  percent?: number | null
+  jobPercent?: number | null
+  documentPercent?: number | null
+  progressPercent?: number | null
+  currentPage?: number | null
+  totalPages?: number | null
+  totalItems?: number | null
+  completedItems?: number | null
+  failedItems?: number | null
+  canceledItems?: number | null
+  finishedItems?: number | null
+  totalDocuments?: number | null
+  completedDocuments?: number | null
+  failedDocuments?: number | null
+  canceledDocuments?: number | null
+  finishedDocuments?: number | null
+  workerId?: string | null
+  retryCount?: number | null
+  message?: string | null
+  error?: ApiError | null
+  timestamp?: string
 }
 
 // ── 문서 결과 ──
@@ -188,20 +245,27 @@ export interface RagSession {
   sessionId: string
   title: string
   documentIds: string[]
+  documentPaths?: string[]
+}
+
+export interface RagCitation {
+  path: string
+  fileName: string
 }
 
 export interface RagMessage {
   messageId: string
   role: 'user' | 'assistant'
   content: string
-  citations: unknown[]
+  citations: RagCitation[]
   createdAt: string
 }
 
 export interface RagAnswer {
   sessionId: string
   answer: string
-  citations: unknown[]
+  citations: RagCitation[]
+  loadedChunks?: number
 }
 
 // ── 시스템 ──
@@ -224,6 +288,15 @@ export interface DiskUsage {
   usedBytes: number
   freeBytes: number
   usagePercent: number
+}
+
+export interface StorageSettings {
+  storagePath: string
+  inputRoot: string
+  outputRoot: string
+  tmpRoot: string
+  updatedAt: string | null
+  usage: DiskUsage
 }
 
 export interface SystemMonitoring {
@@ -312,4 +385,5 @@ export interface ChatMessage {
   type: 'user' | 'assistant'
   content: string
   timestamp: Date
+  citations?: RagCitation[]
 }

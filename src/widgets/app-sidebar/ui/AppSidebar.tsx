@@ -11,6 +11,7 @@ import {
   PanelLeftOpen,
   LogOut,
   ChevronsUpDown,
+  Bot,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -36,6 +37,7 @@ import { useSessionStore, useCurrentUser } from '@/entities/session'
 
 const menuItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { path: '/rag', icon: Bot, label: 'RAG' },
   { path: '/convert', icon: Upload, label: '변환' },
   { path: '/files', icon: FolderOpen, label: '파일관리' },
   { path: '/errors', icon: AlertTriangle, label: '에러 로그' },

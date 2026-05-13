@@ -15,6 +15,7 @@ import { Route as ApiTestRouteImport } from './routes/api-test'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
+import { Route as LayoutRagRouteImport } from './routes/_layout/rag'
 import { Route as LayoutFilesRouteImport } from './routes/_layout/files'
 import { Route as LayoutErrorsRouteImport } from './routes/_layout/errors'
 import { Route as LayoutDashboardRouteImport } from './routes/_layout/dashboard'
@@ -49,6 +50,11 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutRagRoute = LayoutRagRouteImport.update({
+  id: '/rag',
+  path: '/rag',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutFilesRoute = LayoutFilesRouteImport.update({
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof LayoutDashboardRoute
   '/errors': typeof LayoutErrorsRoute
   '/files': typeof LayoutFilesRouteWithChildren
+  '/rag': typeof LayoutRagRoute
   '/settings': typeof LayoutSettingsRoute
   '/files/$fileId': typeof LayoutFilesFileIdRoute
   '/files/': typeof LayoutFilesIndexRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/convert': typeof LayoutConvertRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/errors': typeof LayoutErrorsRoute
+  '/rag': typeof LayoutRagRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
   '/files/$fileId': typeof LayoutFilesFileIdRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/_layout/dashboard': typeof LayoutDashboardRoute
   '/_layout/errors': typeof LayoutErrorsRoute
   '/_layout/files': typeof LayoutFilesRouteWithChildren
+  '/_layout/rag': typeof LayoutRagRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/files/$fileId': typeof LayoutFilesFileIdRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/errors'
     | '/files'
+    | '/rag'
     | '/settings'
     | '/files/$fileId'
     | '/files/'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/convert'
     | '/dashboard'
     | '/errors'
+    | '/rag'
     | '/settings'
     | '/'
     | '/files/$fileId'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/_layout/dashboard'
     | '/_layout/errors'
     | '/_layout/files'
+    | '/_layout/rag'
     | '/_layout/settings'
     | '/_layout/'
     | '/_layout/files/$fileId'
@@ -213,6 +225,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof LayoutSettingsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/rag': {
+      id: '/_layout/rag'
+      path: '/rag'
+      fullPath: '/rag'
+      preLoaderRoute: typeof LayoutRagRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/files': {
@@ -279,6 +298,7 @@ interface LayoutRouteChildren {
   LayoutDashboardRoute: typeof LayoutDashboardRoute
   LayoutErrorsRoute: typeof LayoutErrorsRoute
   LayoutFilesRoute: typeof LayoutFilesRouteWithChildren
+  LayoutRagRoute: typeof LayoutRagRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
@@ -288,6 +308,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutDashboardRoute: LayoutDashboardRoute,
   LayoutErrorsRoute: LayoutErrorsRoute,
   LayoutFilesRoute: LayoutFilesRouteWithChildren,
+  LayoutRagRoute: LayoutRagRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }

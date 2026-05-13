@@ -27,6 +27,10 @@ export {
   getDocumentParserResult,
 } from './parser'
 export type { ConvertParams } from './parser'
+export {
+  buildJobProgressWebSocketUrl,
+  connectJobProgressSocket,
+} from './job-progress-ws'
 export { getModels } from './models'
 export {
   getDashboardSummary,
@@ -34,6 +38,7 @@ export {
   getDashboardRecentItems,
 } from './dashboard'
 export { getSystemMonitoring } from './monitoring'
+export { getStorageSettings, updateStorageSettings } from './settings'
 export {
   createRagSession,
   getRagSessions,
@@ -42,3 +47,4 @@ export {
   sendRagMessage,
   deleteRagSession,
 } from './rag'
+export type { CreateRagSessionParams } from './rag'
