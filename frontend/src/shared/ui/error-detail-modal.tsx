@@ -1,0 +1,164 @@
+import { AlertTriangle, AlertCircle, FileText, Clock } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/shared/ui/dialog'
+import { Button } from '@/shared/ui/button'
+import type { ErrorDetail } from '@/shared/types'
+
+interface ErrorDetailModalProps {
+  error: ErrorDetail | null
+  onClose: () => void
+}
+
+export function ErrorDetailModal({ error, onClose }: ErrorDetailModalProps) {
+  if (!error) return null
+
+  return (
+    <Dialog open={!!error} onOpenChange={() => onClose()}>
+      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="bg-[#fff1f1] p-2">
+              <AlertTriangle className="h-6 w-6 text-[#da1e28]" />
+            </div>
+            <div>
+              <DialogTitle>에러 상세 정보</DialogTitle>
+              <p className="text-muted-foreground text-sm">ID: {error.id}</p>
+            </div>
+          </div>
+        </DialogHeader>
+
+        {/* Error Type Badge */}
+        <div className="mb-4">
+          <span className="inline-flex items-center gap-2 bg-[#fff1f1] px-3 py-1.5 font-medium text-[#da1e28]">
+            <AlertCircle className="h-4 w-4" />
+            {error.type}
+          </span>
+        </div>
+
+        {/* Error Message */}
+        <div className="mb-4">
+          <h4 className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
+            <AlertTriangle className="h-4 w-4" />
+            에러 메시지
+          </h4>
+          <p className="text-foreground border border-[#fa4d56] bg-[#fff1f1] p-4 text-sm">
+            {error.message}
+          </p>
+        </div>
+
+        {/* File Information */}
+        <div className="mb-4 flex flex-col gap-4">
+          <div>
+            <h4 className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
+              <FileText className="h-4 w-4" />
+              파일 정보
+            </h4>
+            <div className="bg-muted space-y-2 p-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">
+                  파일명: <b>{error.fileName}</b>
+                </span>
+              </div>
+              {error.filePath && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    경로:<br></br>
+                    <b>{error.filePath}</b>
+                  </span>
+                </div>
+              )}
+              {error.pageNumber && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    페이지: <b>{error.pageNumber}</b>
+                  </span>
+                </div>
+              )}
+              {error.model && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    모델: <b>{error.model}</b>
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Error Time */}
+          <div>
+            <h4 className="text-foreground mb-2 flex items-center gap-2 text-sm font-semibold">
+              <Clock className="h-4 w-4" />
+              발생 시각
+            </h4>
+            <div className="bg-muted p-3">
+              <p className="text-foreground font-mono text-sm">
+                {new Date(error.timestamp).toLocaleString('ko-KR')}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Stack Trace */}
+        {error.stackTrace && (
+          <div className="mb-4">
+            <h4 className="text-foreground mb-2 text-sm font-semibold">
+              스택 트레이스
+            </h4>
+            <pre className="overflow-x-auto bg-[#161616] p-4 font-mono text-xs whitespace-pre-wrap text-[#42be65]">
+              {error.stackTrace}
+            </pre>
+          </div>
+        )}
+
+        {/* Action Suggestions */}
+        <div className="border border-[#78a9ff] bg-[#edf5ff] p-4">
+          <h4 className="mb-2 text-sm font-semibold text-[#002d9c]">
+            권장 조치
+          </h4>
+          <ul className="list-inside list-disc space-y-1 text-sm text-[#0043ce]">
+            {error.type === 'VLM 타임아웃' && (
+              <>
+                <li>이미지 크기를 줄여 재시도</li>
+                <li>타임아웃 설정을 60초로 증가</li>
+                <li>VLM 서버 상태 확인</li>
+              </>
+            )}
+            {error.type === '메모리 부족' && (
+              <>
+                <li>서버 메모리 증설 검토</li>
+                <li>이미지 해상도를 낮춰 재시도</li>
+                <li>대용량 파일은 분할 처리</li>
+              </>
+            )}
+            {error.type === '변환 실패' && (
+              <>
+                <li>파일 무결성 확인</li>
+                <li>원본 파일을 다시 업로드</li>
+                <li>HWP 뷰어로 파일 열림 확인</li>
+              </>
+            )}
+            {error.type === '파일 형식 오류' && (
+              <>
+                <li>지원되는 파일 형식으로 변환</li>
+                <li>파일 확장자 확인</li>
+                <li>올바른 파일 형식인지 검증</li>
+              </>
+            )}
+          </ul>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            닫기
+          </Button>
+          {/* <Button>재시도</Button> */}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}

@@ -1,0 +1,84 @@
+# Project Setup Logs
+
+## 1단계: Vite + React + TypeScript 프로젝트 스캐폴딩
+- `npm create vite@latest . -- --template react-ts --overwrite` 실행
+- 기존 README.md 백업 후 복원
+- Vite 기본 스캐폴딩 파일(App.tsx, App.css, assets/) 삭제
+
+## 2단계: 핵심 의존성 설치
+- `npm install @tanstack/react-router @tanstack/react-query @tanstack/react-query-devtools zustand axios`
+- `npm install -D @tanstack/router-plugin @tanstack/router-devtools tailwindcss @tailwindcss/vite`
+- `npm install clsx tailwind-merge` (cn 유틸리티용)
+
+## 3단계: vite.config.ts 구성
+- TanStack Router 플러그인 (autoCodeSplitting 활성화, react보다 먼저 배치)
+- React 플러그인
+- TailwindCSS Vite 플러그인
+- `@/` → `src/` path alias 설정
+- Vitest 테스트 설정 (globals, jsdom, setupFiles) 통합
+
+## 4단계: TypeScript 설정
+- `tsconfig.json`, `tsconfig.app.json`에 `baseUrl` + `paths` alias 설정
+- `@/*` → `src/*` 매핑
+
+## 5단계: TailwindCSS v4 + CSS 설정
+- `src/index.css`에 `@import "tailwindcss"` 설정
+
+## 6단계: shadcn/ui 초기화
+- `npx shadcn@latest init -d` 실행
+- `components.json` 자동 생성 (style: new-york, baseColor: neutral)
+- `src/index.css`에 shadcn 테마 변수 자동 추가 (light/dark 모드)
+- `src/lib/utils.ts`에 `cn()` 함수 생성
+- 추가 의존성 자동 설치: class-variance-authority, lucide-react, radix-ui, tw-animate-css
+
+## 7단계: 프로젝트 구조 생성
+- `src/routes/`, `src/components/ui/`, `src/hooks/`, `src/stores/`, `src/services/`, `src/types/`, `src/lib/`, `src/test/` 디렉토리 생성
+- 빈 디렉토리에 `.gitkeep` 파일 배치
+
+## 8단계: 핵심 파일 작성
+- `src/main.tsx`: RouterProvider + createRouter 설정
+- `src/routes/__root.tsx`: 루트 레이아웃 (QueryClientProvider, Outlet, ReactQueryDevtools, TanStackRouterDevtools)
+- `src/routes/index.tsx`: 홈페이지 컴포넌트
+- `src/services/api.ts`: axios 인스턴스 (baseURL, timeout, error interceptor)
+- `src/lib/utils.ts`: cn() 유틸리티
+- `src/test/setup.ts`: vitest + jest-dom 셋업
+- `src/vite-env.d.ts`: Vite 클라이언트 타입 참조
+- 개발 서버 실행으로 `src/routeTree.gen.ts` 자동 생성
+
+## 9단계: 테스트 도구 설치
+- `npm install -D vitest @testing-library/react @testing-library/jest-dom jsdom`
+- vite.config.ts 내 test 설정 통합 (별도 vitest.config.ts 불필요)
+
+## 10단계: 코드 품질 도구 설치 및 설정
+- `npm install -D eslint prettier eslint-config-prettier @eslint/js typescript-eslint globals eslint-plugin-react-hooks eslint-plugin-react-refresh`
+- `npm install -D prettier-plugin-tailwindcss`
+- `eslint.config.js`: ESLint 9 flat config (TypeScript, React hooks, React Refresh, Prettier 통합)
+- `.prettierrc`: semi:false, singleQuote:true, tailwindcss 플러그인
+- `src/routeTree.gen.ts`를 ESLint globalIgnores에 추가
+
+## 11단계: Git 훅 설정
+- `npm install -D husky lint-staged`
+- `npx husky init` 실행
+- `.husky/pre-commit`: `npx lint-staged` 실행
+- `package.json`에 lint-staged 설정 추가 (ts/tsx → eslint+prettier, json/css/md → prettier)
+
+## 12단계: Playwright E2E 테스트 설치 및 설정
+- `npm install -D @playwright/test`
+- `npx playwright install chromium` 실행
+- `playwright.config.ts` 생성 (Chromium 프로젝트, webServer 연동, baseURL localhost:5173)
+- `e2e/home.spec.ts` 기본 E2E 테스트 작성
+- `.gitignore`에 Playwright 출력 디렉토리 추가
+
+## 13단계: Storybook 설치 및 설정
+- `npx storybook@8 init --skip-install --no-dev` 실행 (Storybook 8.6.17)
+- `.storybook/main.ts`, `.storybook/preview.ts` 자동 생성
+- `.storybook/preview.ts`에 `src/index.css` import 추가 (TailwindCSS 연동)
+- 기본 예시 stories (`src/stories/`) 삭제
+- 추가 의존성 자동 설치: @storybook/react, @storybook/react-vite, @storybook/addon-essentials 등
+- `.gitignore`에 storybook-static 추가
+
+## 14단계: 검증
+- `npm run build`: TypeScript 컴파일 + Vite 프로덕션 빌드 성공
+- `npm run lint`: ESLint 검사 통과 (에러 없음)
+- `npm run test`: Vitest 실행 확인 (테스트 파일 없음 → passWithNoTests로 정상 종료)
+- `npm run format`: Prettier 포맷팅 전체 실행 완료

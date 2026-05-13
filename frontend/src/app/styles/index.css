@@ -1,0 +1,432 @@
+@import 'pretendard/dist/web/variable/pretendardvariable.css';
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Carbon spacing scale */
+  --spacing-carbon-1: 0.125rem;
+  --spacing-carbon-2: 0.25rem;
+  --spacing-carbon-3: 0.5rem;
+  --spacing-carbon-4: 0.75rem;
+  --spacing-carbon-5: 1rem;
+  --spacing-carbon-6: 1.5rem;
+  --spacing-carbon-7: 2rem;
+  --spacing-carbon-8: 2.5rem;
+  --spacing-carbon-9: 3rem;
+
+  /* Carbon semantic colors */
+  --color-carbon-blue-60: #0f62fe;
+  --color-carbon-blue-70: #0043ce;
+  --color-carbon-blue-80: #002d9c;
+  --color-carbon-green-50: #24a148;
+  --color-carbon-green-60: #198038;
+  --color-carbon-yellow-30: #f1c21b;
+  --color-carbon-red-60: #da1e28;
+  --color-carbon-red-50: #fa4d56;
+  --color-carbon-purple-60: #8a3ffc;
+  --color-carbon-orange-40: #ff832b;
+
+  /* Luminir brand palette */
+  --color-luminir-pink-80: #c41aff;
+  --color-luminir-pink-50: #e0a6ff;
+  --color-luminir-pink-20: #f4deff;
+  --color-luminir-blue-50: #149de6;
+  --color-luminir-blue-30: #5ebdf0;
+  --color-luminir-blue-10: #dbf2ff;
+  --color-luminir-green-60: #00ad85;
+  --color-luminir-green-40: #5de1c2;
+  --color-luminir-green-10: #d9fbf3;
+  --color-luminir-purple-50: #9d80f7;
+  --color-luminir-purple-20: #d5d1ff;
+  --color-luminir-yellow-60: #caaf00;
+  --color-luminir-yellow-50: #ffd900;
+  --color-luminir-yellow-10: #fff9d1;
+}
+
+/* ───── Carbon Light Theme (IBM Carbon Gray 10 base) ───── */
+:root {
+  --radius: 10px; /* Soft rounded corners */
+
+  /* Core */
+  --background: #f7f7fb; /* Warm gray with hint of purple */
+  --foreground: #1a1a2e; /* Deep navy-black */
+
+  /* Card / Popover */
+  --card: #ffffff;
+  --card-foreground: #1a1a2e;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a2e;
+
+  /* Primary — Luminir Orange */
+  --primary: #ff7121;
+  --primary-foreground: #ffffff;
+
+  /* Secondary */
+  --secondary: #fff4ed;
+  --secondary-foreground: #1a1a2e;
+
+  /* Muted */
+  --muted: #fff4ed;
+  --muted-foreground: #6b7280;
+
+  /* Accent */
+  --accent: #fff4ed;
+  --accent-foreground: #1a1a2e;
+
+  /* Destructive */
+  --destructive: #ef4444;
+
+  /* Border / Input / Ring */
+  --border: #e5e5ef;
+  --input: #e5e5ef;
+  --ring: #ff7121;
+
+  /* Chart palette — Luminir brand-aligned */
+  --chart-1: #ff7121; /* Orange */
+  --chart-2: #00b894; /* Teal green */
+  --chart-3: #fdcb6e; /* Warm yellow */
+  --chart-4: #e17055; /* Coral */
+  --chart-5: #0984e3; /* Sky blue */
+
+  /* Sidebar — White base */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #161616;
+  --sidebar-primary: #0f62fe;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f4f4f4; /* Gray 10 */
+  --sidebar-accent-foreground: #161616;
+  --sidebar-border: #e0e0e0; /* Gray 20 */
+  --sidebar-ring: #0f62fe;
+}
+
+/* ───── Carbon Dark Theme (IBM Carbon Gray 100 base) ───── */
+.dark {
+  --background: #0f0f1a; /* Deep navy */
+  --foreground: #e8e8f0;
+
+  --card: #1a1a2e;
+  --card-foreground: #e8e8f0;
+  --popover: #1a1a2e;
+  --popover-foreground: #e8e8f0;
+
+  --primary: #ff8c4c;
+  --primary-foreground: #0f0f1a;
+
+  --secondary: #2a2015;
+  --secondary-foreground: #e8e8f0;
+
+  --muted: #2a2015;
+  --muted-foreground: #9ca3af;
+
+  --accent: #2a2015;
+  --accent-foreground: #e8e8f0;
+
+  --destructive: #f87171;
+
+  --border: #2d2d4a;
+  --input: #2d2d4a;
+  --ring: #ff8c4c;
+
+  --chart-1: #ff8c4c; /* Soft orange */
+  --chart-2: #55efc4; /* Mint */
+  --chart-3: #ffeaa7; /* Soft yellow */
+  --chart-4: #fab1a0; /* Peach */
+  --chart-5: #74b9ff; /* Light blue */
+
+  --sidebar: #1a1a2e;
+  --sidebar-foreground: #e8e8f0;
+  --sidebar-primary: #ff8c4c;
+  --sidebar-primary-foreground: #0f0f1a;
+  --sidebar-accent: #252540;
+  --sidebar-accent-foreground: #e8e8f0;
+  --sidebar-border: #2d2d4a;
+  --sidebar-ring: #ff8c4c;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family:
+      'Pretendard Variable',
+      Pretendard,
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  code,
+  pre,
+  .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+}
+
+/* ───── Luminir Typography Scale ───── */
+@layer utilities {
+  /* Display — 랜딩, 히어로 섹션 */
+  .typo-display {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  /* Heading 1 — 페이지 제목 */
+  .typo-h1 {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  /* Heading 2 — 섹션 제목 */
+  .typo-h2 {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  /* Heading 3 — 위젯/카드 제목 */
+  .typo-h3 {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  /* Body 1 — 주요 본문 */
+  .typo-body1 {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  /* Body 2 — 보조 본문, 설명 */
+  .typo-body2 {
+    font-size: 0.8125rem; /* 13px */
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* Label — 버튼, 폼 라벨, 인터랙티브 텍스트 */
+  .typo-label {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* Caption — 힌트, 타임스탬프, 부가 정보 */
+  .typo-caption {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* Overline — 작은 라벨, 카테고리 태그 */
+  .typo-overline {
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Stat — 대시보드 숫자, 큰 수치 강조 */
+  .typo-stat {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Code — 코드, 경로, 기술 텍스트 */
+  .typo-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8125rem; /* 13px */
+    font-weight: 400;
+    line-height: 1.5;
+  }
+}
+
+/* ───── Custom form controls (radio / checkbox) ───── */
+@layer base {
+  input[type='radio'],
+  input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+      border-color 0.15s,
+      background-color 0.15s;
+  }
+
+  input[type='radio'] {
+    border-radius: 50%;
+  }
+
+  input[type='checkbox'] {
+    border-radius: 4px;
+  }
+
+  input[type='radio']:checked {
+    border-color: var(--primary);
+    border-width: 5px;
+  }
+
+  input[type='checkbox']:checked {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+  }
+
+  input[type='radio']:hover,
+  input[type='checkbox']:hover {
+    border-color: var(--primary);
+  }
+
+  input[type='radio']:focus-visible,
+  input[type='checkbox']:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ───── Floating shape animations ───── */
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(3deg);
+  }
+}
+@keyframes float-mid {
+  0%,
+  100% {
+    transform: translateY(0) rotate(12deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(15deg);
+  }
+}
+
+@layer utilities {
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+  .animate-float-mid {
+    animation: float-mid 6s ease-in-out infinite;
+  }
+}
+
+/* ───── Luminir Color Combos (bg + text matching) ───── */
+@layer utilities {
+  .luminir-pink-80 {
+    background-color: var(--color-luminir-pink-80);
+    color: #ffffff;
+  }
+  .luminir-pink-50 {
+    background-color: var(--color-luminir-pink-50);
+    color: #ffffff;
+  }
+  .luminir-pink-20 {
+    background-color: var(--color-luminir-pink-20);
+    color: var(--color-luminir-pink-80);
+  }
+  .luminir-blue-50 {
+    background-color: var(--color-luminir-blue-50);
+    color: #ffffff;
+  }
+  .luminir-blue-30 {
+    background-color: var(--color-luminir-blue-30);
+    color: #ffffff;
+  }
+  .luminir-blue-10 {
+    background-color: var(--color-luminir-blue-10);
+    color: var(--color-luminir-blue-50);
+  }
+  .luminir-green-60 {
+    background-color: var(--color-luminir-green-60);
+    color: #ffffff;
+  }
+  .luminir-green-40 {
+    background-color: var(--color-luminir-green-40);
+    color: #ffffff;
+  }
+  .luminir-green-10 {
+    background-color: var(--color-luminir-green-10);
+    color: var(--color-luminir-green-60);
+  }
+  .luminir-purple-50 {
+    background-color: var(--color-luminir-purple-50);
+    color: #ffffff;
+  }
+  .luminir-purple-20 {
+    background-color: var(--color-luminir-purple-20);
+    color: var(--color-luminir-purple-50);
+  }
+  .luminir-yellow-60 {
+    background-color: var(--color-luminir-yellow-60);
+    color: #ffffff;
+  }
+  .luminir-yellow-50 {
+    background-color: var(--color-luminir-yellow-50);
+    color: var(--color-luminir-yellow-60);
+  }
+  .luminir-yellow-10 {
+    background-color: var(--color-luminir-yellow-10);
+    color: var(--color-luminir-yellow-60);
+  }
+}

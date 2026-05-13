@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint & Format & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npx tsc -b --noEmit
+
+  unit-test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  ci-pass:
+    name: CI
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [quality, unit-test, build, e2e]
+    steps:
+      - name: Check required jobs
+        run: |
+          echo "quality: ${{ needs.quality.result }}"
+          echo "unit-test: ${{ needs.unit-test.result }}"
+          echo "build: ${{ needs.build.result }}"
+          echo "e2e: ${{ needs.e2e.result }}"
+
+          if [[ "${{ needs.quality.result }}" != "success" ]]; then
+            echo "::error::quality failed"
+            exit 1
+          fi
+          if [[ "${{ needs.unit-test.result }}" != "success" ]]; then
+            echo "::error::unit-test failed"
+            exit 1
+          fi
+          if [[ "${{ needs.build.result }}" != "success" ]]; then
+            echo "::error::build failed"
+            exit 1
+          fi
+
+          # E2E policy: required for main, warning-only for develop
+          if [[ "${{ github.base_ref }}" == "main" && "${{ needs.e2e.result }}" != "success" ]]; then
+            echo "::error::e2e failed (required for main)"
+            exit 1
+          fi
+          if [[ "${{ needs.e2e.result }}" != "success" ]]; then
+            echo "::warning::e2e failed (non-blocking for develop)"
+          fi
+
+          echo "All required checks passed"
