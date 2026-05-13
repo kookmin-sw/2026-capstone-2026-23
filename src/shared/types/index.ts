@@ -245,20 +245,27 @@ export interface RagSession {
   sessionId: string
   title: string
   documentIds: string[]
+  documentPaths?: string[]
+}
+
+export interface RagCitation {
+  path: string
+  fileName: string
 }
 
 export interface RagMessage {
   messageId: string
   role: 'user' | 'assistant'
   content: string
-  citations: unknown[]
+  citations: RagCitation[]
   createdAt: string
 }
 
 export interface RagAnswer {
   sessionId: string
   answer: string
-  citations: unknown[]
+  citations: RagCitation[]
+  loadedChunks?: number
 }
 
 // ── 시스템 ──
@@ -378,4 +385,5 @@ export interface ChatMessage {
   type: 'user' | 'assistant'
   content: string
   timestamp: Date
+  citations?: RagCitation[]
 }

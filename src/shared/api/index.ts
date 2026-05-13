@@ -47,3 +47,4 @@ export {
   sendRagMessage,
   deleteRagSession,
 } from './rag'
+export type { CreateRagSessionParams } from './rag'
