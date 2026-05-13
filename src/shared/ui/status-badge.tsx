@@ -68,8 +68,7 @@ export function StatusBadge({
     default:
       return (
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f4f4f4] px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-[#525252]">
-          <Clock className="h-3 w-3" />
-          알 수 없음
+          <Clock className="h-3 w-3" />알 수 없음
         </span>
       )
   }

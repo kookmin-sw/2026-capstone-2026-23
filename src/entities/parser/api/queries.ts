@@ -19,7 +19,12 @@ import type {
   JobStatusData,
 } from '@/shared/types'
 
-const TERMINAL_JOB_STATUSES = new Set(['COMPLETED', 'FAILED', 'CANCELLED', 'CANCELED'])
+const TERMINAL_JOB_STATUSES = new Set([
+  'COMPLETED',
+  'FAILED',
+  'CANCELLED',
+  'CANCELED',
+])
 const JOB_STATUSES = new Set([
   'QUEUED',
   'PROCESSING',

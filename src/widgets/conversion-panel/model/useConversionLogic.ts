@@ -10,7 +10,12 @@ import {
 import { useUIStore } from '@/app/model/ui-store'
 import type { JobProgressEvent } from '@/shared/types'
 
-const TERMINAL_STATUSES = new Set(['COMPLETED', 'FAILED', 'CANCELLED', 'CANCELED'])
+const TERMINAL_STATUSES = new Set([
+  'COMPLETED',
+  'FAILED',
+  'CANCELLED',
+  'CANCELED',
+])
 
 function clampPercent(value: number | null | undefined) {
   if (value == null || Number.isNaN(value)) return 0
@@ -118,7 +123,13 @@ export function useConversionLogic() {
         setBatchStatus(`처리 중: ${clampPercent(event.jobPercent)}%`)
       }
     },
-    [selectedResultPath, setBatchStatus, setIsConverting, setSelectedResultPath, updateFile],
+    [
+      selectedResultPath,
+      setBatchStatus,
+      setIsConverting,
+      setSelectedResultPath,
+      updateFile,
+    ],
   )
 
   useJobProgressStream(jobId ?? undefined, isConverting, handleProgressEvent)

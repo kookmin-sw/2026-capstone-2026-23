@@ -19,7 +19,10 @@ import { UnconnectedBadge } from '@/shared/ui/unconnected-badge'
 import { Card, CardContent } from '@/shared/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 import { useUIStore } from '@/app/model/ui-store'
-import { useStorageSettings, useUpdateStorageSettings } from '@/entities/settings'
+import {
+  useStorageSettings,
+  useUpdateStorageSettings,
+} from '@/entities/settings'
 import { useCurrentUser } from '@/entities/session'
 import { UserManagement, PasswordChangeDialog } from '@/features/auth'
 
@@ -53,7 +56,8 @@ export function SettingsPage() {
   const storagePercentLabel = storageUsage
     ? `${storagePercent.toFixed(1)}%`
     : '-'
-  const storagePath = storagePathDraft ?? storageSettings.data?.storagePath ?? ''
+  const storagePath =
+    storagePathDraft ?? storageSettings.data?.storagePath ?? ''
 
   const handleStorageSave = () => {
     const nextStoragePath = storagePath.trim()
@@ -403,9 +407,7 @@ export function SettingsPage() {
                           <span
                             className={`text-sm font-semibold ${storageColor.text}`}
                           >
-                            {storageSettings.isLoading
-                              ? '-'
-                              : storageUsedLabel}
+                            {storageSettings.isLoading ? '-' : storageUsedLabel}
                           </span>
                         </div>
                         <div className="bg-muted h-2.5 w-full overflow-hidden rounded-full">
@@ -444,7 +446,9 @@ export function SettingsPage() {
                           <input
                             type="text"
                             value={storagePath}
-                            onChange={(e) => setStoragePathDraft(e.target.value)}
+                            onChange={(e) =>
+                              setStoragePathDraft(e.target.value)
+                            }
                             className={`${inputClass} pl-10`}
                           />
                         </div>
