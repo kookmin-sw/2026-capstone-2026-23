@@ -1,7 +1,7 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Lvs6kcL8)
 
 <p align="center">
-  <img width="820" alt="Durmon:t Banner" src="https://github.com/user-attachments/assets/95720cd3-1f04-473f-beed-059e2fa0ae90" />
+  <img width="760" alt="LLMong README Banner" src="./assets/images/readme-banner.gif" />
 </p>
 
 <p align="center">
@@ -13,12 +13,73 @@
 ## ᕱ‬ Durmon:t ‪ᕱ
 
 <p align="center">
-  <strong>Document Understanding & Representation Model of Next Technology</strong>
+  <strong>From Complex Documents to AI-Ready Knowledge</strong>
 </p>
 
 <p align="center">
   Durmon:t는 복잡한 문서를 AI가 이해할 수 있는 구조로 변환하고, 검색과 질의응답까지 연결하는 문서 AI 기술을 만듭니다.
 </p>
+
+### 팀원 소개
+
+<table>
+  <tr>
+    <td align="center" width="180px">
+      <img src="https://github.com/0yeonnnn0.png" width="120px" height="120px" alt="김동연" />
+      <br />
+      <strong>김동연</strong>
+      <br />
+      PM & Full Stack
+      <br />
+      <a href="https://github.com/0yeonnnn0">GitHub</a>
+    </td>
+    <td align="center" width="180px">
+      <img src="https://github.com/kaye0ng.png" width="120px" height="120px" alt="강아영" />
+      <br />
+      <strong>강아영</strong>
+      <br />
+      AI
+      <br />
+      <a href="https://github.com/kaye0ng">GitHub</a>
+    </td>
+    <td align="center" width="180px">
+      <img src="https://github.com/K-Dongjin.png" width="120px" height="120px" alt="김동진" />
+      <br />
+      <strong>김동진</strong>
+      <br />
+      Frontend
+      <br />
+      <a href="https://github.com/K-Dongjin">GitHub</a>
+    </td>
+    <td align="center" width="180px">
+      <img src="https://github.com/gahyeon1022.png" width="120px" height="120px" alt="박가현" />
+      <br />
+      <strong>박가현</strong>
+      <br />
+      Backend
+      <br />
+      <a href="https://github.com/gahyeon1022">GitHub</a>
+    </td>
+    <td align="center" width="180px">
+      <img src="https://github.com/jun-kookmin.png" width="120px" height="120px" alt="배경준" />
+      <br />
+      <strong>배경준</strong>
+      <br />
+      Backend
+      <br />
+      <a href="https://github.com/jun-kookmin">GitHub</a>
+    </td>
+    <td align="center" width="180px">
+      <img src="https://github.com/seunG-Zzun.png" width="120px" height="120px" alt="하승준" />
+      <br />
+      <strong>하승준</strong>
+      <br />
+      Backend & AI
+      <br />
+      <a href="https://github.com/seunG-Zzun">GitHub</a>
+    </td>
+  </tr>
+</table>
 
 <br />
 
@@ -35,8 +96,8 @@ HWP/HWPX, PDF, 이미지, Excel 문서를 업로드하면 텍스트, 표, 이미
 
 ## 프로젝트 소개
 
-**LLMong**은 **르몽**과 협력해 진행한 산학협력 프로젝트입니다.
-실제 업무 문서에서 발생하는 복잡한 포맷과 레이아웃 문제를 해결하고, 문서 기반 검색과 질의응답 흐름을 구현하는 데 초점을 맞췄습니다.
+**LLMong**은 다양한 형식의 업무 문서를 AI가 활용할 수 있는 구조화 데이터로 변환하는 문서 파싱 서비스입니다.
+복잡한 문서 포맷과 레이아웃을 분석해 텍스트, 표, 이미지, 메타데이터를 추출하고, RAG 검색과 질의응답에 연결할 수 있는 데이터 흐름을 제공합니다.
 
 <br />
 
@@ -236,69 +297,6 @@ cap_be/
     e2e/                          # Playwright E2E 테스트
     docs/                         # frontend 개발 문서
 ```
-
-<br />
-
-## 팀 Durmon:t 소개
-
-<table>
-  <tr>
-    <td align="center" width="180px">
-      <img src="https://github.com/0yeonnnn0.png" width="120px" height="120px" alt="김동연" />
-      <br />
-      <strong>김동연</strong>
-      <br />
-      PM & Full Stack
-      <br />
-      <a href="https://github.com/0yeonnnn0">GitHub</a>
-    </td>
-    <td align="center" width="180px">
-      <img src="https://github.com/kaye0ng.png" width="120px" height="120px" alt="강아영" />
-      <br />
-      <strong>강아영</strong>
-      <br />
-      AI
-      <br />
-      <a href="https://github.com/kaye0ng">GitHub</a>
-    </td>
-    <td align="center" width="180px">
-      <img src="https://github.com/K-Dongjin.png" width="120px" height="120px" alt="김동진" />
-      <br />
-      <strong>김동진</strong>
-      <br />
-      Frontend
-      <br />
-      <a href="https://github.com/K-Dongjin">GitHub</a>
-    </td>
-    <td align="center" width="180px">
-      <img src="https://github.com/gahyeon1022.png" width="120px" height="120px" alt="박가현" />
-      <br />
-      <strong>박가현</strong>
-      <br />
-      Backend
-      <br />
-      <a href="https://github.com/gahyeon1022">GitHub</a>
-    </td>
-    <td align="center" width="180px">
-      <img src="https://github.com/jun-kookmin.png" width="120px" height="120px" alt="배경준" />
-      <br />
-      <strong>배경준</strong>
-      <br />
-      Backend
-      <br />
-      <a href="https://github.com/jun-kookmin">GitHub</a>
-    </td>
-    <td align="center" width="180px">
-      <img src="https://github.com/seunG-Zzun.png" width="120px" height="120px" alt="하승준" />
-      <br />
-      <strong>하승준</strong>
-      <br />
-      Backend & AI
-      <br />
-      <a href="https://github.com/seunG-Zzun">GitHub</a>
-    </td>
-  </tr>
-</table>
 
 <br />
 
