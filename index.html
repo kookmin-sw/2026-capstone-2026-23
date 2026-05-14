@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Durmon:T</title>
+    <title>LLMong</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
     <link rel="stylesheet" href="assets/css/member-cards.css">
@@ -14,30 +14,31 @@
         <img src="assets/images/logo.svg" alt="Durmon:T">
       </a>
       <nav class="side-nav" aria-label="페이지 섹션 이동">
-        <a href="#top">Durmon:T</a>
+        <a class="side-nav-brand" href="#top">LLMong</a>
         <a href="#project">프로젝트 소개</a>
+        <a href="#background">서비스 개발 배경</a>
         <a href="#features">주요 기능</a>
         <a href="#demo">시연 영상</a>
         <a href="#team">팀 소개</a>
         <a href="#architecture">시스템 아키텍처</a>
         <a href="#stack">기술 스택</a>
-        <a href="#usage">사용법</a>
+        <a href="#usage">이용 안내</a>
         <a href="#resources">프로젝트 자료</a>
         <a class="side-nav-external" href="https://github.com/kookmin-sw/2026-capstone-23">Github 바로가기 &gt;</a>
-        <a class="side-nav-external" href="http://luminir.edumong.ai:3001/dashboard">Durmon:T 시작하기 &gt;</a>
+        <a class="side-nav-external" href="http://luminir.edumong.ai:3001/dashboard">LLMong 시작하기 &gt;</a>
       </nav>
-      <p class="sidebar-footer">© 2026 DURMONT</p>
+      <p class="sidebar-footer">© 2026 DURMON:T</p>
     </aside>
 
     <main class="page-shell">
       <div class="content-topbar">
-        <a class="topbar-link" href="https://github.com/kookmin-sw/2026-capstone-23">Github</a>
+        <a class="topbar-link" href="https://github.com/kookmin-sw/2026-capstone-23">capstone 23팀 Durmon:t</a>
       </div>
 
       <header class="page-hero" id="top">
-        <h1>Durmon:T</h1>
+        <h1><span class="brand-title">LLMong</span></h1>
         <p>문서의 가치를 구조화하다</p>
-        <img class="hero-banner" src="assets/images/banner.svg" alt="Durmon:T banner">
+        <img class="hero-banner" src="assets/images/banner.svg" alt="DOC PARSER - 문서를 이해하고, 검색 가능한 가치로 변환하다">
       </header>
 
       <hr>
@@ -47,14 +48,29 @@
         <img class="section-image" src="assets/images/poster.svg" alt="Project poster">
 
         <div class="feature-copy">
-          <h3>1. 문서 포맷 통합 처리 기술 고도화</h3>
-          <p>HWP, PDF, 스캔 이미지 등 문서를 단일 파이프라인으로 처리하고, 포맷 별 예외 케이스를 흡수합니다.</p>
+          <p><strong class="brand-highlight">LLMong</strong>은 문서를 <strong>AI 기반으로 구조화</strong>하여 <strong>RAG 검색 및 질의응답에 최적화된 데이터</strong>로 전환하는 <strong>문서 파싱 서비스</strong>입니다.</p>
+          <p>복잡한 업무 문서를 단순 파일이 아닌 <strong>검색 가능한 지식 데이터</strong>로 바꾸는 것을 목표로 합니다.</p>
+          <p>업로드된 문서의 텍스트, 표, 이미지, 메타데이터를 분석해 사용자가 문서 내용을 더 쉽게 찾고 질문할 수 있는 기반을 제공합니다.</p>
+        </div>
+      </section>
 
-          <h3>2. 문서 구조 · 정보 추출 체계 구축</h3>
-          <p>한국형 문서 구조를 인식·복원하고 핵심 실무 필드를 자동 추출해, 후속 업무 시스템에서 활용 가능한 정규화 규칙을 수립합니다.</p>
+      <hr>
 
-          <h3>3. 업무 활용형 구조화 출력 표준화</h3>
-          <p>RAG, LLM, 검색, 민원 처리, 정산 등 후속 시스템에서 즉시 사용할 수 있도록 구조화 출력 포맷을 표준화하고, API 연계 중심의 운영 가능한 데이터 인터페이스를 제공합니다.</p>
+      <section id="background">
+        <h2>서비스 개발 배경</h2>
+
+        <div class="feature-copy">
+          <p>LLM과 RAG를 업무 문서에 활용하려면 사내 문서를 단순 보관 파일이 아니라 <strong>검색 가능한 데이터</strong>로 정리하는 과정이 필요합니다.</p>
+        </div>
+
+        <div class="service-image-list">
+          <img class="service-image" src="assets/images/service1.svg" alt="서비스 개발 배경 이미지 1">
+          <img class="service-image" src="assets/images/service2.svg" alt="서비스 개발 배경 이미지 2">
+          <img class="service-image" src="assets/images/service3.svg" alt="서비스 개발 배경 이미지 3">
+        </div>
+
+        <div class="feature-copy">
+          <p>하지만 실제 회사에서 사용하는 업무 문서는 <strong>HWP, PDF, 스캔 이미지, 표, 차트, 수식</strong>처럼 형식이 다양하고 레이아웃이 복잡해, 일반적인 텍스트 추출만으로는 <strong>RAG 검색에 바로 사용할 수 있는 데이터</strong>로 변환하기 어렵습니다. <strong class="brand-highlight">LLMong</strong>은 이러한 문서를 자동으로 구조화해 <strong>RAG 검색에 사용 가능한 데이터</strong>를 만들기 위해 개발되었습니다.</p>
         </div>
       </section>
 
@@ -63,18 +79,80 @@
       <section id="features">
         <h2>주요 기능</h2>
 
+        <div class="parser-note">
+          <strong>문서 파서란?</strong>
+          <p>문서 파서는 HWP, PDF, 이미지처럼 서로 다른 형식의 문서에서 텍스트, 표, 이미지, 메타데이터를 추출하고, 검색과 분석에 사용할 수 있는 구조화 데이터로 바꾸는 처리 모듈입니다.</p>
+        </div>
+
         <div class="feature-copy">
-          <h3>AI 문서 파싱 / 변환</h3>
-          <p>HWP/HWPX, PDF, 이미지, Excel 문서를 업로드하면 VLM이 텍스트, 표, 이미지 요소를 추출해 .txt, 메타데이터, HTML/Markdown 표 형태로 변환합니다.</p>
+          <h3>1. AI 문서 파싱 / 변환</h3>
+          <div class="feature-media-row">
+            <div class="feature-media-copy">
+              <p><strong>HWP/HWPX, PDF, 이미지, Excel</strong> 문서를 업로드하면 텍스트, 표, 이미지, 메타데이터를 추출합니다.</p>
+              <p>추출 결과는 .txt, 구조화 메타데이터, HTML, Markdown 표 형식으로 변환되어 <strong>검색, 요약, RAG</strong>에 바로 활용할 수 있습니다.</p>
+              <p>변환된 결과는 문서 단위로 확인할 수 있으며, 필요한 출력 형식으로 저장해 <strong>RAG 검색 시스템</strong>에 연결할 수 있습니다.</p>
+            </div>
+            <img class="feature-image" src="assets/images/show.svg" alt="AI 문서 파싱 및 변환 화면">
+          </div>
 
-          <h3>온프레미스 지원</h3>
-          <p>qwen_doc → qwen_infer → qwen_finalize 단계로 문서를 나눠 처리합니다. RTX 3090 기준으로 모델을 한 번 로딩하고, GPU 동시 추론 수를 제한해서 안정적으로 처리하는 구조입니다.</p>
+          <h3>2. API 연계 및 온프레미스 문서 처리 구조</h3>
+          <div class="feature-media-row">
+            <div class="feature-media-copy">
+              <p><strong>API 연계 방식</strong>으로 기존 서비스와 연결할 수 있고, <strong>온프레미스 방식</strong>으로 사내망 또는 로컬 서버에 직접 배포할 수 있습니다.</p>
+              <p>온프레미스 방식에서는 민감한 문서를 외부로 내보내지 않고 내부 인프라에서 처리합니다.</p>
+              <p>온프레미스 내부 처리는 <strong>qwen_doc → qwen_infer → qwen_finalize</strong> 단계로 분리되어 동작합니다.</p>
+              <p>문서 전처리, VLM 추론, 결과 병합/정제를 분리해 대용량 문서도 작업 상태를 추적하며 안정적으로 처리합니다.</p>
+              <p>모델은 워커에서 한 번 로딩한 뒤 재사용하고, <strong>GPU 동시 추론 수를 제한</strong>해 VRAM 초과를 방지합니다.</p>
+              <p>여러 작업이 들어와도 큐 기반으로 순차/제한 병렬 처리할 수 있습니다.</p>
+            </div>
+            <img class="feature-image" src="assets/images/model.svg" alt="API 연계 및 온프레미스 모델 처리 구조">
+          </div>
 
-          <h3>표 / 차트 / 플로우차트 / 수식 이미지 이해</h3>
-          <p>이미지를 TABLE, CHART, FLOWCHART, MATH, IMAGE로 분류하고 유형별 프롬프트로 구조화합니다. 특히 표는 HTML &lt;table&gt;과 Markdown 형태로 변환하는 기능이 핵심입니다.</p>
+          <h3>3. VLM 기반 문서 구조화 파이프라인</h3>
+          <div class="feature-media-row">
+            <div class="feature-media-copy">
+              <p>PDF는 텍스트 블록, 이미지 영역, 표 후보, 페이지 렌더링 결과를 분리 처리해 단순 OCR보다 문서 구조를 더 안정적으로 복원합니다.</p>
+              <p>이미지 기반 문서는 VLM으로 <strong>TABLE, CHART, FLOWCHART, MATH, IMAGE</strong> 유형을 먼저 분류하고, 유형별 프롬프트를 적용해 구조화 정확도를 높입니다.</p>
+              <p>표 이미지는 셀 구조를 복원해 <strong>HTML &lt;table&gt;과 Markdown table</strong>로 변환하고, 차트는 축, 범례, 수치, 추세를 텍스트로 요약합니다.</p>
+              <p>플로우차트는 노드와 연결 관계를 단계별 흐름으로 정리하고, 수식 이미지는 LaTeX 또는 설명형 텍스트로 변환할 수 있습니다.</p>
+              <p>이 과정을 통해 단순 이미지 저장이 아니라, <strong>검색과 질의응답에 활용 가능한 구조화 데이터</strong>로 변환합니다.</p>
+            </div>
+            <img class="feature-image" src="assets/images/pipeline.svg" alt="이미지 유형 분류 및 구조화 파이프라인">
+          </div>
 
-          <h3>문서 기반 RAG 질의응답</h3>
-          <p>변환된 문서를 chunk로 나누고 embedding 검색 후, 관련 문맥을 기반으로 질문에 답하는 구조입니다. 프론트에는 AI 채팅 UI도 연결되어 있습니다.</p>
+          <h3>4. 문서 기반 RAG 질의응답</h3>
+          <div class="feature-media-row">
+            <div class="feature-media-copy">
+              <h4>RAG란?</h4>
+              <p>
+                <span class="text-line"><strong>RAG(Retrieval-Augmented Generation)</strong>는 LLM이 답변을 생성하기 전에</span>
+                <span class="text-line">사내 문서나 데이터베이스에서 질문과 관련된 정보를 먼저 검색하고,</span>
+                <span class="text-line">그 검색 결과를 근거로 답변을 만드는 방식입니다.</span>
+              </p>
+              <p>
+                <span class="text-line">정확한 RAG 검색을 위해서는 문서가 단순 파일 상태가 아니라</span>
+                <span class="text-line"><strong>chunk, 메타데이터, 표 구조, 이미지 설명</strong>처럼</span>
+                <span class="text-line">검색 가능한 데이터로 정리되어 있어야 합니다.</span>
+              </p>
+              <p>
+                <span class="text-line">변환된 문서는 chunk 단위로 분리되고,</span>
+                <span class="text-line">embedding을 생성해 벡터 검색에 사용할 수 있습니다.</span>
+              </p>
+              <p>
+                <span class="text-line">사용자가 질문하면 관련 chunk를 먼저 검색한 뒤,</span>
+                <span class="text-line">검색된 문맥을 기반으로 답변을 생성합니다.</span>
+              </p>
+              <p>
+                <span class="text-line">답변은 원문 문서의 텍스트, 표, 이미지 설명을 함께 참조할 수 있어</span>
+                <span class="text-line">단순 키워드 검색보다 정확한 문서 기반 질의응답이 가능합니다.</span>
+              </p>
+              <p>
+                <span class="text-line"><strong>RAG 기반 질의응답</strong>을 통해 사용자는 업로드한 문서의 내용을 자연어로 검색하고,</span>
+                <span class="text-line">관련 문맥을 반영한 답변을 받을 수 있습니다.</span>
+              </p>
+            </div>
+            <img class="feature-image" src="assets/images/rag2.svg" alt="문서 기반 RAG 질의응답 흐름">
+          </div>
         </div>
       </section>
 
@@ -97,6 +175,15 @@
             <p>프론트엔드·백엔드 연동</p>
             <p>전체 서비스 흐름 관리</p>
             <a class="member-link" href="https://github.com/0yeonnnn0">@0yeonnnn0</a>
+          </article>
+
+          <article class="member-card">
+            <img class="member-photo" src="https://github.com/kaye0ng.png" alt="강아영 프로필">
+            <h3>강아영 <span>AI</span></h3>
+            <p>문서 분석 모델 실험</p>
+            <p>이미지·텍스트 추출 개선</p>
+            <p>결과 품질 평가</p>
+            <a class="member-link" href="https://github.com/kaye0ng">@kaye0ng</a>
           </article>
 
           <article class="member-card">
@@ -134,15 +221,6 @@
             <p>Worker 처리 구조 설계</p>
             <a class="member-link" href="https://github.com/seunG-Zzun">@seunG-Zzun</a>
           </article>
-
-          <article class="member-card">
-            <img class="member-photo" src="https://github.com/kaye0ng.png" alt="강아영 프로필">
-            <h3>강아영 <span>AI</span></h3>
-            <p>문서 분석 모델 실험</p>
-            <p>이미지·텍스트 추출 개선</p>
-            <p>결과 품질 평가</p>
-            <a class="member-link" href="https://github.com/kaye0ng">@kaye0ng</a>
-          </article>
         </div>
       </section>
 
@@ -157,50 +235,93 @@
 
       <section id="stack">
         <h2>기술 스택</h2>
-        <table class="stack-table">
-          <tbody>
-            <tr>
-              <th>Frontend</th>
-              <td>
-                <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
-                <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
-                <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
-                <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
-              </td>
-            </tr>
-            <tr>
-              <th>Backend</th>
-              <td>
-                <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-                <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
-                <img src="https://img.shields.io/badge/Redis-FF4438?style=for-the-badge&logo=redis&logoColor=white" alt="Redis">
-                <img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white" alt="RabbitMQ">
-              </td>
-            </tr>
-            <tr>
-              <th>AI</th>
-              <td>
-                <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI">
-                <img src="https://img.shields.io/badge/Qwen-615CED?style=for-the-badge&logo=qwen&logoColor=white" alt="Qwen">
-                <img src="https://img.shields.io/badge/OpenRouter-000000?style=for-the-badge&logo=openrouter&logoColor=white" alt="OpenRouter">
-              </td>
-            </tr>
-            <tr>
-              <th>Collaboration Tools</th>
-              <td>
-                <img src="https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white" alt="Notion">
-                <img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord">
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="stack-grid">
+          <article class="stack-card">
+            <div class="stack-card-heading">
+              <span class="stack-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M8 4 3 12l5 8"></path>
+                  <path d="m16 4 5 8-5 8"></path>
+                  <path d="m14 5-4 14"></path>
+                </svg>
+              </span>
+              <h3>Frontend</h3>
+            </div>
+            <div class="stack-badges">
+              <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
+              <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+              <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
+              <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
+            </div>
+          </article>
+
+          <article class="stack-card">
+            <div class="stack-card-heading">
+              <span class="stack-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <rect x="4" y="5" width="16" height="14" rx="2"></rect>
+                  <path d="M8 9h8"></path>
+                  <path d="M8 13h5"></path>
+                  <path d="M7 2v3"></path>
+                  <path d="M17 2v3"></path>
+                </svg>
+              </span>
+              <h3>Backend</h3>
+            </div>
+            <div class="stack-badges">
+              <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+              <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
+              <img src="https://img.shields.io/badge/Redis-FF4438?style=for-the-badge&logo=redis&logoColor=white" alt="Redis">
+              <img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white" alt="RabbitMQ">
+            </div>
+          </article>
+
+          <article class="stack-card">
+            <div class="stack-card-heading">
+              <span class="stack-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3v18"></path>
+                  <path d="M5.5 7.5A3.5 3.5 0 0 1 12 5"></path>
+                  <path d="M18.5 7.5A3.5 3.5 0 0 0 12 5"></path>
+                  <path d="M5.5 16.5A3.5 3.5 0 0 0 12 19"></path>
+                  <path d="M18.5 16.5A3.5 3.5 0 0 1 12 19"></path>
+                  <path d="M4 12h16"></path>
+                </svg>
+              </span>
+              <h3>AI</h3>
+            </div>
+            <div class="stack-badges">
+              <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI">
+              <img src="https://img.shields.io/badge/Qwen-615CED?style=for-the-badge&logo=qwen&logoColor=white" alt="Qwen">
+              <img src="https://img.shields.io/badge/OpenRouter-000000?style=for-the-badge&logo=openrouter&logoColor=white" alt="OpenRouter">
+            </div>
+          </article>
+
+          <article class="stack-card">
+            <div class="stack-card-heading">
+              <span class="stack-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path>
+                  <path d="M16 21a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path>
+                  <path d="M7 11v3a3 3 0 0 0 3 3h2"></path>
+                  <path d="M13 7h2a3 3 0 0 1 3 3v3"></path>
+                </svg>
+              </span>
+              <h3>Collaboration</h3>
+            </div>
+            <div class="stack-badges">
+              <img src="https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white" alt="Notion">
+              <img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord">
+            </div>
+          </article>
+        </div>
       </section>
 
       <hr>
 
       <section id="usage">
-        <h2>사용법</h2>
-        <p><strong>Durmon:t</strong>의 Parser는 지금 <strong>배포</strong>되고 있습니다.</p>
+        <h2>이용 안내</h2>
+        <p><strong class="brand-highlight">LLMong</strong>의 Parser는 지금 <strong>배포</strong>되고 있습니다.</p>
         <p>아래에서 확인해 보세요.</p>
       </section>
 
@@ -209,10 +330,62 @@
       <section id="resources">
         <h2>프로젝트 자료</h2>
         <ul class="project-links">
-          <li><a href="#">최종 발표 자료</a></li>
-          <li><a href="http://luminir.edumong.ai:3001/dashboard">프로젝트 페이지</a></li>
-          <li><a href="https://www.notion.so/Lemong-2f101b1c23cb80029c94c7a3d6dd62b9?source=copy_link">프로젝트 노션</a></li>
-          <li><a href="#">결과 보고서</a></li>
+          <li>
+            <a href="http://luminir.edumong.ai:3001/dashboard" target="_blank" rel="noopener noreferrer">
+              <span class="project-link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 5h16v11H4z"></path>
+                  <path d="M8 20h8"></path>
+                  <path d="M12 16v4"></path>
+                  <path d="M13 8h4v4"></path>
+                  <path d="M11 14l6-6"></path>
+                </svg>
+              </span>
+              <span>프로젝트 페이지</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <span class="project-link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 4h16v11H4z"></path>
+                  <path d="M8 20l4-5 4 5"></path>
+                  <path d="M9 9h6"></path>
+                  <path d="M9 12h4"></path>
+                </svg>
+              </span>
+              <span>최종 발표 자료</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.notion.so/Lemong-2f101b1c23cb80029c94c7a3d6dd62b9?source=copy_link" target="_blank" rel="noopener noreferrer">
+              <span class="project-link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M6 4h10l3 3v13H6z"></path>
+                  <path d="M16 4v4h4"></path>
+                  <path d="M9 10h6"></path>
+                  <path d="M9 13h6"></path>
+                  <path d="M9 16h4"></path>
+                </svg>
+              </span>
+              <span>프로젝트 노션</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <span class="project-link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M8 4h8"></path>
+                  <path d="M9 2h6v4H9z"></path>
+                  <path d="M6 5h12v17H6z"></path>
+                  <path d="M9 11h6"></path>
+                  <path d="M9 15h6"></path>
+                  <path d="M9 19h4"></path>
+                </svg>
+              </span>
+              <span>결과 보고서</span>
+            </a>
+          </li>
         </ul>
       </section>
 
@@ -221,5 +394,71 @@
         산학협력 프로젝트 협력사: <strong>르몽</strong>
       </footer>
     </main>
+
+    <script>
+      (() => {
+        const navItems = Array.from(document.querySelectorAll('.side-nav a[href^="#"]'))
+          .map((link) => {
+            const id = link.getAttribute('href').slice(1);
+            const section = document.getElementById(id);
+
+            return section ? { id, link, section } : null;
+          })
+          .filter(Boolean);
+
+        if (!navItems.length) {
+          return;
+        }
+
+        const setActiveSection = (activeId) => {
+          navItems.forEach(({ id, link }) => {
+            const isActive = id === activeId;
+
+            link.classList.toggle('is-active', isActive);
+
+            if (isActive) {
+              link.setAttribute('aria-current', 'page');
+            } else {
+              link.removeAttribute('aria-current');
+            }
+          });
+        };
+
+        const updateActiveSection = () => {
+          const scrollOffset = window.innerWidth <= 960 ? 100 : 140;
+          let activeId = navItems[0].id;
+
+          navItems.forEach(({ id, section }) => {
+            if (section.getBoundingClientRect().top <= scrollOffset) {
+              activeId = id;
+            }
+          });
+
+          if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+            activeId = navItems[navItems.length - 1].id;
+          }
+
+          setActiveSection(activeId);
+        };
+
+        let ticking = false;
+        const requestActiveUpdate = () => {
+          if (ticking) {
+            return;
+          }
+
+          window.requestAnimationFrame(() => {
+            updateActiveSection();
+            ticking = false;
+          });
+          ticking = true;
+        };
+
+        window.addEventListener('scroll', requestActiveUpdate, { passive: true });
+        window.addEventListener('resize', requestActiveUpdate);
+        window.addEventListener('load', updateActiveSection);
+        updateActiveSection();
+      })();
+    </script>
   </body>
 </html>
