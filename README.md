@@ -1,23 +1,23 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Lvs6kcL8)
 
 <p align="center">
-  <img width="100%" alt="DURMONT Banner" src="https://github.com/user-attachments/assets/95720cd3-1f04-473f-beed-059e2fa0ae90" />
+  <img width="100%" alt="Durmon:t Banner" src="https://github.com/user-attachments/assets/95720cd3-1f04-473f-beed-059e2fa0ae90" />
 </p>
 
 <p align="center">
-  안녕하세요. 여기는 2026년도 캡스톤 23조 DURMONT의 GitHub입니다.
+  안녕하세요. 여기는 2026년도 캡스톤 23조 Durmon:t의 GitHub입니다.
 </p>
 
 <br />
 
-## ᕱ‬ DURMONT ‪ᕱ
+## ᕱ‬ Durmon:t ‪ᕱ
 
 <p align="center">
   <strong>Document Understanding & Representation Model Of Next Technology</strong>
 </p>
 
 <p align="center">
-  DURMONT는 문서를 이해하고 구조화하는 차세대 기술을 목표로 하는 팀입니다.
+  Durmon:t는 문서를 이해하고 구조화하는 차세대 기술을 목표로 하는 팀입니다.
 </p>
 
 <br />
@@ -31,7 +31,7 @@ HWP/HWPX, PDF, 이미지, Excel 문서를 업로드하면 텍스트, 표, 이미
 
 ## 프로젝트 소개
 
-저희는 산학협력 프로젝트를 진행하고 있는 23조 DURMONT입니다.
+저희는 산학협력 프로젝트를 진행하고 있는 23조 Durmon:t입니다.
 
 저희는 **르몽**과 협력하여 문서 분석 및 AI 기반 문서 활용 시스템을 개발하고 있습니다.
 
@@ -459,7 +459,7 @@ QWEN_INFER_WORKER_MAX_CONCURRENCY=1
 QWEN_INFER_GPU_SLOTS=1
 GPU_MAX_CONCURRENT_INFERENCE=1
 
-RABBITMQ_USER=luminir
+RABBITMQ_USER=llmong
 RABBITMQ_PASSWORD=change-me-rabbitmq-password
 ```
 
@@ -571,7 +571,7 @@ http://localhost:8000/docs
 
 ## 🤝 협업 방식
 
-DURMONT는 프론트엔드와 백엔드를 독립적으로 개발하면서도, 전체 프로젝트 구조와 API 인터페이스의 일관성을 유지하는 방식으로 협업했습니다.
+Durmon:t는 프론트엔드와 백엔드를 독립적으로 개발하면서도, 전체 프로젝트 구조와 API 인터페이스의 일관성을 유지하는 방식으로 협업했습니다.
 
 ### Git Flow
 
@@ -712,7 +712,7 @@ GitHub Issue, Milestone, Label을 활용하여 작업을 관리했습니다.
 
 <br />
 
-## 팀 DURMONT 소개
+## 팀 Durmon:t 소개
 
 <table>
   <tr>
