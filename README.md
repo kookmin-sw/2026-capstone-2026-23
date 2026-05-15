@@ -1,22 +1,28 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Lvs6kcL8)
 
-<img width="400" height="225" alt="Image" src="https://github.com/user-attachments/assets/6873de50-6b18-41ee-9d45-1a84bcdaf3f1" />
-<p align="center">
-  
-  안녕하세요. 여기는 2026년도 캡스톤 23조 Durmon:t의 GitHub입니다.
+<div align="center">
+
+<img width="100%" alt="Durmon:t" src="https://github.com/user-attachments/assets/6873de50-6b18-41ee-9d45-1a84bcdaf3f1" />
+
+<br />
+<br />
+
+<p>
+  안녕하세요. 여기는 <strong>2026년도 캡스톤 23조 Durmon:t</strong>의 GitHub입니다.
 </p>
 
 <br />
 
-## ᕱ‬ Durmon:t ‪ᕱ
+<h1>ᕱ Durmon:t ᕱ</h1>
 
-<p align="center">
-  <strong>From Complex Documents to AI-Ready Knowledge</strong>
+<h3>From Complex Documents to AI-Ready Knowledge</h3>
+
+<p>
+  Durmon:t는 복잡한 문서를 AI가 이해할 수 있는 구조로 변환하고,<br />
+  검색과 질의응답까지 연결하는 문서 AI 기술을 만듭니다.
 </p>
 
-<p align="center">
-  Durmon:t는 복잡한 문서를 AI가 이해할 수 있는 구조로 변환하고, 검색과 질의응답까지 연결하는 문서 AI 기술을 만듭니다.
-</p>
+</div>
 
 ### 팀원 소개
 
