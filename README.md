@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img width="100%" alt="Durmon:t" src="https://github.com/user-attachments/assets/6873de50-6b18-41ee-9d45-1a84bcdaf3f1" />
+<img width="400" height="225" alt="Durmon:t" src="https://github.com/user-attachments/assets/6873de50-6b18-41ee-9d45-1a84bcdaf3f1" />
 
 <br />
 <br />
